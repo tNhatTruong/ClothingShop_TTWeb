@@ -1,0 +1,177 @@
+/* ===== COLOR PALETTE ===== */
+:root {
+    --color-beige: #F5F0E6;
+    --color-black: #212121;
+    --color-accent-gold: #D4AF37;
+    --color-sidebar: #E0D6C8; /* be dịu nhẹ cho sidebar */
+    --color-border: #D4AF37;
+    --color-text-muted: #5A5A5A;
+}
+
+/* ===== MAIN LAYOUT ===== */
+main {
+    background-color: var(--color-beige);
+    color: var(--color-black);
+    padding: 50px 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+    background-color: var(--color-sidebar);
+    color: var(--color-black);
+    padding: 30px 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.sidebar h4 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--color-accent-gold);
+    padding-bottom: 10px;
+}
+
+.sidebar a {
+    display: block;
+    color: var(--color-black);
+    text-decoration: none;
+    margin-bottom: 12px;
+    transition: color 0.3s;
+}
+
+.sidebar a:hover {
+    color: var(--color-accent-gold);
+}
+
+/* ===== CONTENT AREA ===== */
+.content {
+    background-color: #fff;
+    padding: 30px 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(33, 33, 33, 0.05);
+}
+
+.content h4 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 25px;
+    color: var(--color-black);
+}
+
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.form-control, .form-select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background-color: #fff;
+    color: var(--color-black);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--color-accent-gold);
+    box-shadow: 0 0 6px rgba(212, 175, 55, 0.3);
+}
+
+/* ===== BUTTONS ===== */
+.btn-save {
+    padding: 12px 30px;
+    background-color: var(--color-beige);
+    color: var(--color-black);
+    border: 2px solid var(--color-beige);
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.3s;
+}
+
+.btn-save i {
+    margin-right: 8px;
+}
+
+.btn-save:hover {
+    background-color: var(--color-accent-gold);
+    border-color: var(--color-accent-gold);
+    color: var(--color-black);
+    transform: translateY(-2px);
+}
+
+/* ===== RESPONSIVE GRID ===== */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -15px;
+}
+
+.col-md-3, .col-md-9 {
+    padding: 15px;
+}
+
+.col-md-3 {
+    flex: 0 0 25%;
+    max-width: 25%;
+}
+
+.col-md-9 {
+    flex: 0 0 75%;
+    max-width: 75%;
+}
+
+/* ===== MEDIA QUERIES ===== */
+@media (max-width: 992px) {
+    .col-md-3, .col-md-9 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    main {
+        padding: 30px 0;
+    }
+
+    .content {
+        margin-top: 20px;
+    }
+}
+
+/* ===== ADDITIONAL STYLES ===== */
+#logoutBtn {
+    color: var(--color-black);
+    font-weight: 600;
+}
+
+#logoutBtn:hover {
+    color: var(--color-accent-gold);
+}
+
+span#emailInput {
+    display: inline-block;
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+/* Form spacing tweaks */
+#accountInfoForm .form-group input,
+#accountInfoForm .form-group select {
+    margin-top: 5px;
+}

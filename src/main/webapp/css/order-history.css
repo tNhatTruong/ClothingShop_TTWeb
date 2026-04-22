@@ -1,0 +1,111 @@
+/* ===== MAIN LAYOUT ===== */
+.orders-history {
+    background: #f5f0e6;
+    min-height: 100vh;
+}
+
+/* ===== PAGE HEADER ===== */
+.orders-history .text-center h1 {
+    color: #212121;
+}
+
+.orders-history .text-center p {
+    color: #5A5A5A;
+}
+
+/* ===== ORDERS TABLE ===== */
+.orders-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px; /* khoảng cách giữa các row */
+}
+
+.orders-table th {
+    background: #E0D6C8;
+    color: #212121;
+    font-weight: 600;
+    padding: 12px 15px;
+    text-align: center;
+    border-radius: 6px 6px 0 0;
+}
+
+.orders-table td {
+    background: #fff;
+    padding: 12px 15px;
+    vertical-align: middle;
+    border-radius: 6px;
+    text-align: center;
+}
+.orders-table tr.order-row td {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.orders-table tr.order-row:hover td {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* ===== PRODUCT IMAGE ===== */
+.order-product-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+/* ===== BUTTONS ===== */
+.btn-primary, .btn-secondary {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background-color: #212121;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #333;
+}
+
+.btn-secondary {
+    background-color: #E0D6C8;
+    color: #212121;
+}
+
+.btn-secondary:hover {
+    background-color: #d4c9b5;
+}
+
+/* ===== ORDER DETAILS ===== */
+.order-details .details-content {
+    background: #f9f5f0;
+    padding: 12px 15px;
+    border-radius: 6px;
+    color: #212121;
+    font-size: 14px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .orders-table th,
+    .orders-table td {
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .order-product-img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .btn-primary, .btn-secondary {
+        padding: 5px 8px;
+        font-size: 12px;
+    }
+}

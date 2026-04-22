@@ -1,0 +1,112 @@
+plugins {
+    id 'java'
+    id 'war'
+    id 'maven-publish'
+    id "org.hidetake.ssh" version "2.11.2"
+}
+
+group = 'com.clothing'
+version = '1.0-SNAPSHOT'
+
+// Set tên file WAR
+war {
+    archiveFileName = 'lab.war'
+}
+
+java {
+    sourceCompatibility = 11
+    targetCompatibility = 11
+}
+
+repositories {
+    mavenCentral()
+}
+
+// --- CÁC THƯ VIỆN CỦA DỰ ÁN WEB ---
+dependencies {
+
+    // ===== DATABASE =====
+    implementation 'com.mysql:mysql-connector-j:8.4.0'
+
+    // ===== JAKARTA EE =====
+    providedCompile 'jakarta.platform:jakarta.jakartaee-web-api:10.0.0'
+
+    // ===== JSTL =====
+    implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0'
+    implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1'
+
+    // ===== JDBI =====
+    implementation 'org.jdbi:jdbi3-core:3.50.0'
+
+    // ===== LOGGING =====
+    implementation 'org.slf4j:slf4j-api:2.0.17'
+    implementation 'ch.qos.logback:logback-classic:1.5.13'
+
+    // ===== OTHER =====
+    implementation 'com.google.protobuf:protobuf-java:3.25.5'
+    implementation 'org.mindrot:jbcrypt:0.4'
+    implementation 'com.sun.mail:jakarta.mail:2.0.1'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'org.apache.httpcomponents:fluent-hc:4.5.14'
+
+    // ===== TEST =====
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+// ===== SSH CONFIG =====
+apply plugin: 'org.hidetake.ssh'
+
+remotes {
+    host {
+        host = 'YOUR_SERVER_IP'
+        user = 'root'
+        password = 'YOUR_PASSWORD'
+    }
+}
+
+ssh.settings {
+    knownHosts = allowAnyHosts
+}
+
+// ===== TASK DEPLOY =====
+task docker_app_start {
+    doLast {
+        println 'begin docker_app_start'
+        ssh.run {
+            session(remotes.host) {
+                execute 'docker stop tomcat9', ignoreError: true
+                execute '''
+                    docker run -it --rm -d \
+                    --name tomcat9 \
+                    -v /usr/deploy:/usr/local/tomcat/webapps \
+                    -p 80:8080 \
+                    tomcat:9.0
+                '''
+            }
+        }
+    }
+}
+
+task docker_upload_file_to_server {
+    dependsOn build
+    doLast {
+        println 'begin upload'
+        ssh.run {
+            session(remotes.host) {
+                remove '/usr/deploy/lab.war'
+                put from: "${buildDir}/libs/lab.war",
+                        into: "/usr/deploy/lab.war"
+            }
+        }
+    }
+}
+
+task docker_deploy {
+    dependsOn docker_upload_file_to_server
+    dependsOn docker_app_start
+}
