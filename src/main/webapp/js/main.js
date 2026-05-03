@@ -97,3 +97,29 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+// ==========================================
+// BACK TO TOP BUTTON LOGIC (ISSUE #8)
+// ==========================================
+document.addEventListener('DOMContentLoaded', function () {
+    const backToTopBtn = document.getElementById("backToTopBtn");
+
+    if (backToTopBtn) {
+        // 1. Khi cuộn xuống 300px thì hiện nút
+        window.addEventListener("scroll", function() {
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                backToTopBtn.style.display = "block";
+            } else {
+                backToTopBtn.style.display = "none";
+            }
+        });
+
+        // 2. Khi click vào nút thì cuộn lên đầu mượt mà
+        backToTopBtn.addEventListener("click", function() {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        });
+    }
+});
