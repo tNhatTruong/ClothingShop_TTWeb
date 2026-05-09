@@ -52,3 +52,37 @@ function checkPasswordStrength(password, context) {
     bar.style.backgroundColor = color;
     text.innerText = 'Độ mạnh mật khẩu: ' + label;
 }
+
+// Hàm validate mật khẩu theo điều kiện
+function validatePassword(password) {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+    return regex.test(password);
+}
+
+// Hàm confirm mật khẩu nhập lại
+function confirmPassword(password, confirm) {
+    return password === confirm;
+}
+// Gắn sự kiện cho form đăng ký
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("registerForm");
+    const pwdInput = document.getElementById("registerPassword");
+    const confirmInput = document.getElementById("registerConfirmPassword");
+
+    form.addEventListener("submit", (e) => {
+        const pwd = pwdInput.value;
+        const confirm = confirmInput.value;
+
+        if (!validatePassword(pwd)) {
+            e.preventDefault();
+            alert("Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.");
+            return;
+        }
+
+        if (!confirmPassword(pwd, confirm)) {
+            e.preventDefault();
+            alert("Mật khẩu nhập lại không khớp.");
+            return;
+        }
+    });
+});
