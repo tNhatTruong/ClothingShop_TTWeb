@@ -2,6 +2,7 @@
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="root" value="${pageContext.request.contextPath}" scope="request"/>
 
 <!DOCTYPE html>
@@ -15,6 +16,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="${root}/css/header-footer.css">
     <link rel="stylesheet" href="${root}/css/product.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
 </head>
 
 <body>
@@ -55,12 +58,20 @@
                                 </a>
                             </h6>
                             <ul>
-                                <c:forEach items="${p.subCategories}" var="s">
-                                    <li class="${param.cateId == s.id ? 'active' : ''}">
+                                <c:forEach items="${p.subCategories}" var="s" varStatus="status">
+                                    <li class="${param.cateId == s.id ? 'active' : ''}
+                           ${status.index >= 4 ? 'hidden-sub' : ''}">
                                         <a href="${root}/product?cateId=${s.id}">${s.name}</a>
                                     </li>
                                 </c:forEach>
                             </ul>
+
+                            <c:if test="${fn:length(p.subCategories) > 4}">
+                                <a href="#" class="toggle-sub float-end">
+                                    Xem thêm (${fn:length(p.subCategories) - 4})
+                                    <i class="bi bi-chevron-down"></i>
+                                </a>
+                            </c:if>
                         </div>
                     </c:forEach>
 
@@ -99,22 +110,35 @@
                     <div class="filter-section">
                         <h6>Kích thước</h6>
                         <div class="size-list" style="display: flex; flex-wrap: wrap; gap: 5px;">
-                            <c:forEach items="${listSizes}" var="size">
-                                <a href="#" class="btn btn-outline-secondary btn-sm"
-                                   style="min-width: 35px;">${size}</a>
+                            <c:forEach items="${listSizes}" var="size" varStatus="status">
+                                <a href="#" class="btn btn-outline-secondary btn-sm ${status.index >= 4 ? 'hidden-size' : ''}">
+                                        ${size}
+                                </a>
                             </c:forEach>
+                            <c:if test="${fn:length(listSizes) > 4}">
+                                <a href="#" class="toggle-size float-end">
+                                    Xem thêm (${fn:length(listSizes) - 4})
+                                    <i class="bi bi-chevron-down"></i>
+                                </a>
+                            </c:if>
                         </div>
                     </div>
                     <hr>
                     <div class="filter-section">
                         <h6>Màu sắc</h6>
-                        <ul class="color-list" style="list-style: none; padding: 0;">
-                            <c:forEach items="${listColors}" var="color">
-                                <li style="margin-bottom: 5px;">
+                        <ul class="color-list" style="list-style:none; padding:0;">
+                            <c:forEach items="${listColors}" var="color" varStatus="status">
+                                <li class="${status.index >= 4 ? 'hidden-color' : ''}" style="margin-bottom:5px;">
                                     <input type="checkbox"> ${color}
                                 </li>
                             </c:forEach>
                         </ul>
+                        <c:if test="${fn:length(listColors) > 4}">
+                            <a href="#" class="toggle-color float-end">
+                                Xem thêm (${fn:length(listColors) - 4})
+                                <i class="bi bi-chevron-down"></i>
+                            </a>
+                        </c:if>
                     </div>
                 </div>
             </aside>
@@ -180,7 +204,7 @@
                     <% } %>
                 </div>
 
-                <c:if test="${totalPages > 1}">
+                <c:if test="${totalPages >= 1}">
                     <nav aria-label="Page navigation" class="mt-5">
                         <ul class="pagination justify-content-center">
 
@@ -232,6 +256,35 @@
         el.addEventListener('change', function() {
             document.getElementById('priceFilterForm').submit();
         });
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+        function setupToggle(toggleClass, hiddenClass) {
+            document.querySelectorAll(toggleClass).forEach(function(toggle) {
+                toggle.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    const parent = toggle.closest(".filter-section");
+                    const hiddenItems = parent.querySelectorAll(hiddenClass);
+                    if (hiddenItems.length === 0) return;
+
+                    const isHidden = hiddenItems[0].classList.contains(hiddenClass.replace('.', ''));
+
+                    hiddenItems.forEach(function(el) {
+                        el.classList.toggle(hiddenClass.replace('.', ''));
+                    });
+
+                    const totalHidden = hiddenItems.length;
+                    if (isHidden) {
+                        toggle.innerHTML = 'Thu gọn <i class="bi bi-chevron-up"></i>';
+                    } else {
+                        toggle.innerHTML = 'Xem thêm ('+ totalHidden +') <i class="bi bi-chevron-down"></i>';
+                    }
+                });
+            });
+        }
+
+        setupToggle(".toggle-sub", ".hidden-sub");
+        setupToggle(".toggle-size", ".hidden-size");
+        setupToggle(".toggle-color", ".hidden-color");
     });
 </script>
 </body>
