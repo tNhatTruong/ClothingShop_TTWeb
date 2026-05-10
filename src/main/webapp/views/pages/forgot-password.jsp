@@ -56,7 +56,7 @@
                             <button type="submit" class="auth-btn">Gửi</button>
 
                             <div style="text-align: center; margin-top: 20px;">
-                                <a href="login.jsp" class="forgot-link">
+                                <a href="login" class="forgot-link">
                                     <i class="fas fa-arrow-left"></i> Quay lại đăng nhập
                                 </a>
                             </div>

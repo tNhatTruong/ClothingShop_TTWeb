@@ -14,6 +14,20 @@
     <link rel="stylesheet" href="${root}/css/header-footer.css">
     <link rel="stylesheet" href="${root}/css/account.css">
 </head>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const alert = document.getElementById('successAlert');
+        if (alert) {
+            setTimeout(() => {
+                // Dùng Bootstrap API để đóng alert
+                const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+                bsAlert.close();
+            }, 3000);
+        }
+    });
+</script>
+
+
 
 <body>
 <jsp:include page="/views/layout/header.jsp" />
@@ -21,12 +35,13 @@
 <main>
     <div class="container">
         <c:if test="${not empty sessionScope.successMsg}">
-            <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            <div class="alert alert-success alert-dismissible fade show mt-3" role="alert" id="successAlert">
                     ${sessionScope.successMsg}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
             <c:remove var="successMsg" scope="session"/>
         </c:if>
+
 
         <c:if test="${not empty error}">
             <div class="alert alert-danger mt-3">${error}</div>
@@ -37,7 +52,7 @@
                 <div class="sidebar">
                     <h4>TÀI KHOẢN</h4>
                     <a href="${root}/account" class="active">Thông tin tài khoản</a>
-                    <a href="${root}/reset-password">Đổi mật khẩu</a>
+                    <a href="${root}/change-password">Đổi mật khẩu</a>
                     <a href="${root}/order-history">Xem lịch sử mua hàng</a>
                     <a href="${root}/logout" id="logoutBtn">Đăng xuất</a>
                 </div>

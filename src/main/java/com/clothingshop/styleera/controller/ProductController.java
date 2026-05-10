@@ -32,6 +32,7 @@ public class ProductController extends HttpServlet {
         String cateIdParam = request.getParameter("cateId");
         String sortParam = request.getParameter("sort");
         String searchParam = request.getParameter("search");
+        String priceRangeParam = request.getParameter("priceRange");
 
         // Lấy trang hiện tại
         String pageParam = request.getParameter("page");
@@ -72,10 +73,24 @@ public class ProductController extends HttpServlet {
                 else if(sortParam.equals("bestseller")) title = "Sản Phẩm Bán Chạy";
                 else title = "Tất cả sản phẩm";
             }
+            else if (priceRangeParam != null && !priceRangeParam.isEmpty()) {
+                int rangeType = Integer.parseInt(priceRangeParam);
+
+                if (cateIdParam != null) {
+                    int cateId = Integer.parseInt(cateIdParam);
+                    fullList = categoryDAO.getProductsByPriceRange(cateId, rangeType);
+                    title = categoryDAO.getSubNameById(cateId) + " - Lọc theo giá";
+                } else {
+                    fullList = productDAO.getAllProductsByPriceRange(rangeType);
+                    title = "Lọc theo giá";
+                }
+            }
+
             else {
                 // Mặc định lấy tất cả
                 fullList = productService.findAll();
             }
+
         } catch (NumberFormatException e) {
             fullList = productService.findAll();
         }

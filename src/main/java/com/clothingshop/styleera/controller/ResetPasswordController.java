@@ -24,6 +24,7 @@ public class ResetPasswordController extends HttpServlet {
         }
 
         // Chuyển hướng vào Kho (File JSP) để hiển thị giao diện
+        request.setAttribute("formAction", "reset-password");
         request.getRequestDispatcher("/views/pages/reset-password.jsp").forward(request, response);
     }
 
@@ -62,6 +63,7 @@ public class ResetPasswordController extends HttpServlet {
         // Thành công -> Chuyển hướng sang trang Login
         // Dùng Session để truyền thông báo vì sendRedirect sẽ làm mất request attribute
         session.setAttribute("successMsg", "Đổi mật khẩu thành công! Hãy đăng nhập lại.");
+        request.setAttribute("formAction", "reset-password");
         response.sendRedirect(request.getContextPath() + "/login");
     }
 }

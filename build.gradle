@@ -33,7 +33,7 @@ dependencies {
     providedCompile 'jakarta.servlet.jsp:jakarta.servlet.jsp-api:3.1.1'
     providedCompile 'jakarta.el:jakarta.el-api:5.0.1'
 
-    // ===== JSTL =====
+    // ===== JSTL (Jakarta) =====
     implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0'
     implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1'
 
@@ -82,11 +82,14 @@ task docker_app_start {
         ssh.run {
             session(remotes.host) {
                 execute 'docker stop tomcat10', ignoreError: true
+                execute 'docker stop tomcat10', ignoreError: true
                 execute '''
                     docker run -it --rm -d \
                     --name tomcat10 \
+                    --name tomcat10 \
                     -v /usr/deploy:/usr/local/tomcat/webapps \
                     -p 80:8080 \
+                    tomcat:10.1
                     tomcat:10.1
                 '''
             }

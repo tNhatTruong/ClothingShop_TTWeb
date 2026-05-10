@@ -29,7 +29,7 @@
                     </div>
 
                     <div class="auth-body">
-                        <form action="${root}/reset-password" method="post" id="resetForm">
+                        <form action="${root}/${formAction}" method="post" id="resetForm">
 
                             <c:if test="${not empty error}">
                                 <div class="alert alert-danger text-center mb-3">

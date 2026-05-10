@@ -1,10 +1,10 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<c:set var="root" value="${pageContext.request.contextPath}" scope="request" />
+<c:set var="root" value="${pageContext.request.contextPath}" scope="request"/>
 
 <%--Định dạng tiền tệ VNĐ--%>
-<fmt:setLocale value="vi_VN" />
+<fmt:setLocale value="vi_VN"/>
 <fmt:setTimeZone value="Asia/Ho_Chi_Minh"/>
 
 <!DOCTYPE html>
@@ -22,12 +22,12 @@
 </head>
 <body>
 
-<jsp:include page="/views/layout/header.jsp" />
+<jsp:include page="/views/layout/header.jsp"/>
 
 <main class="container product-page">
     <nav aria-label="breadcrumb" class="mt-3 mb-3">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.jsp">Trang Chủ</a></li>
+            <li class="breadcrumb-item"><a href="${root}/home">Trang Chủ</a></li>
             <li class="breadcrumb-item active" id="breadcrumb-category">Giỏ hàng</li>
         </ol>
     </nav>
@@ -50,7 +50,7 @@
                             </tr>
                             </thead>
                             <tbody>
-<%--                            Hiển thị danh sách sản phẩm được thêm vào giỏ hàng--%>
+                            <%--                            Hiển thị danh sách sản phẩm được thêm vào giỏ hàng--%>
                             <c:choose>
                                 <c:when test="${sessionScope.cart == null || sessionScope.cart.item.size() == 0}">
                                     <tr>
@@ -64,8 +64,9 @@
                                     <c:set var="count" value="1"/>
                                     <c:forEach items="${sessionScope.cart.item}" var="item">
                                         <tr>
-<%--                                            tạo checkbox để chọn thanh toán--%>
-                                            <td><input type="checkbox" class="form-check-input cart-item-checkbox"/></td>
+                                                <%--                                            tạo checkbox để chọn thanh toán--%>
+                                            <td><input type="checkbox" class="form-check-input cart-item-checkbox"/>
+                                            </td>
                                             <td>${count}</td>
                                             <td>
                                                 <div class="product-item img_product">
@@ -81,7 +82,8 @@
                                             </td>
                                             <td>
                                                 <div class="product-item">
-                                                    <h6> <fmt:formatNumber value="${item.variant.product.price}" pattern="#,##0 'VNĐ'" /></h6>
+                                                    <h6><fmt:formatNumber value="${item.variant.product.price}"
+                                                                          pattern="#,##0 'VNĐ'"/></h6>
                                                 </div>
                                             </td>
                                             <td>
@@ -92,32 +94,35 @@
                                                         <i class="fa-solid fa-minus"></i>
                                                     </button>
 
-                                                        <input type="text" name="quantity" class="qty-input"
-                                                               value="${item.quantity}" size="2" readonly/>
+                                                    <input type="text" name="quantity" class="qty-input"
+                                                           value="${item.quantity}" size="2" readonly/>
 
-                                                        <button type="button"
-                                                                class="qty-btn"
-                                                                onclick="updateCart(${item.variant.variantId},'increase',this)">
-                                                            <i class="fa-solid fa-plus"></i>
-                                                        </button>
+                                                    <button type="button"
+                                                            class="qty-btn"
+                                                            onclick="updateCart(${item.variant.variantId},'increase',this)">
+                                                        <i class="fa-solid fa-plus"></i>
+                                                    </button>
 
                                                 </div>
 
                                             </td>
                                             <td>
                                                 <div class="price-item">
-                                                    <div class="cart_price"> <fmt:formatNumber value=" ${item.quantity * item.variant.product.price }"  pattern="#,##0 'VNĐ'"/></div>
+                                                    <div class="cart_price"><fmt:formatNumber
+                                                            value=" ${item.quantity * item.variant.product.price }"
+                                                            pattern="#,##0 'VNĐ'"/></div>
                                                 </div>
                                             </td>
-<%--                                            Chức năng xoá sản phẩm ra khỏi giỏ hàng--%>
+                                                <%--Chức năng xoá sản phẩm ra khỏi giỏ hàng--%>
                                             <td>
                                                 <button type="button" class="btn-remove"
-                                                        onclick="removeItem(${item.variant.variantId}, this)">
-                                                    <i class="fa-solid fa-circle-xmark closed" style="color: #b61111ff"></i>
+                                                        onclick="if(confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?')) { removeItem(${item.variant.variantId}, this); }">
+                                                    <i class="fa-solid fa-circle-xmark closed"
+                                                       style="color: #b61111ff"></i>
                                                 </button>
                                             </td>
                                         </tr>
-<%--                                        tăng biến count lên 1 khi thêm nhiều vào giỏ hàng--%>
+                                        <%--                                        tăng biến count lên 1 khi thêm nhiều vào giỏ hàng--%>
                                         <c:set var="count" value="${count + 1}"/>
                                     </c:forEach>
                                 </c:otherwise>
@@ -137,15 +142,18 @@
                         <ul>
                             <li>
                                 <span class="label">TỔNG ĐƠN HÀNG:</span>
-                                <span class="value"><strong id="total-quantity">${sessionScope.cart != null ? sessionScope.cart.totalQuantity : 0}</strong></span>
+                                <span class="value"><strong
+                                        id="total-quantity">${sessionScope.cart != null ? sessionScope.cart.totalQuantity : 0}</strong></span>
                             </li>
                             <li>
                                 <span class="label">TỔNG GIÁ TIỀN:</span>
-                                <span class="value"><strong id="total-price"> <fmt:formatNumber value="${ sessionScope.cart != null ? sessionScope.cart.total() : 0}" pattern="#,##0 'VNĐ'" /></strong></span>
+                                <span class="value"><strong id="total-price"> <fmt:formatNumber
+                                        value="${ sessionScope.cart != null ? sessionScope.cart.total() : 0}"
+                                        pattern="#,##0 'VNĐ'"/></strong></span>
                             </li>
                         </ul>
                         <div class="cart-actions">
-                             <%-- NÚT THANH TOÁN--%>
+                            <%-- NÚT THANH TOÁN--%>
                             <a href="checkout.jsp" class="btn btn-success">MUA HÀNG</a>
                             <a href="order_status.jsp" class="btn btn-danger">TRẠNG THÁI ĐƠN HÀNG</a>
                         </div>
@@ -156,7 +164,7 @@
     </div>
 </main>
 
-<jsp:include page="/views/layout/footer.jsp" />
+<jsp:include page="/views/layout/footer.jsp"/>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="${root}/js/main.js"></script>

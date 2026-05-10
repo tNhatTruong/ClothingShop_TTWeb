@@ -961,3 +961,27 @@ img:not([src]) {
     margin-right: 5px;
     color: #888;
 }
+
+/* Nút Back to Top */
+#backToTopBtn {
+    display: none; /* Ẩn đi lúc đầu */
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 999;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    background-color: #000;
+    color: white;
+    cursor: pointer;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+#backToTopBtn:hover {
+    background-color: #555;
+}

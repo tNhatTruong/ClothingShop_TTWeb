@@ -44,6 +44,7 @@ public class LoginController extends HttpServlet {
             // Nếu user không làm gì trong 30p, server tự hủy session này.
             HttpSession session = request.getSession();
             session.setAttribute("auth", user);
+            session.setAttribute("currentUser", user);
             session.setMaxInactiveInterval(30 * 60);
 
             // 4. Cookie

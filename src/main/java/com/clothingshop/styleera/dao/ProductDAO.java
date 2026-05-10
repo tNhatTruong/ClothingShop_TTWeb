@@ -116,7 +116,7 @@ public class ProductDAO {
     }
 
     // 6. Tìm chi tiết theo ID (Trang Detail)
-    public List<Product> findById(int id){
+    public List<Product> findById(int id) {
         Jdbi jdbi = JDBIConnector.getJdbi();
         return jdbi.withHandle(handle -> {
             String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.short_description, " +
@@ -476,6 +476,7 @@ public class ProductDAO {
             handle.createUpdate("DELETE FROM products WHERE id = ?").bind(0, productId).execute();
         });
     }
+
     //22. Thêm product  trong trang admin quan ly san pham
     public void insertProductFull(
             String productName,
@@ -522,6 +523,62 @@ public class ProductDAO {
                     .bind(1, imageName)
                     .bind(2, imagePath)
                     .execute();
+        });
+    }
+
+    // 24. Lọc sản phẩm theo khoảng giá trong một SubCategory
+    public List<Product> getProductsByPriceRange(int subCategoryId, int rangeType) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        return jdbi.withHandle(handle -> {
+            String sql = "SELECT p.id AS product_id, p.product_name, p.price, " +
+                    "i.path AS thumbnail " +
+                    "FROM products p " +
+                    "LEFT JOIN images i ON p.image_id = i.id " +
+                    "WHERE p.category_sub_id = :subId ";
+
+            switch (rangeType) {
+                case 1: // dưới 200k
+                    sql += "AND p.price < 200000";
+                    break;
+                case 2: // 200k - 500k
+                    sql += "AND p.price BETWEEN 200000 AND 500000";
+                    break;
+                case 3: // trên 500k
+                    sql += "AND p.price > 500000";
+                    break;
+            }
+
+            return handle.createQuery(sql)
+                    .bind("subId", subCategoryId)
+                    .mapToBean(Product.class)
+                    .list();
+        });
+    }
+
+    // 25. Lọc toàn bộ sản phẩm theo khoảng giá
+    public List<Product> getAllProductsByPriceRange(int rangeType) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        return jdbi.withHandle(handle -> {
+            String sql = "SELECT p.id AS product_id, p.product_name, p.price, " +
+                    "i.path AS thumbnail " +
+                    "FROM products p " +
+                    "LEFT JOIN images i ON p.image_id = i.id WHERE 1=1 ";
+
+            switch (rangeType) {
+                case 1:
+                    sql += "AND p.price < 200000";
+                    break;
+                case 2:
+                    sql += "AND p.price BETWEEN 200000 AND 500000";
+                    break;
+                case 3:
+                    sql += "AND p.price > 500000";
+                    break;
+            }
+
+            return handle.createQuery(sql)
+                    .mapToBean(Product.class)
+                    .list();
         });
     }
 
