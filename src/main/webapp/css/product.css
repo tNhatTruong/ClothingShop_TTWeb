@@ -309,3 +309,12 @@ body {
         cursor: pointer;
     }
 }
+.hidden-sub, .hidden-size, .hidden-color {
+    display: none !important;
+}
+.toggle-sub, .toggle-size, .toggle-color  {
+    font-size: 0.9rem;
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: none;
+}

@@ -2,6 +2,7 @@
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="root" value="${pageContext.request.contextPath}" scope="request"/>
 
 <!DOCTYPE html>
@@ -15,6 +16,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="${root}/css/header-footer.css">
     <link rel="stylesheet" href="${root}/css/product.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
 </head>
 
 <body>
@@ -55,44 +58,87 @@
                                 </a>
                             </h6>
                             <ul>
-                                <c:forEach items="${p.subCategories}" var="s">
-                                    <li class="${param.cateId == s.id ? 'active' : ''}">
+                                <c:forEach items="${p.subCategories}" var="s" varStatus="status">
+                                    <li class="${param.cateId == s.id ? 'active' : ''}
+                           ${status.index >= 4 ? 'hidden-sub' : ''}">
                                         <a href="${root}/product?cateId=${s.id}">${s.name}</a>
                                     </li>
                                 </c:forEach>
                             </ul>
+
+                            <c:if test="${fn:length(p.subCategories) > 4}">
+                                <a href="#" class="toggle-sub float-end">
+                                    Xem thêm (${fn:length(p.subCategories) - 4})
+                                    <i class="bi bi-chevron-down"></i>
+                                </a>
+                            </c:if>
                         </div>
                     </c:forEach>
 
                     <hr>
                     <div class="filter-section">
-                        <h6>Giá</h6>
-                        <ul>
-                            <li><input type="checkbox"> Dưới 200.000</li>
-                            <li><input type="checkbox"> 200.000 – 500.000</li>
-                            <li><input type="checkbox"> Trên 500.000</li>
-                        </ul>
+                        <h5>Giá</h5>
+                        <form id="priceFilterForm" action="product" method="get">
+                            <!-- Giữ cateId hoặc parentId nếu có -->
+                            <c:if test="${not empty currentCate}">
+                                <input type="hidden" name="cateId" value="${currentCate}" />
+                            </c:if>
+                            <c:if test="${not empty currentParent}">
+                                <input type="hidden" name="parentId" value="${currentParent}" />
+                            </c:if>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="priceRange" value="1"
+                                       id="priceRange1" ${currentPriceRange == '1' ? 'checked' : ''}>
+                                <label class="form-check-label" for="priceRange1">Dưới 200.000</label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="priceRange" value="2"
+                                       id="priceRange2" ${currentPriceRange == '2' ? 'checked' : ''}>
+                                <label class="form-check-label" for="priceRange2">200.000 - 500.000</label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="priceRange" value="3"
+                                       id="priceRange3" ${currentPriceRange == '3' ? 'checked' : ''}>
+                                <label class="form-check-label" for="priceRange3">Trên 500.000</label>
+                            </div>
+                        </form>
                     </div>
                     <hr>
                     <div class="filter-section">
                         <h6>Kích thước</h6>
                         <div class="size-list" style="display: flex; flex-wrap: wrap; gap: 5px;">
-                            <c:forEach items="${listSizes}" var="size">
-                                <a href="#" class="btn btn-outline-secondary btn-sm"
-                                   style="min-width: 35px;">${size}</a>
+                            <c:forEach items="${listSizes}" var="size" varStatus="status">
+                                <a href="#" class="btn btn-outline-secondary btn-sm ${status.index >= 4 ? 'hidden-size' : ''}">
+                                        ${size}
+                                </a>
                             </c:forEach>
+                            <c:if test="${fn:length(listSizes) > 4}">
+                                <a href="#" class="toggle-size float-end">
+                                    Xem thêm (${fn:length(listSizes) - 4})
+                                    <i class="bi bi-chevron-down"></i>
+                                </a>
+                            </c:if>
                         </div>
                     </div>
                     <hr>
                     <div class="filter-section">
                         <h6>Màu sắc</h6>
-                        <ul class="color-list" style="list-style: none; padding: 0;">
-                            <c:forEach items="${listColors}" var="color">
-                                <li style="margin-bottom: 5px;">
+                        <ul class="color-list" style="list-style:none; padding:0;">
+                            <c:forEach items="${listColors}" var="color" varStatus="status">
+                                <li class="${status.index >= 4 ? 'hidden-color' : ''}" style="margin-bottom:5px;">
                                     <input type="checkbox"> ${color}
                                 </li>
                             </c:forEach>
                         </ul>
+                        <c:if test="${fn:length(listColors) > 4}">
+                            <a href="#" class="toggle-color float-end">
+                                Xem thêm (${fn:length(listColors) - 4})
+                                <i class="bi bi-chevron-down"></i>
+                            </a>
+                        </c:if>
                     </div>
                 </div>
             </aside>
@@ -158,7 +204,7 @@
                     <% } %>
                 </div>
 
-                <c:if test="${totalPages > 1}">
+                <c:if test="${totalPages >= 1}">
                     <nav aria-label="Page navigation" class="mt-5">
                         <ul class="pagination justify-content-center">
 
@@ -205,6 +251,41 @@
 </script>
 <script src="${root}/js/add-cart.js"></script>
 <script src="${root}/js/main.js"></script>
+<script>
+    document.querySelectorAll('#priceFilterForm input[name="priceRange"]').forEach(function(el) {
+        el.addEventListener('change', function() {
+            document.getElementById('priceFilterForm').submit();
+        });
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+        function setupToggle(toggleClass, hiddenClass) {
+            document.querySelectorAll(toggleClass).forEach(function(toggle) {
+                toggle.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    const parent = toggle.closest(".filter-section");
+                    const hiddenItems = parent.querySelectorAll(hiddenClass);
+                    if (hiddenItems.length === 0) return;
 
+                    const isHidden = hiddenItems[0].classList.contains(hiddenClass.replace('.', ''));
+
+                    hiddenItems.forEach(function(el) {
+                        el.classList.toggle(hiddenClass.replace('.', ''));
+                    });
+
+                    const totalHidden = hiddenItems.length;
+                    if (isHidden) {
+                        toggle.innerHTML = 'Thu gọn <i class="bi bi-chevron-up"></i>';
+                    } else {
+                        toggle.innerHTML = 'Xem thêm ('+ totalHidden +') <i class="bi bi-chevron-down"></i>';
+                    }
+                });
+            });
+        }
+
+        setupToggle(".toggle-sub", ".hidden-sub");
+        setupToggle(".toggle-size", ".hidden-size");
+        setupToggle(".toggle-color", ".hidden-color");
+    });
+</script>
 </body>
 </html>
