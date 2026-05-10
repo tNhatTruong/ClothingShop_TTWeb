@@ -1,0 +1,41 @@
+services:
+  db:
+    image: mysql:8.4
+    container_name: clothing_shop_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: clothing_shop
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init-db:/docker-entrypoint-initdb.d # Drop your .sql files here to auto-import
+
+  app:
+    build: .
+    container_name: clothing_shop_app
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_URL=jdbc:mysql://db:3306/clothing_shop?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - DB_USER=root
+      - DB_PASS=root
+    volumes:
+      - ./src/main/webapp/views:/usr/local/tomcat/webapps/ROOT/views
+      - ./src/main/webapp/assets:/usr/local/tomcat/webapps/ROOT/assets
+      - ./src/main/webapp/css:/usr/local/tomcat/webapps/ROOT/css
+      - ./src/main/webapp/js:/usr/local/tomcat/webapps/ROOT/js
+      - ./src/main/webapp/images:/usr/local/tomcat/webapps/ROOT/images
+      - ./src/main/webapp/admin:/usr/local/tomcat/webapps/ROOT/admin
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  mysql_data:

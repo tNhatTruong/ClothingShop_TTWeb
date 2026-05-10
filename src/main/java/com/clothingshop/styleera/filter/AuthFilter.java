@@ -1,6 +1,5 @@
 package com.clothingshop.styleera.filter;
 
-import com.clothingshop.styleera.model.User;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,11 +8,12 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 // Áp dụng cho TẤT CẢ các request
-@WebFilter(filterName = "AuthFilter", urlPatterns = {"/*"})
+@WebFilter(filterName = "AuthFilter", urlPatterns = { "/*" })
 public class AuthFilter implements Filter {
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
@@ -48,7 +48,8 @@ public class AuthFilter implements Filter {
             }
         }
 
-        // 4. Logic cho trang Login/Register (Nếu đã đăng nhập thì không cho vào lại trang login nữa)
+        // 4. Logic cho trang Login/Register (Nếu đã đăng nhập thì không cho vào lại
+        // trang login nữa)
         boolean isAuthPage = path.contains("/login.jsp") || path.contains("/register.jsp");
         if (isAuthPage && isLoggedIn) {
             res.sendRedirect(req.getContextPath() + "/home");
@@ -56,8 +57,9 @@ public class AuthFilter implements Filter {
         }
 
         // 5. Logic cho trang Reset Password
-        // Trang này cho phép vào nếu: (Đã đăng nhập) HOẶC (Đang trong quy trình Quên mật khẩu hợp lệ)
-        if (path.contains("/reset-pasword.jsp")) {
+        // Trang này cho phép vào nếu: (Đã đăng nhập) HOẶC (Đang trong quy trình Quên
+        // mật khẩu hợp lệ)
+        if (path.contains("/reset-password.jsp")) {
             String verifyType = (session != null) ? (String) session.getAttribute("verifyType") : null;
             boolean isResetFlow = "RESET_PASSWORD".equals(verifyType);
 
