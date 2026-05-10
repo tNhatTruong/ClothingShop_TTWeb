@@ -2,6 +2,7 @@ package com.clothingshop.styleera.dao;
 
 import com.clothingshop.styleera.JDBiConnector.JDBIConnector;
 import com.clothingshop.styleera.model.ParentCategory;
+import com.clothingshop.styleera.model.Product;
 import com.clothingshop.styleera.model.SubCategory;
 import org.jdbi.v3.core.Jdbi;
 
@@ -126,6 +127,38 @@ public class CategoryDAO {
             handle.createUpdate(
                     "DELETE FROM subcategories WHERE id = ?"
             ).bind(0, subId).execute();
+        });
+    }
+
+    // Lọc sản phẩm theo khoảng giá cố định trong một SubCategory
+    public List<Product> getProductsByPriceRange(int subCategoryId, int rangeType) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+
+        return jdbi.withHandle(handle -> {
+            String sql = "SELECT p.id AS product_id, p.product_name, p.price, " +
+                    "p.short_description, i.path AS thumbnail, p.category_sub_id " +
+                    "FROM products p " +
+                    "LEFT JOIN images i ON p.image_id = i.id " +
+                    "WHERE p.category_sub_id = :subId ";
+
+            switch (rangeType) {
+                case 1: // dưới 200k
+                    sql += "AND p.price < 200000";
+                    break;
+                case 2: // 200k - 500k
+                    sql += "AND p.price BETWEEN 200000 AND 500000";
+                    break;
+                case 3: // trên 500k
+                    sql += "AND p.price > 500000";
+                    break;
+                default:
+                    break;
+            }
+
+            return handle.createQuery(sql)
+                    .bind("subId", subCategoryId)
+                    .mapToBean(Product.class)
+                    .list();
         });
     }
 

@@ -66,12 +66,34 @@
 
                     <hr>
                     <div class="filter-section">
-                        <h6>Giá</h6>
-                        <ul>
-                            <li><input type="checkbox"> Dưới 200.000</li>
-                            <li><input type="checkbox"> 200.000 – 500.000</li>
-                            <li><input type="checkbox"> Trên 500.000</li>
-                        </ul>
+                        <h5>Giá</h5>
+                        <form id="priceFilterForm" action="product" method="get">
+                            <!-- Giữ cateId hoặc parentId nếu có -->
+                            <c:if test="${not empty currentCate}">
+                                <input type="hidden" name="cateId" value="${currentCate}" />
+                            </c:if>
+                            <c:if test="${not empty currentParent}">
+                                <input type="hidden" name="parentId" value="${currentParent}" />
+                            </c:if>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="priceRange" value="1"
+                                       id="priceRange1" ${currentPriceRange == '1' ? 'checked' : ''}>
+                                <label class="form-check-label" for="priceRange1">Dưới 200.000</label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="priceRange" value="2"
+                                       id="priceRange2" ${currentPriceRange == '2' ? 'checked' : ''}>
+                                <label class="form-check-label" for="priceRange2">200.000 - 500.000</label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="priceRange" value="3"
+                                       id="priceRange3" ${currentPriceRange == '3' ? 'checked' : ''}>
+                                <label class="form-check-label" for="priceRange3">Trên 500.000</label>
+                            </div>
+                        </form>
                     </div>
                     <hr>
                     <div class="filter-section">
@@ -205,6 +227,12 @@
 </script>
 <script src="${root}/js/add-cart.js"></script>
 <script src="${root}/js/main.js"></script>
-
+<script>
+    document.querySelectorAll('#priceFilterForm input[name="priceRange"]').forEach(function(el) {
+        el.addEventListener('change', function() {
+            document.getElementById('priceFilterForm').submit();
+        });
+    });
+</script>
 </body>
 </html>
