@@ -326,6 +326,68 @@ img {
 .account-dropdown-menu a:hover {
     background: #f8f9fa;
 }
+/* 1. Mặc định ẩn nút search mobile và thanh search dòng 2 */
+.mobile-search-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    padding: 8px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.mobile-search-bar {
+    display: none; /* Ẩn mặc định */
+    width: 100%;
+    padding: 10px 0;
+    border-top: 1px solid #eee;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+/* 2. Responsive cho Mobile (Dưới 991px) */
+@media (max-width: 991px) {
+    .mobile-search-toggle {
+        display: inline-block; /* Hiện nút icon search */
+    }
+
+    .mobile-search-bar.active {
+        display: block; /* Hiện thanh search khi có class .active */
+        animation: slideDown 0.3s ease-out;
+    }
+
+    .mobile-search-form {
+        display: flex;
+        position: relative;
+        width: 100%;
+    }
+
+    .mobile-search-input {
+        width: 100%;
+        padding: 12px 45px 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .mobile-search-btn {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #666;
+    }
+}
+
+/* Hiệu ứng trượt xuống nhẹ nhàng */
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
 /* Responsive: Dropdown trên mobile */
 @media (max-width: 991px) {
