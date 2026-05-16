@@ -1,6 +1,8 @@
 package com.clothingshop.styleera.controller;
 
+import com.clothingshop.styleera.dao.CartDao;
 import com.clothingshop.styleera.model.Cart;
+import com.clothingshop.styleera.model.User;
 import com.clothingshop.styleera.model.Variants;
 import com.clothingshop.styleera.service.VariantService;
 import jakarta.servlet.*;
@@ -27,10 +29,7 @@ public class AddCart extends HttpServlet {
             int variantId = Integer.parseInt(request.getParameter("variantId"));
             int quantity = Integer.parseInt(request.getParameter("quantity"));
 
-            HttpSession session = request.getSession();
-            Cart cart = (Cart) session.getAttribute("cart");
-            if (cart == null) cart = new Cart();
-
+            // 1. TÌM SẢN PHẨM TỪ DB TRƯỚC
             VariantService variantService = new VariantService();
             Variants variant = variantService.getById(variantId);
 
@@ -39,8 +38,24 @@ public class AddCart extends HttpServlet {
                 return;
             }
 
+            // 2. THÊM VÀO GIỎ HÀNG SESSION (ĐỂ HIỂN THỊ NHANH)
+            HttpSession session = request.getSession();
+            Cart cart = (Cart) session.getAttribute("cart");
+            if (cart == null) {
+                cart = new Cart();
+            }
+
             cart.addItem(variant, quantity);
             session.setAttribute("cart", cart);
+
+            // 3. THÊM XUỐNG DATABASE (ĐỂ LƯU VĨNH VIỄN KHÔNG BỊ MẤT)
+            User user = (User) session.getAttribute("auth");
+            if (user != null) {
+                CartDao cartDao = new CartDao();
+                cartDao.saveOrUpdateCartItem(user.getId(), variant.getVariantId(), quantity);
+            }
+
+            // 4. TRẢ VỀ KẾT QUẢ THÀNH CÔNG CHO AJAX (JSP)
             out.print("{"
                     + "\"status\":\"success\","
                     + "\"msg\":\"Đã thêm vào giỏ hàng thành công\","
@@ -51,6 +66,5 @@ public class AddCart extends HttpServlet {
             e.printStackTrace();
             out.print("{\"status\":\"error\",\"msg\":\"Lỗi dữ liệu\"}");
         }
-
     }
 }

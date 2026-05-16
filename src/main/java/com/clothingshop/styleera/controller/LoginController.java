@@ -1,6 +1,9 @@
 package com.clothingshop.styleera.controller;
 
+import com.clothingshop.styleera.dao.CartDao;
 import com.clothingshop.styleera.dao.UserDAO;
+import com.clothingshop.styleera.model.Cart;
+import com.clothingshop.styleera.model.CartItem;
 import com.clothingshop.styleera.model.User;
 import com.clothingshop.styleera.util.PasswordUtils;
 
@@ -9,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet("/login")
 public class LoginController extends HttpServlet {
@@ -46,6 +50,16 @@ public class LoginController extends HttpServlet {
             session.setAttribute("auth", user);
             session.setAttribute("currentUser", user);
             session.setMaxInactiveInterval(30 * 60);
+
+            CartDao cartDao = new CartDao();
+            List<CartItem> dbCartItems = cartDao.getCartItems(user.getId());
+
+            Cart cart = new Cart();
+            if (dbCartItems != null && !dbCartItems.isEmpty()) {
+                cart.loadFromList(dbCartItems);
+            }
+
+            session.setAttribute("cart", cart);
 
             // 4. Cookie
             Cookie cEmail = new Cookie("c_user", remember != null ? email : "");

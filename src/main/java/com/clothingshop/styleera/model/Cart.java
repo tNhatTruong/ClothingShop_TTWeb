@@ -63,4 +63,15 @@ public class Cart implements Serializable {
     public void updateCustomer(User user){
         this.user = user;
     }
+
+    public void loadFromList(List<CartItem> dbItems) {
+        if (dbItems != null) {
+            for (CartItem item : dbItems) {
+                if (item.getVariant() != null) {
+                    // Đưa sản phẩm từ DB vào Map với key là variantId
+                    this.items.put(item.getVariant().getVariantId(), item);
+                }
+            }
+        }
+    }
 }
