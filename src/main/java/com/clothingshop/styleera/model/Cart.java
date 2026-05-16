@@ -1,5 +1,6 @@
 package com.clothingshop.styleera.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class Cart {
+public class Cart implements Serializable {
     Map<Integer, CartItem> items;
     private User user;
     public Cart() {
@@ -61,5 +62,16 @@ public class Cart {
     }
     public void updateCustomer(User user){
         this.user = user;
+    }
+
+    public void loadFromList(List<CartItem> dbItems) {
+        if (dbItems != null) {
+            for (CartItem item : dbItems) {
+                if (item.getVariant() != null) {
+                    // Đưa sản phẩm từ DB vào Map với key là variantId
+                    this.items.put(item.getVariant().getVariantId(), item);
+                }
+            }
+        }
     }
 }

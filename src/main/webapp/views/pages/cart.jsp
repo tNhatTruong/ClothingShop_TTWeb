@@ -154,7 +154,7 @@
                         </ul>
                         <div class="cart-actions">
                             <%-- NÚT THANH TOÁN--%>
-                            <a href="checkout.jsp" class="btn btn-success">MUA HÀNG</a>
+                            <a href="${root}/checkout" class="btn btn-success">MUA HÀNG</a>
                             <a href="order_status.jsp" class="btn btn-danger">TRẠNG THÁI ĐƠN HÀNG</a>
                         </div>
                     </div>
