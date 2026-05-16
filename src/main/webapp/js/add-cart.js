@@ -25,7 +25,8 @@ function addToCart(variantId) {
                 alert(data.msg || "Không thể thêm vào giỏ hàng");
                 return;
             }
-           const totalItems = data.totalItems || quantity;
+            const totalItems = data.totalQuantity;
+
             document.querySelectorAll(".cart-badge").forEach(el => {
                 el.textContent = totalItems;
                 el.style.display = totalItems > 0 ? "flex" : "none";

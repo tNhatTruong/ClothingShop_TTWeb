@@ -1,5 +1,6 @@
 package com.clothingshop.styleera.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class Cart {
+public class Cart implements Serializable {
     Map<Integer, CartItem> items;
     private User user;
     public Cart() {
