@@ -90,7 +90,7 @@
                                                 <div class="quantity-item">
                                                     <button type="button"
                                                             class="qty-btn"
-                                                            onclick="updateCart(${item.variant.variantId},'decrease',this)">
+                                                            data-variant-id="${item.variant.variantId}" onclick="updateCart(this.dataset.variantId,'decrease',this)">
                                                         <i class="fa-solid fa-minus"></i>
                                                     </button>
 
@@ -99,7 +99,7 @@
 
                                                     <button type="button"
                                                             class="qty-btn"
-                                                            onclick="updateCart(${item.variant.variantId},'increase',this)">
+                                                            data-variant-id="${item.variant.variantId}" onclick="updateCart(this.dataset.variantId,'increase',this)">
                                                         <i class="fa-solid fa-plus"></i>
                                                     </button>
 
@@ -116,7 +116,7 @@
                                                 <%--Chức năng xoá sản phẩm ra khỏi giỏ hàng--%>
                                             <td>
                                                 <button type="button" class="btn-remove"
-                                                        onclick="if(confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?')) { removeItem(${item.variant.variantId}, this); }">
+                                                        data-variant-id="${item.variant.variantId}" onclick="if(confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?')) { removeItem(this.dataset.variantId, this); }">
                                                     <i class="fa-solid fa-circle-xmark closed"
                                                        style="color: #b61111ff"></i>
                                                 </button>
