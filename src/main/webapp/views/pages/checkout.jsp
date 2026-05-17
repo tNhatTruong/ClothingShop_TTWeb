@@ -134,22 +134,60 @@
                     <div id="checkout-confirm">
                         <legend>Chi tiết đơn hàng</legend>
                         <div class="order-summary">
-                            <div class="d-flex align-items-center mb-3">
-                                <img src="${pageContext.request.contextPath}${cImage}"
-                                     alt="${cName}"
-                                     style="width: 80px; height: 100px; object-fit: cover;"
-                                     class="me-3 border">
-                                <div class="flex-grow-1">
-                                    <h5 class="mb-0">${cName}</h5>
-                                    <small class="text-muted">Size: ${cSize} | Màu: ${cColor}</small><br>
-                                    <small class="text-muted">Số lượng: ${cQty}</small>
-                                </div>
-                                <div class="text-end">
-                                    <strong>
-                                        <fmt:formatNumber value="${cSubTotal}" type="number" groupingUsed="true"/>₫
-                                    </strong>
-                                </div>
-                            </div>
+
+                            <c:choose>
+                                <%-- TRƯỜNG HỢP 1: THANH TOÁN TỪ GIỎ HÀNG (GET) --%>
+                                <c:when test="${isCartCheckout}">
+                                    <%-- Đã sửa thành .item theo đúng chuẩn của Cart.java --%>
+                                    <c:forEach var="item" items="${sessionScope.cart.item}">
+                                        <div class="d-flex align-items-center mb-3">
+                                                <%-- Đã sửa lại đường dẫn lấy Ảnh --%>
+                                            <img src="${pageContext.request.contextPath}${item.variant.product.thumbnail}"
+                                                 alt="${item.variant.product.product_name}"
+                                                 style="width: 80px; height: 100px; object-fit: cover;"
+                                                 class="me-3 border">
+                                            <div class="flex-grow-1">
+                                                    <%-- Đã sửa lại đường dẫn lấy Tên --%>
+                                                <h5 class="mb-0">${item.variant.product.product_name}</h5>
+
+                                                    <%-- LƯU Ý: Chỗ size và màu này mình đang đoán tên biến.
+                                                         Nếu trong class Variant của bạn thuộc tính tên khác (ví dụ: size_name, color_name),
+                                                         hãy sửa lại cho đúng nhé! --%>
+                                                <small class="text-muted">Size: ${item.variant.size} | Màu: ${item.variant.color}</small><br>
+
+                                                <small class="text-muted">Số lượng: ${item.quantity}</small>
+                                            </div>
+                                            <div class="text-end">
+                                                <strong>
+                                                        <%-- Đã sửa lại đường dẫn lấy Giá tiền --%>
+                                                    <fmt:formatNumber value="${item.variant.product.price * item.quantity}" type="number" groupingUsed="true"/>₫
+                                                </strong>
+                                            </div>
+                                        </div>
+                                    </c:forEach>
+                                </c:when>
+
+                                <%-- TRƯỜNG HỢP 2: MUA NGAY 1 SẢN PHẨM (POST) --%>
+                                <c:when test="${isBuyNow}">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="${pageContext.request.contextPath}${cImage}"
+                                             alt="${cName}"
+                                             style="width: 80px; height: 100px; object-fit: cover;"
+                                             class="me-3 border">
+                                        <div class="flex-grow-1">
+                                            <h5 class="mb-0">${cName}</h5>
+                                            <small class="text-muted">Size: ${cSize} | Màu: ${cColor}</small><br>
+                                            <small class="text-muted">Số lượng: ${cQty}</small>
+                                        </div>
+                                        <div class="text-end">
+                                            <strong>
+                                                <fmt:formatNumber value="${cSubTotal}" type="number" groupingUsed="true"/>₫
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </c:when>
+                            </c:choose>
+
                             <hr>
                             <div class="d-flex justify-content-between">
                                 <span>Tạm tính</span>
@@ -166,6 +204,7 @@
                                     <fmt:formatNumber value="${cTotal}" type="number" groupingUsed="true"/>₫
                                 </h3>
                             </div>
+
                             <div id="checkout-payment-method" class="mb-4">
                                 <h4 class="payment-title">Phương thức thanh toán</h4>
                                 <form id="form-payment-method">

@@ -43,6 +43,9 @@
         <div class="row">
             <aside class="col-lg-3 col-md-4">
                 <div class="filter-box">
+                    <button type="button" class="btn-close-sidebar d-md-none" onclick="toggleSidebar()">
+                        <i class="fas fa-times"></i>
+                    </button>
                     <h5 class="filter-title">
                         <a href="${root}/product" style="text-decoration: none; color: inherit;">
                             <i class="fas fa-list-ul"></i> Tất cả sản phẩm
@@ -144,11 +147,15 @@
             </aside>
 
             <section class="col-lg-9 col-md-8">
+                <button class="filter-toggle-btn" onclick="toggleSidebar()">
+                    <i class="fas fa-filter"></i> Bộ lọc sản phẩm
+                </button>
 
                 <h2 class="category-title" id="category-title">
                     ${requestScope.categoryTitle != null ? requestScope.categoryTitle : 'Tất cả sản phẩm'}
                 </h2>
 
+                <div class="filter-overlay" id="filterOverlay" onclick="toggleSidebar()"></div>
                 <div class="sort-bar d-flex justify-content-between align-items-center mb-3">
                     <span class="text-muted">Hiển thị trang ${currentPage} / ${totalPages}</span>
                     <select class="form-select w-auto" onchange="location = this.value;">
@@ -252,6 +259,20 @@
 <script src="${root}/js/add-cart.js"></script>
 <script src="${root}/js/main.js"></script>
 <script>
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.filter-box');
+        const overlay = document.getElementById('filterOverlay');
+
+        sidebar.classList.toggle('show');
+        overlay.classList.toggle('active');
+
+        // Ngăn chặn cuộn trang phía sau khi đang mở bộ lọc
+        if (sidebar.classList.contains('show')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+    }
     document.querySelectorAll('#priceFilterForm input[name="priceRange"]').forEach(function(el) {
         el.addEventListener('change', function() {
             document.getElementById('priceFilterForm').submit();
@@ -285,6 +306,7 @@
         setupToggle(".toggle-sub", ".hidden-sub");
         setupToggle(".toggle-size", ".hidden-size");
         setupToggle(".toggle-color", ".hidden-color");
+
     });
 </script>
 </body>

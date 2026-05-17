@@ -9,6 +9,9 @@
         <button class="mobile-menu-toggle" aria-label="Open menu" onclick="toggleMobileMenu()">
         <i class="fas fa-bars"></i>
         </button>
+            <button class="mobile-search-toggle" aria-label="Toggle search" onclick="toggleMobileSearch()">
+                <i class="fas fa-search"></i>
+            </button>
         </div>
 
         <div class="brand-logo">
@@ -160,5 +163,13 @@
         </a>
         </div>
         </div>
+            <div class="mobile-search-bar" id="mobileSearchBar">
+                <form action="${root}/product" method="GET" class="mobile-search-form">
+                    <input name="search" class="mobile-search-input" type="text" placeholder="Tìm kiếm sản phẩm...">
+                    <button type="submit" class="mobile-search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
         </div>
         </header>

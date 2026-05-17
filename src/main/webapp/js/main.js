@@ -123,3 +123,24 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+function toggleMobileSearch() {
+    const searchBar = document.getElementById('mobileSearchBar');
+    // Bật/tắt class 'active'
+    searchBar.classList.toggle('active');
+
+    // Tùy chọn: Tự động focus vào ô input khi mở ra
+    if (searchBar.classList.contains('active')) {
+        searchBar.querySelector('input').focus();
+    }
+}
+
+// Đóng search nếu người dùng mở menu mobile (tránh chồng chéo)
+function toggleMobileMenu() {
+    const nav = document.getElementById('mainNavigation');
+    const searchBar = document.getElementById('mobileSearchBar');
+
+    nav.classList.toggle('active');
+    if (nav.classList.contains('active')) {
+        searchBar.classList.remove('active');
+    }
+}
