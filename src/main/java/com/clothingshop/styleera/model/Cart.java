@@ -63,6 +63,9 @@ public class Cart implements Serializable {
     public void updateCustomer(User user){
         this.user = user;
     }
+    public User getUser(){
+        return user;
+    }
 
     public void loadFromList(List<CartItem> dbItems) {
         if (dbItems != null) {
