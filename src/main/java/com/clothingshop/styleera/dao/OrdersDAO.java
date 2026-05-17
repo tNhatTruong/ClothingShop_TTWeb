@@ -2,12 +2,9 @@ package com.clothingshop.styleera.dao;
 
 import com.clothingshop.styleera.JDBiConnector.JDBIConnector;
 import com.clothingshop.styleera.model.Orders;
-import org.jdbi.v3.core.Jdbi;
-
 import java.util.List;
 
 public class OrdersDAO {
-    private Jdbi jdbi;
     // đếm tổng các order (đơn hàng)
     public int countTotalOrders() {
         return JDBIConnector.getJdbi().withHandle(handle ->
