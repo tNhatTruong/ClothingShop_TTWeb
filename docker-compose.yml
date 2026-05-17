@@ -2,7 +2,7 @@ services:
   db:
     image: mysql:8.4
     container_name: clothing_shop_db
-    restart: always
+    restart: no
     environment:
       MYSQL_DATABASE: clothing_shop
       MYSQL_ROOT_PASSWORD: root

@@ -36,6 +36,11 @@
                     <div class="auth-body">
                         <form id="loginForm" action="${root}/login" method="post">
 
+                            <c:if test="${not empty errorMsg}">
+                                <div class="alert alert-danger text-center mb-3">
+                                        ${errorMsg}
+                                </div>
+                            </c:if>
                             <c:if test="${not empty sessionScope.error}">
                                 <div class="alert alert-danger text-center mb-3">
                                         ${sessionScope.error}

@@ -62,10 +62,10 @@ public class LoginController extends HttpServlet {
 
         } else {
             // Nếu sai Email/Pass -> Quay lại trang LOGIN (login.jsp) chứ KHÔNG PHẢI verify.jsp
-            request.setAttribute("error", "Email hoặc mật khẩu không chính xác!");
+            request.setAttribute("errorMsg", "Sai tài khoản hoặc mật khẩu!");
             // Giữ lại email để người dùng không phải nhập lại
             request.setAttribute("email", email);
-            request.getRequestDispatcher("views/pages/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/pages/login.jsp").forward(request, response);
         }
     }
 }

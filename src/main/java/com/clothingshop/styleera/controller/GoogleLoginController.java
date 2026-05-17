@@ -9,7 +9,7 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import java.io.IOException;
 
-@WebServlet("/login-google")
+@WebServlet(urlPatterns = {"/login-google", "/StyleEra/login-google"})
 public class GoogleLoginController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
