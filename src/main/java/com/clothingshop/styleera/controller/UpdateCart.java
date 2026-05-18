@@ -97,12 +97,14 @@ public class UpdateCart extends HttpServlet {
             double itemTotal = newQty * itemPrice;
             double cartTotal = cart.total();
             int totalQuantity = cart.getTotalQuantity();
+            int cartSize = cart.getItem().size();
 
             // 8. Đóng gói JSON thành công
             result.put("status", "success");
             result.put("quantity", newQty);
             result.put("itemTotal", itemTotal);
             result.put("totalQuantity", totalQuantity);
+            result.put("cartSize", cartSize);
             result.put("cartTotal", cartTotal);
 
             out.print(gson.toJson(result));

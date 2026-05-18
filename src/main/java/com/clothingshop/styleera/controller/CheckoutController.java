@@ -46,12 +46,32 @@ public class CheckoutController extends HttpServlet {
         if (isGet) {
             // Logic cho GET (Giỏ hàng)
             Cart cart = (Cart) session.getAttribute("cart");
-            if (cart == null || cart.getTotalQuantity() == 0) {
+            if (cart == null || cart.getItem().size() == 0) {
                 response.sendRedirect(request.getContextPath() + "/cart");
                 return;
             }
-            double subTotal = cart.total();
+
+            // Lọc các sản phẩm được chọn để thanh toán
+            String variantIdsStr = request.getParameter("variants");
+            java.util.List<com.clothingshop.styleera.model.CartItem> checkoutItems = new java.util.ArrayList<>();
+            double subTotal = 0;
+            if (variantIdsStr != null && !variantIdsStr.trim().isEmpty()) {
+                String[] selectedIds = variantIdsStr.split(",");
+                java.util.Set<String> selectedIdSet = new java.util.HashSet<>(java.util.Arrays.asList(selectedIds));
+                for (com.clothingshop.styleera.model.CartItem item : cart.getItem()) {
+                    if (selectedIdSet.contains(String.valueOf(item.getVariant().getVariantId()))) {
+                        checkoutItems.add(item);
+                        subTotal += item.getVariant().getProduct().getPrice() * item.getQuantity();
+                    }
+                }
+            } else {
+                // Nếu không có tham số variants, mặc định là toàn bộ giỏ hàng
+                checkoutItems.addAll(cart.getItem());
+                subTotal = cart.total();
+            }
+
             double shipping = 30000.0;
+            request.setAttribute("checkoutItems", checkoutItems);
             request.setAttribute("cSubTotal", subTotal);
             request.setAttribute("cShipping", shipping);
             request.setAttribute("cTotal", subTotal + shipping);

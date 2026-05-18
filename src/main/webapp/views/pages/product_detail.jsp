@@ -456,7 +456,7 @@
     const contextPath = "<%= request.getContextPath() %>";
 </script>
 <%--Xử lý sự kiện trong product - thêm giỏ hàng--%>
-<script src="${root}/js/add-cart.js"></script>
+<script src="${root}/js/add-cart.js?v=<%= System.currentTimeMillis() %>"></script>
 </body>
 
 </html>

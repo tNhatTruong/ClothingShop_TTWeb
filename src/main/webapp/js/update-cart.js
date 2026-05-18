@@ -21,24 +21,33 @@ function updateCart(variantId, action, btn) {
             if (data.status === "success") {
                 const row = btn.closest("tr");
                 // cập nhật số lượng
-                row.querySelector(".qty-input").value = data.quantity;
-                // cập nhật giá dòng
-                row.querySelector(".cart_price").innerText =
-                    formatVND(data.itemTotal);
+                if (row) {
+                    row.querySelector(".qty-input").value = data.quantity;
+                    const checkbox = row.querySelector(".cart-item-checkbox");
+                    if (checkbox) {
+                        checkbox.dataset.quantity = data.quantity;
+                    }
+                    // cập nhật giá dòng
+                    row.querySelector(".cart_price").innerText =
+                        formatVND(data.itemTotal);
+                }
                 // cập nhật badge giỏ hàng
                 const cartBadge = document.querySelector(".cart-badge");
                 if (cartBadge) {
-                    cartBadge.innerText = data.totalQuantity;
+                    cartBadge.innerText = data.cartSize;
                 }
-                // cập nhật tổng đơn hàng
-                const totalQtyElement = document.getElementById("total-quantity");
-                if (totalQtyElement) {
-                    totalQtyElement.innerText = data.totalQuantity;
-                }
-                // cập nhật tổng giá tiền
-                const totalPriceElement = document.getElementById("total-price");
-                if (totalPriceElement) {
-                    totalPriceElement.innerText = formatVND(data.cartTotal);
+                // cập nhật tổng sản phẩm và tổng giá tiền
+                if (window.calculateCartSummary) {
+                    window.calculateCartSummary();
+                } else {
+                    const totalQtyElement = document.getElementById("total-quantity");
+                    if (totalQtyElement) {
+                        totalQtyElement.innerText = data.totalQuantity;
+                    }
+                    const totalPriceElement = document.getElementById("total-price");
+                    if (totalPriceElement) {
+                        totalPriceElement.innerText = formatVND(data.cartTotal);
+                    }
                 }
             }
         })

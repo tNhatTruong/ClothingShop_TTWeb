@@ -38,7 +38,7 @@ function addToCart(variantId) {
                 alert(data.msg || "Không thể thêm vào giỏ hàng");
                 return;
             }
-            const totalItems = data.totalQuantity;
+            const totalItems = data.cartSize;
 
             document.querySelectorAll(".cart-badge").forEach(el => {
                 el.textContent = totalItems;

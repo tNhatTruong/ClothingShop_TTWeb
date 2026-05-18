@@ -256,7 +256,7 @@
 <script>
     const contextPath = "<%= request.getContextPath() %>";
 </script>
-<script src="${root}/js/add-cart.js"></script>
+<script src="${root}/js/add-cart.js?v=<%= System.currentTimeMillis() %>"></script>
 <script src="${root}/js/main.js"></script>
 <script>
     function toggleSidebar() {

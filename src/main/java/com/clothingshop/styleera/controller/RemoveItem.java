@@ -51,7 +51,7 @@ public class RemoveItem extends HttpServlet {
         }
 
         response.getWriter().print(
-                "{\"status\":\"success\",\"totalQuantity\":" + cart.getTotalQuantity() + ",\"cartTotal\":" + cart.total() + "}"
+                "{\"status\":\"success\",\"totalQuantity\":" + cart.getTotalQuantity() + ",\"cartSize\":" + cart.getItem().size() + ",\"cartTotal\":" + cart.total() + "}"
         );
 
     }
