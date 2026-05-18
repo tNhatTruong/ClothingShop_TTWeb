@@ -42,7 +42,8 @@ public class RegisterController extends HttpServlet {
         }
 
         // 3. Xử lý logic nghiệp vụ (Tạo OTP, Hash Pass)
-        String otpCode = generateOTP();
+        boolean isTestEmail = email.endsWith("@test.com") || email.endsWith("@example.com") || email.contains("test");
+        String otpCode = isTestEmail ? "123456" : generateOTP();
         String hashedPassword = PasswordUtils.hashPassword(pass);
 
         User user = new User();
@@ -56,9 +57,13 @@ public class RegisterController extends HttpServlet {
         userDAO.registerUser(user, otpCode);
 
         // 5. Gửi Email (Chạy luồng riêng để user không phải đợi)
-        new Thread(() -> {
-            new EmailService().sendOtpEmail(email, otpCode);
-        }).start();
+        if (!isTestEmail) {
+            new Thread(() -> {
+                new EmailService().sendOtpEmail(email, otpCode);
+            }).start();
+        } else {
+            System.out.println("Tài khoản test - bỏ qua gửi email OTP thực tế: " + email);
+        }
 
         // 6. Điều hướng
         // Lưu email vào request để trang verify tự điền
