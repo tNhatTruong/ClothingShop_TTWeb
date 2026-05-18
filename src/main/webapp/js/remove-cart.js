@@ -22,30 +22,23 @@ function removeItem(variantId, btn) {
                 const row = btn.closest("tr");
                 if (row) row.remove();
                 const badge = document.querySelector(".cart-badge");
-                if (badge) badge.innerText = data.totalQuantity;
-                // cập nhật tổng đơn hàng
-                const totalQtyElement = document.getElementById("total-quantity");
-                if (totalQtyElement) {
-                    totalQtyElement.innerText = data.totalQuantity;
-                }
-                // cập nhật tổng giá tiền
-                const totalPriceElement = document.getElementById("total-price");
-                if (totalPriceElement && data.cartTotal !== undefined) {
-                    totalPriceElement.innerText = formatVND(data.cartTotal);
-                }
-                // Kiểm tra nếu giỏ hàng trống
-                if (data.totalQuantity === 0) {
-                    const tbody = document.querySelector("table tbody");
-                    if (tbody) {
-                        tbody.innerHTML = `
-                            <tr>
-                                <td colspan="7" class="text-center py-4">
-                                    <i class="fa-solid fa-cart-shopping fa-2x mb-2"></i>
-                                    <p class="mt-2 mb-0 fw-bold">Giỏ hàng của bạn đang trống</p>
-                                </td>
-                            </tr>
-                        `;
+                if (badge) badge.innerText = data.cartSize;
+                // cập nhật tổng sản phẩm và tổng giá tiền
+                if (window.calculateCartSummary) {
+                    window.calculateCartSummary();
+                } else {
+                    const totalQtyElement = document.getElementById("total-quantity");
+                    if (totalQtyElement) {
+                        totalQtyElement.innerText = data.totalQuantity;
                     }
+                    const totalPriceElement = document.getElementById("total-price");
+                    if (totalPriceElement && data.cartTotal !== undefined) {
+                        totalPriceElement.innerText = formatVND(data.cartTotal);
+                    }
+                }
+                // Kiểm tra nếu giỏ hàng trống thì reload trang để hiển thị Empty State chuẩn và đồng bộ badge
+                if (data.totalQuantity === 0) {
+                    window.location.reload();
                 }
             } else {
                 alert(data.msg);
