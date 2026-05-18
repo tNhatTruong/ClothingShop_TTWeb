@@ -114,7 +114,8 @@
                             </button>
                             <%-- Nút thêm vào giỏ hàng--%>
                             <button class="btn btn-primary validate_order" type="button"
-                                    onclick="addToCart(${product.getDefaultVariantId()})">
+                                    data-variant-id="${product.defaultVariantId}"
+                                    onclick="addToCart(this.getAttribute('data-variant-id'))">
                                 Thêm vào giỏ hàng
                             </button>
                         </div>
