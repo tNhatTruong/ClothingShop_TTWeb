@@ -29,6 +29,11 @@
                         <div id="checkout-shipping-address">
                             <fieldset>
                                 <legend>Thông tin người dùng</legend>
+                                <c:if test="${not empty error}">
+                                    <div class="alert alert-danger" role="alert">
+                                        ${error}
+                                    </div>
+                                </c:if>
                                 <div id="shipping-existing" style="display: none;">
                                     <select name="address_id" id="input-shipping-address" class="form-select">
                                         <option>--- Vui lòng chọn ---</option>
@@ -36,16 +41,16 @@
                                 </div>
                                 <br/>
                                 <div id="shipping-new">
-                                    <form autocomplete="off" id="form-shipping-address" class="section-shipping-address">
+                                    <form autocomplete="off" id="form-shipping-address" class="section-shipping-address" action="${root}/place-order" method="POST">
                                         <div class="row row-cols-1 row-cols-md-2">
 
                                             <div class="col mb-3 required order-1">
                                                 <label for="input-shipping-firstname" class="form-label">Họ tên</label>
                                                 <input type="text"
                                                        name="fullname"
-                                                       value="${sessionScope.auth.user_name}"
+                                                       value="${not empty param.fullname ? param.fullname : sessionScope.auth.user_name}"
                                                        placeholder="Họ tên" id="input-shipping-firstname"
-                                                       class="form-control"/>
+                                                       class="form-control" required/>
                                                 <div id="error-shipping-firstname" class="invalid-feedback"></div>
                                             </div>
 
@@ -53,9 +58,9 @@
                                                 <label for="input-shipping-address-1" class="form-label">Địa chỉ</label>
                                                 <input type="text"
                                                        name="address"
-                                                       value="${userAddress.street}"
+                                                       value="${not empty param.address ? param.address : userAddress.street}"
                                                        placeholder="Địa chỉ" id="input-shipping-address-1"
-                                                       class="form-control"/>
+                                                       class="form-control" required/>
                                                 <div id="error-shipping-address-1" class="invalid-feedback"></div>
                                             </div>
 
@@ -76,9 +81,12 @@
                                                 <label for="input-shipping-custom-field-29" class="form-label">Điện thoại</label>
                                                 <input type="text" autocomplete="off"
                                                        name="phone"
-                                                       value="${sessionScope.auth.phone}"
+                                                       value="${not empty param.phone ? param.phone : sessionScope.auth.phone}"
                                                        placeholder="Điện thoại" id="input-shipping-custom-field-29"
-                                                       class="form-control"/>
+                                                       class="form-control"
+                                                       required
+                                                       pattern="^(03|05|07|08|09)\d{8}$"
+                                                       title="Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 03, 05, 07, 08 hoặc 09"/>
                                                 <div id="error-shipping-custom-field-29" class="invalid-feedback"></div>
                                             </div>
 
@@ -280,7 +288,10 @@
 <script src="${root}/js/main.js"></script>
 <script>
     document.getElementById("validate_order").addEventListener("click", function () {
-        window.location.href = "order_success.jsp";
+        var form = document.getElementById("form-shipping-address");
+        if (form.reportValidity()) {
+            form.submit();
+        }
     });
 </script>
 </body>
