@@ -79,7 +79,7 @@ public class LoginController extends HttpServlet {
             request.setAttribute("error", "Email hoặc mật khẩu không chính xác!");
             // Giữ lại email để người dùng không phải nhập lại
             request.setAttribute("email", email);
-            request.getRequestDispatcher("views/pages/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/pages/login.jsp").forward(request, response);
         }
     }
 }
