@@ -141,4 +141,24 @@ public class UserDAO {
                         .list()
         );
     }
+    // 12. Thêm tài khoản Admin mới
+    public void insertAdmin(User user) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        try {
+            jdbi.useHandle(handle -> {
+                String sql = "INSERT INTO users (user_name, email, password_hash, phone, role, status, enabled) " +
+                             "VALUES (?, ?, ?, ?, 'Admin', 'Hoạt Động', 1)";
+                handle.createUpdate(sql)
+                        .bind(0, user.getUser_name())
+                        .bind(1, user.getEmail())
+                        .bind(2, user.getPassword_hash())
+                        .bind(3, user.getPhone())
+                        .execute();
+            });
+        } catch (Exception e) {
+            System.err.println("Lỗi khi chèn tài khoản Admin vào DB: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }
