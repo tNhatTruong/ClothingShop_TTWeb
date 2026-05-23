@@ -1,124 +1,130 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // 1. DỮ LIỆU DÙNG ID (KHỚP VỚI HTML: 43 và 44)
-    const districts = {
-        "43": [ // TP.HCM Nội thành
-            { value: "1", text: "Quận 1" },
-            { value: "3", text: "Quận 3" },
-            { value: "4", text: "Quận 4" },
-            { value: "5", text: "Quận 5" },
-            { value: "6", text: "Quận 6" },
-            { value: "7", text: "Quận 7" },
-            { value: "8", text: "Quận 8" },
-            { value: "10", text: "Quận 10" },
-            { value: "11", text: "Quận 11" },
-            { value: "12", text: "Quận 12" },
-            { value: "TB", text: "Quận Tân Bình" },
-            { value: "TP", text: "Quận Tân Phú" },
-            { value: "BT", text: "Quận Bình Thạnh" },
-            { value: "BTA", text: "Quận Bình Tân" },
-            { value: "PN", text: "Quận Phú Nhuận" }
-        ],
-        "44": [ // TP.HCM Ngoại thành
-            { value: "GV", text: "Quận Gò Vấp" },
-            { value: "TD", text: "TP Thủ Đức" },
-            { value: "CC", text: "Huyện Củ Chi" },
-            { value: "BC", text: "Huyện Bình Chánh" },
-            { value: "NB", text: "Huyện Nhà Bè" },
-            { value: "CG", text: "Huyện Cần Giờ" },
-            { value: "HM", text: "Huyện Hóc Môn" }
-        ]
-    };
 
-    const citySelect = document.getElementById("input-shipping-zone");
-    const districtSelect = document.getElementById("input-shipping-custom-field-30");
+    const provinceSelect = document.getElementById('province');
+    const districtSelect = document.getElementById('district');
+    const wardSelect = document.getElementById('ward');
 
-    // Hai thẻ ẩn dùng để gửi Tên về Server
-    const hiddenCity = document.getElementById("hidden-city-name");
-    const hiddenDistrict = document.getElementById("hidden-district-name");
+    if (provinceSelect && districtSelect && wardSelect) {
+        // A. Hàm load Tỉnh/Thành ngay khi mở trang
+        function loadProvinces() {
+            console.log("1. Đang gọi Java Backend để lấy Tỉnh/Thành...");
+            fetch(contextPath + '/api/address/province', {
+                method: 'GET'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.code === 200) {
+                        data.data.forEach(province => {
+                            let option = document.createElement('option');
+                            option.value = province.ProvinceID;
+                            option.text = province.ProvinceName;
+                            provinceSelect.appendChild(option);
+                        });
+                        console.log("2. Đã load xong danh sách Tỉnh/Thành!");
+                    } else {
+                        console.error("Lỗi: ", data.message);
+                    }
+                }).catch(error => console.error("Lỗi mạng: ", error));
+        }
 
-    if (citySelect && districtSelect) {
+        loadProvinces();
 
-        // Hàm reset
-        function resetDistricts() {
-            districtSelect.innerHTML = '<option value="">Vui lòng chọn quận/huyện</option>';
+        // B. Sự kiện chọn Tỉnh -> Xổ Quận/Huyện
+        provinceSelect.addEventListener('change', function() {
+            let provinceId = this.value;
+
+            districtSelect.innerHTML = '<option value="">-- Chọn Quận / Huyện --</option>';
+            wardSelect.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
             districtSelect.disabled = true;
-            // Nếu reset quận thì cũng xóa value trong thẻ hidden
-            if(hiddenDistrict) hiddenDistrict.value = "";
-        }
+            wardSelect.disabled = true;
 
-        // Hàm cập nhật Input ẩn khi người dùng chọn (Lấy TEXT để lưu DB)
-        function updateHiddenInputs() {
-            // Lấy text của Tỉnh đang chọn -> Gán vào hiddenCity
-            if (citySelect.selectedIndex >= 0 && hiddenCity) {
-                hiddenCity.value = citySelect.options[citySelect.selectedIndex].text;
-            }
-            // Lấy text của Quận đang chọn -> Gán vào hiddenDistrict
-            if (districtSelect.selectedIndex >= 0 && hiddenDistrict && !districtSelect.disabled) {
-                hiddenDistrict.value = districtSelect.options[districtSelect.selectedIndex].text;
-            }
-        }
+            if (!provinceId) return;
 
-        // Hàm Render Quận/Huyện
-        function renderDistricts(cityId, selectedDistrictText = null) {
-            resetDistricts();
-
-            if (!cityId || cityId === "0" || !districts[cityId]) return;
-
-            const list = districts[cityId];
-            list.forEach(d => {
-                const option = document.createElement("option");
-                option.value = d.value; // ID ngắn gọn
-                option.textContent = d.text;
-
-                // Logic Auto-fill: So sánh bằng TEXT vì DB lưu Text
-                if (selectedDistrictText && d.text === selectedDistrictText) {
-                    option.selected = true;
-                }
-                districtSelect.appendChild(option);
-            });
-
-            districtSelect.disabled = false;
-            // Gọi update ngay sau khi render để đảm bảo thẻ hidden có dữ liệu đúng
-            updateHiddenInputs();
-        }
-
-        // --- SỰ KIỆN ---
-        citySelect.addEventListener("change", function () {
-            renderDistricts(this.value);
-            updateHiddenInputs();
+            fetch(contextPath + '/api/address/district?province_id=' + provinceId, {
+                method: 'GET'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.code === 200) {
+                        districtSelect.disabled = false;
+                        data.data.forEach(district => {
+                            let option = document.createElement('option');
+                            option.value = district.DistrictID;
+                            option.text = district.DistrictName;
+                            districtSelect.appendChild(option);
+                        });
+                    }
+                });
         });
 
-        districtSelect.addEventListener("change", function () {
-            updateHiddenInputs();
+        // C. Sự kiện chọn Quận -> Xổ Phường/Xã
+        districtSelect.addEventListener('change', function() {
+            let districtId = this.value;
+
+            wardSelect.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
+            wardSelect.disabled = true;
+
+            if (!districtId) return;
+
+            fetch(contextPath + '/api/address/ward?district_id=' + districtId, {
+                method: 'GET'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.code === 200) {
+                        wardSelect.disabled = false;
+                        data.data.forEach(ward => {
+                            let option = document.createElement('option');
+                            option.value = ward.WardCode;
+                            option.text = ward.WardName;
+                            wardSelect.appendChild(option);
+                        });
+                    }
+                });
         });
 
+        // D. Gọi tính phí khi chọn Phường/Xã
+        wardSelect.addEventListener('change', function() {
+            let toDistrictId = districtSelect.value;
+            let toWardCode = this.value;
 
-        // === LOGIC AUTO-FILL TỪ DATABASE (QUAN TRỌNG) ===
-        // DB trả về Tên ("TP.Hồ Chí Minh..."), ta cần tìm ra ID ("43") để select đúng
-        const savedCityText = citySelect.getAttribute("data-selected"); // "TP.Hồ Chí Minh..."
-        const savedDistrictText = districtSelect.getAttribute("data-selected"); // "Quận 1"
+            if(toDistrictId && toWardCode) {
+                fetch(contextPath + '/api/calculate-shipping', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        'district_id': toDistrictId,
+                        'ward_code': toWardCode
+                    })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.status === 'success') {
+                            let shippingFee = data.fee;
 
-        if (savedCityText) {
-            // 1. Tìm option nào trong City Select có text trùng với savedCityText
-            let foundCityId = "";
-            for (let i = 0; i < citySelect.options.length; i++) {
-                if (citySelect.options[i].text === savedCityText) {
-                    citySelect.selectedIndex = i;
-                    foundCityId = citySelect.options[i].value;
-                    break;
-                }
+                            let subTotalSpan = document.getElementById('sub-total-display');
+                            let subTotal = subTotalSpan ? parseInt(subTotalSpan.getAttribute('data-value') || 0) : 0;
+
+                            let total = subTotal + shippingFee;
+
+                            const formatter = new Intl.NumberFormat('vi-VN');
+                            let shipDisplay = document.getElementById('shipping-fee-display');
+                            let totalDisplay = document.getElementById('total-price-display');
+
+                            if(shipDisplay) shipDisplay.innerText = formatter.format(shippingFee) + '₫';
+                            if(totalDisplay) totalDisplay.innerText = formatter.format(total) + '₫';
+                        } else {
+                            console.error("Lỗi tính phí: ", data.message);
+                        }
+                    })
+                    .catch(err => console.error(err));
             }
-
-            // 2. Nếu tìm thấy ID tương ứng (VD: 43) -> Render quận và chọn lại quận cũ
-            if (foundCityId) {
-                renderDistricts(foundCityId, savedDistrictText);
-            }
-            // Cập nhật thẻ hidden để nếu user không sửa gì thì bấm lưu vẫn đúng
-            updateHiddenInputs();
-        }
+        });
     }
 
-    // XÁC NHẬN ĐƠN HÀNG (Logic Modal)
+    // Modal và Nút bấm
     const viewOrderBtn = document.getElementById('viewOrderBtn');
     const trackBtn = document.getElementById('trackBtn');
     const homeBtn = document.getElementById('homeBtn');
@@ -147,7 +153,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Populate Modal (chỉ chạy ở trang checkout success)
     (function populateFromQuery(){
         const params = new URLSearchParams(location.search);
         const setText = (id, val) => {

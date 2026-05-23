@@ -72,28 +72,27 @@
                                             </div>
 
                                             <div class="col col-md-12 mb-3 order-4"> <div class="row">
-                                                <div class="col-md-4 mb-3 mb-md-0 required">
-                                                    <label for="province" class="form-label">Tỉnh / Thành phố <span class="text-danger">*</span></label>
-                                                    <select name="province_id" id="province" class="form-select" required>
+                                                <div class="col mb-3 required">
+                                                    <label class="form-label" for="province">Tỉnh / thành phố</label>
+                                                    <select id="province" name="city" class="form-select">
                                                         <option value="">-- Chọn Tỉnh / Thành phố --</option>
                                                     </select>
                                                     <div id="error-shipping-zone" class="invalid-feedback"></div>
                                                 </div>
 
-                                                <div class="col-md-4 mb-3 mb-md-0 required">
-                                                    <label for="district" class="form-label">Quận / Huyện <span class="text-danger">*</span></label>
-                                                    <select name="district_id" id="district" class="form-select" required disabled>
+                                                <div class="col mb-3 custom-field custom-field-30 required">
+                                                    <label class="form-label" for="district">Quận / Huyện</label>
+                                                    <select id="district" name="district" class="form-select" disabled>
                                                         <option value="">-- Chọn Quận / Huyện --</option>
                                                     </select>
                                                     <div id="error-shipping-custom-field-30" class="invalid-feedback"></div>
                                                 </div>
 
-                                                <div class="col-md-4 required">
-                                                    <label for="ward" class="form-label">Phường / Xã <span class="text-danger">*</span></label>
-                                                    <select name="ward_code" id="ward" class="form-select" required disabled>
+                                                <div class="col mb-3 custom-field required">
+                                                    <label class="form-label" for="ward">Phường / Xã</label>
+                                                    <select id="ward" name="ward" class="form-select" disabled>
                                                         <option value="">-- Chọn Phường / Xã --</option>
                                                     </select>
-                                                    <div id="error-shipping-custom-field-31" class="invalid-feedback"></div>
                                                 </div>
                                             </div>
                                             </div>
@@ -198,16 +197,20 @@
                             <hr>
                             <div class="d-flex justify-content-between">
                                 <span>Tạm tính</span>
-                                <span><fmt:formatNumber value="${cSubTotal}" type="number" groupingUsed="true"/>₫</span>
+                                <span id="sub-total-display" data-value="${cSubTotal}">
+                                    <fmt:formatNumber value="${cSubTotal}" type="number" groupingUsed="true"/>₫
+                                </span>
                             </div>
                             <div class="d-flex justify-content-between">
                                 <span>Phí vận chuyển</span>
-                                <span><fmt:formatNumber value="${cShipping}" type="number" groupingUsed="true"/>₫</span>
+                                <span id="shipping-fee-display">
+                                    <fmt:formatNumber value="${cShipping}" type="number" groupingUsed="true"/>₫
+                                </span>
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between align-items-center">
                                 <h4 class="text-danger">Tổng cộng</h4>
-                                <h3 class="text-primary">
+                                <h3 class="text-primary" id="total-price-display">
                                     <fmt:formatNumber value="${cTotal}" type="number" groupingUsed="true"/>₫
                                 </h3>
                             </div>
@@ -285,6 +288,9 @@
 
 <script src="${root}/js/checkout.js"></script>
 <script src="${root}/js/main.js"></script>
+<script>
+    var contextPath = "${root}";
+</script>
 <script>
     document.getElementById("validate_order").addEventListener("click", function () {
         window.location.href = "order_success.jsp";
