@@ -61,17 +61,6 @@
 
                                             <div class="col mb-3 required d-none"></div>
 
-                                            <div class="col mb-3 required">
-                                                <label class="form-label">Tỉnh / thành phố</label>
-                                                <select id="input-shipping-zone" class="form-select" data-selected="${userAddress.province}">
-                                                    <option value="0">Vui lòng chọn tỉnh/thành phố</option>
-                                                    <option value="43">TP.Hồ Chí Minh - Nội thành</option>
-                                                    <option value="44">TP.Hồ Chí Minh - Ngoại thành</option>
-                                                </select>
-                                                <input type="hidden" name="city" id="hidden-city-name" value="${userAddress.province}">
-                                                <div id="error-shipping-zone" class="invalid-feedback"></div>
-                                            </div>
-
                                             <div class="col mb-3 custom-field custom-field-29">
                                                 <label for="input-shipping-custom-field-29" class="form-label">Điện thoại</label>
                                                 <input type="text" autocomplete="off"
@@ -82,13 +71,31 @@
                                                 <div id="error-shipping-custom-field-29" class="invalid-feedback"></div>
                                             </div>
 
-                                            <div class="col mb-3 custom-field custom-field-30">
-                                                <label class="form-label">Quận / Huyện</label>
-                                                <select id="input-shipping-custom-field-30" class="form-select" data-selected="${userAddress.district}">
-                                                    <option value="0">Vui lòng chọn quận/huyện</option>
-                                                </select>
-                                                <input type="hidden" name="district" id="hidden-district-name" value="${userAddress.district}">
-                                                <div id="error-shipping-custom-field-30" class="invalid-feedback"></div>
+                                            <div class="col col-md-12 mb-3 order-4"> <div class="row">
+                                                <div class="col-md-4 mb-3 mb-md-0 required">
+                                                    <label for="province" class="form-label">Tỉnh / Thành phố <span class="text-danger">*</span></label>
+                                                    <select name="province_id" id="province" class="form-select" required>
+                                                        <option value="">-- Chọn Tỉnh / Thành phố --</option>
+                                                    </select>
+                                                    <div id="error-shipping-zone" class="invalid-feedback"></div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-3 mb-md-0 required">
+                                                    <label for="district" class="form-label">Quận / Huyện <span class="text-danger">*</span></label>
+                                                    <select name="district_id" id="district" class="form-select" required disabled>
+                                                        <option value="">-- Chọn Quận / Huyện --</option>
+                                                    </select>
+                                                    <div id="error-shipping-custom-field-30" class="invalid-feedback"></div>
+                                                </div>
+
+                                                <div class="col-md-4 required">
+                                                    <label for="ward" class="form-label">Phường / Xã <span class="text-danger">*</span></label>
+                                                    <select name="ward_code" id="ward" class="form-select" required disabled>
+                                                        <option value="">-- Chọn Phường / Xã --</option>
+                                                    </select>
+                                                    <div id="error-shipping-custom-field-31" class="invalid-feedback"></div>
+                                                </div>
+                                            </div>
                                             </div>
 
                                             <div class="col mb-3 custom-field custom-field-31">
