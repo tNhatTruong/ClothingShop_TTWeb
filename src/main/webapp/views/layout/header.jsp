@@ -116,7 +116,7 @@
         </form>
         </div>
 
-        <a href="${root}/admin/admin-login.jsp" class="admin-link" title="Quản trị viên">
+        <a href="${root}/admin-login" class="admin-link" title="Quản trị viên">
         <i class="fas fa-user-cog" style="color: black;"></i>
         </a>
 

@@ -12,6 +12,6 @@ public class OrderStatusController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/order_status.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/pages/order_status.jsp").forward(request, response);
     }
 }

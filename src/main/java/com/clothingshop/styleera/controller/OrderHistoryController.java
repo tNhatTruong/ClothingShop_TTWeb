@@ -12,6 +12,6 @@ public class OrderHistoryController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/order-history.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/pages/order-history.jsp").forward(request, response);
     }
 }

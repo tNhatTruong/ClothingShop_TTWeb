@@ -42,7 +42,7 @@
             </div>
             <div class="order-actions">
                 <button class="btn" id="viewOrderBtn">
-                    <a href="order_status.jsp">Xem đơn hàng</a>
+                    <a href="${root}/order-status">Xem đơn hàng</a>
                 </button>
 
             </div>
