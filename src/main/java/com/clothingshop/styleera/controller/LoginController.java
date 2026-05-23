@@ -19,6 +19,13 @@ public class LoginController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        String referer = request.getHeader("Referer");
+        // Lưu trang trước đó để sau khi đăng nhập xong thì quay lại
+        if (referer != null && !referer.contains("/login") && !referer.contains("/register") && !referer.contains("/verify") && !referer.contains("/reset-password")) {
+            session.setAttribute("returnUrl", referer);
+        }
+        
         request.getRequestDispatcher("/views/pages/login.jsp").forward(request, response);
     }
 
@@ -51,7 +58,16 @@ public class LoginController extends HttpServlet {
             session.setAttribute("currentUser", user);
             session.setMaxInactiveInterval(30 * 60);
 
+            // Gộp giỏ hàng khách (nếu có) vào CSDL
             CartDao cartDao = new CartDao();
+            Cart guestCart = (Cart) session.getAttribute("cart");
+            if (guestCart != null && !guestCart.getItem().isEmpty()) {
+                for (CartItem item : guestCart.getItem()) {
+                    cartDao.saveOrUpdateCartItem(user.getId(), item.getVariant().getVariantId(), item.getQuantity());
+                }
+            }
+
+            // Tải lại toàn bộ giỏ hàng từ CSDL (đã bao gồm đồ của khách)
             List<CartItem> dbCartItems = cartDao.getCartItems(user.getId());
 
             Cart cart = new Cart();
@@ -68,8 +84,13 @@ public class LoginController extends HttpServlet {
             response.addCookie(cEmail);
 
             // 5. Chuyển hướng
+            String returnUrl = (String) session.getAttribute("returnUrl");
+            session.removeAttribute("returnUrl"); // Xóa sau khi dùng
+
             if ("Admin".equalsIgnoreCase(user.getRole())) {
                 response.sendRedirect(request.getContextPath() + "/admin-dashboard.jsp");
+            } else if (returnUrl != null && !returnUrl.isEmpty()) {
+                response.sendRedirect(returnUrl);
             } else {
                 response.sendRedirect(request.getContextPath() + "/home");
             }

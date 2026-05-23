@@ -21,11 +21,11 @@ public class CartDao {
                     "    ci.quantity,\n" +
                     "    (p.price * ci.quantity) as totalPrice,\n" +
                     "    img.path as imageUrl\n" +
-                    "FROM CartItem ci\n" +
+                    "FROM cartitem ci\n" +
                     // Sửa 2: Chỗ ON cũng phải sửa cho đúng tên cột của cả 2 bảng
-                    "JOIN Variants v ON ci.variant_id = v.id\n" +
-                    "JOIN Products p ON v.product_id = p.id\n" +  // Chú ý: Cả p.product_id có thể cũng chỉ là p.id thôi
-                    "LEFT JOIN Images img ON img.product_id = p.id\n" +
+                    "JOIN variants v ON ci.variant_id = v.id\n" +
+                    "JOIN products p ON v.product_id = p.id\n" +  // Chú ý: Cả p.product_id có thể cũng chỉ là p.id thôi
+                    "LEFT JOIN images img ON img.product_id = p.id\n" +
                     "WHERE ci.user_id = ?\n" +
                     "ORDER BY ci.updated_at DESC\n";
             // Trong file CartDao.java
@@ -64,7 +64,7 @@ public class CartDao {
         Jdbi jdbi = JDBIConnector.getJdbi();
         jdbi.useHandle(handle -> {
             // 1. Kiểm tra xem sản phẩm này đã có trong giỏ hàng của user chưa
-            int count = handle.createQuery("SELECT count(*) FROM CartItem WHERE user_id = ? AND variant_id = ?")
+            int count = handle.createQuery("SELECT count(*) FROM cartitem WHERE user_id = ? AND variant_id = ?")
                     .bind(0, userId)
                     .bind(1, variantId)
                     .mapTo(Integer.class)
@@ -72,7 +72,7 @@ public class CartDao {
 
             if (count > 0) {
                 // 2. Nếu có rồi -> Cập nhật cộng dồn số lượng
-                String sqlUpdate = "UPDATE CartItem SET quantity = quantity + ? WHERE user_id = ? AND variant_id = ?";
+                String sqlUpdate = "UPDATE cartitem SET quantity = quantity + ? WHERE user_id = ? AND variant_id = ?";
                 handle.createUpdate(sqlUpdate)
                         .bind(0, quantity)
                         .bind(1, userId)
@@ -81,7 +81,7 @@ public class CartDao {
             } else {
                 // 3. Nếu chưa có -> Thêm mới vào bảng
                 // Lưu ý: Kiểm tra lại tên cột (user_id, variant_id, quantity) cho khớp với DB của bạn
-                String sqlInsert = "INSERT INTO CartItem (user_id, variant_id, quantity) VALUES (?, ?, ?)";
+                String sqlInsert = "INSERT INTO cartitem (user_id, variant_id, quantity) VALUES (?, ?, ?)";
                 handle.createUpdate(sqlInsert)
                         .bind(0, userId)
                         .bind(1, variantId)

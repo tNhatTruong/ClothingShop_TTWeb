@@ -45,7 +45,6 @@
                                                     <tr class="table-dark">
                                                         <th><input type="checkbox" class="form-check-input"
                                                                 id="checkAllCart" /></th>
-                                                        <th>STT</th>
                                                         <th>Hình Ảnh</th>
                                                         <th>SẢN PHẨM</th>
                                                         <th>GIÁ TIỀN</th>
@@ -60,7 +59,7 @@
                                                             <c:when
                                                                 test="${sessionScope.cart == null || sessionScope.cart.item.size() == 0}">
                                                                 <tr>
-                                                                    <td colspan="8" class="text-center py-5 empty-table-td" style="background-color: #ffffff;">
+                                                                    <td colspan="7" class="text-center py-5 empty-table-td" style="background-color: #ffffff;">
                                                                         <i class="fa-solid fa-cart-shopping fa-3x mb-3 text-muted" style="color: #c9bca9 !important; animation: floatIcon 3s ease-in-out infinite; display: inline-block;"></i>
                                                                         <p class="mt-2 mb-0 fw-bold text-dark fs-5">Giỏ hàng của bạn đang trống</p>
                                                                         <span class="text-muted d-block mt-1">Hãy quay lại mua sắm để lấp đầy giỏ hàng của bạn!</span>
@@ -68,7 +67,6 @@
                                                                 </tr>
                                                             </c:when>
                                                             <c:otherwise>
-                                                                <c:set var="count" value="1" />
                                                                 <c:forEach items="${sessionScope.cart.item}" var="item">
                                                                     <tr>
                                                                         <%-- tạo checkbox để chọn thanh toán--%>
@@ -78,7 +76,6 @@
                                                                                     data-price="${item.variant.product.price}"
                                                                                     data-quantity="${item.quantity}" />
                                                                             </td>
-                                                                            <td>${count}</td>
                                                                             <td>
                                                                                 <div class="product-item img_product">
                                                                                     <img src="${pageContext.request.contextPath}${item.variant.product.thumbnail}"
@@ -147,9 +144,8 @@
                                                                                     </button>
                                                                                 </td>
                                                                     </tr>
-                                                                    <%-- tăng biến count lên 1 khi thêm nhiều vào giỏ
-                                                                        hàng--%>
-                                                                        <c:set var="count" value="${count + 1}" />
+
+
                                                                 </c:forEach>
                                                             </c:otherwise>
                                                         </c:choose>

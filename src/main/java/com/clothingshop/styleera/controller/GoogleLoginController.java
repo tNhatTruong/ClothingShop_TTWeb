@@ -9,6 +9,11 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import java.io.IOException;
 
+import com.clothingshop.styleera.dao.CartDao;
+import com.clothingshop.styleera.model.Cart;
+import com.clothingshop.styleera.model.CartItem;
+import java.util.List;
+
 @WebServlet(urlPatterns = {"/login-google", "/StyleEra/login-google"})
 public class GoogleLoginController extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -72,8 +77,36 @@ public class GoogleLoginController extends HttpServlet {
             // Set thời gian hết hạn session (30 phút - giống Login thường)
             session.setMaxInactiveInterval(30 * 60);
 
-            // 5. Chuyển hướng về trang chủ
-            response.sendRedirect(request.getContextPath() + "/home");
+            // === Gộp giỏ hàng khách (nếu có) vào CSDL ===
+            CartDao cartDao = new CartDao();
+            Cart guestCart = (Cart) session.getAttribute("cart");
+            if (guestCart != null && !guestCart.getItem().isEmpty()) {
+                for (CartItem item : guestCart.getItem()) {
+                    cartDao.saveOrUpdateCartItem(user.getId(), item.getVariant().getVariantId(), item.getQuantity());
+                }
+            }
+
+            // Tải lại toàn bộ giỏ hàng từ CSDL (đã bao gồm đồ của khách)
+            List<CartItem> dbCartItems = cartDao.getCartItems(user.getId());
+
+            Cart cart = new Cart();
+            if (dbCartItems != null && !dbCartItems.isEmpty()) {
+                cart.loadFromList(dbCartItems);
+            }
+
+            session.setAttribute("cart", cart);
+
+            // 5. Chuyển hướng về trang chủ hoặc trang trước đó
+            String returnUrl = (String) session.getAttribute("returnUrl");
+            session.removeAttribute("returnUrl"); // Xóa sau khi dùng
+
+            if ("Admin".equalsIgnoreCase(user.getRole())) {
+                response.sendRedirect(request.getContextPath() + "/admin-dashboard.jsp");
+            } else if (returnUrl != null && !returnUrl.isEmpty()) {
+                response.sendRedirect(returnUrl);
+            } else {
+                response.sendRedirect(request.getContextPath() + "/home");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
