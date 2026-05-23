@@ -61,17 +61,6 @@
 
                                             <div class="col mb-3 required d-none"></div>
 
-                                            <div class="col mb-3 required">
-                                                <label class="form-label">Tỉnh / thành phố</label>
-                                                <select id="input-shipping-zone" class="form-select" data-selected="${userAddress.province}">
-                                                    <option value="0">Vui lòng chọn tỉnh/thành phố</option>
-                                                    <option value="43">TP.Hồ Chí Minh - Nội thành</option>
-                                                    <option value="44">TP.Hồ Chí Minh - Ngoại thành</option>
-                                                </select>
-                                                <input type="hidden" name="city" id="hidden-city-name" value="${userAddress.province}">
-                                                <div id="error-shipping-zone" class="invalid-feedback"></div>
-                                            </div>
-
                                             <div class="col mb-3 custom-field custom-field-29">
                                                 <label for="input-shipping-custom-field-29" class="form-label">Điện thoại</label>
                                                 <input type="text" autocomplete="off"
@@ -82,13 +71,30 @@
                                                 <div id="error-shipping-custom-field-29" class="invalid-feedback"></div>
                                             </div>
 
-                                            <div class="col mb-3 custom-field custom-field-30">
-                                                <label class="form-label">Quận / Huyện</label>
-                                                <select id="input-shipping-custom-field-30" class="form-select" data-selected="${userAddress.district}">
-                                                    <option value="0">Vui lòng chọn quận/huyện</option>
-                                                </select>
-                                                <input type="hidden" name="district" id="hidden-district-name" value="${userAddress.district}">
-                                                <div id="error-shipping-custom-field-30" class="invalid-feedback"></div>
+                                            <div class="col col-md-12 mb-3 order-4"> <div class="row">
+                                                <div class="col mb-3 required">
+                                                    <label class="form-label" for="province">Tỉnh / thành phố</label>
+                                                    <select id="province" name="city" class="form-select">
+                                                        <option value="">-- Chọn Tỉnh / Thành phố --</option>
+                                                    </select>
+                                                    <div id="error-shipping-zone" class="invalid-feedback"></div>
+                                                </div>
+
+                                                <div class="col mb-3 custom-field custom-field-30 required">
+                                                    <label class="form-label" for="district">Quận / Huyện</label>
+                                                    <select id="district" name="district" class="form-select" disabled>
+                                                        <option value="">-- Chọn Quận / Huyện --</option>
+                                                    </select>
+                                                    <div id="error-shipping-custom-field-30" class="invalid-feedback"></div>
+                                                </div>
+
+                                                <div class="col mb-3 custom-field required">
+                                                    <label class="form-label" for="ward">Phường / Xã</label>
+                                                    <select id="ward" name="ward" class="form-select" disabled>
+                                                        <option value="">-- Chọn Phường / Xã --</option>
+                                                    </select>
+                                                </div>
+                                            </div>
                                             </div>
 
                                             <div class="col mb-3 custom-field custom-field-31">
@@ -191,16 +197,20 @@
                             <hr>
                             <div class="d-flex justify-content-between">
                                 <span>Tạm tính</span>
-                                <span><fmt:formatNumber value="${cSubTotal}" type="number" groupingUsed="true"/>₫</span>
+                                <span id="sub-total-display" data-value="${cSubTotal}">
+                                    <fmt:formatNumber value="${cSubTotal}" type="number" groupingUsed="true"/>₫
+                                </span>
                             </div>
                             <div class="d-flex justify-content-between">
                                 <span>Phí vận chuyển</span>
-                                <span><fmt:formatNumber value="${cShipping}" type="number" groupingUsed="true"/>₫</span>
+                                <span id="shipping-fee-display">
+                                    <fmt:formatNumber value="${cShipping}" type="number" groupingUsed="true"/>₫
+                                </span>
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between align-items-center">
                                 <h4 class="text-danger">Tổng cộng</h4>
-                                <h3 class="text-primary">
+                                <h3 class="text-primary" id="total-price-display">
                                     <fmt:formatNumber value="${cTotal}" type="number" groupingUsed="true"/>₫
                                 </h3>
                             </div>
@@ -278,6 +288,9 @@
 
 <script src="${root}/js/checkout.js"></script>
 <script src="${root}/js/main.js"></script>
+<script>
+    var contextPath = "${root}";
+</script>
 <script>
     document.getElementById("validate_order").addEventListener("click", function () {
         window.location.href = "order_success.jsp";

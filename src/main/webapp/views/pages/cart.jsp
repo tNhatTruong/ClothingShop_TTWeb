@@ -200,7 +200,7 @@
                             <script>
                                 document.addEventListener("DOMContentLoaded", function () {
                                     const checkAll = document.getElementById("checkAllCart");
-                                    
+
                                     function formatVND(amount) {
                                         const n = Number(String(amount ?? 0).replace(/[^\d-]/g, "")) || 0;
                                         return new Intl.NumberFormat("vi-VN", {
@@ -266,12 +266,12 @@
                                         checkoutBtn.addEventListener("click", function (e) {
                                             e.preventDefault();
                                             if (this.classList.contains("disabled-btn")) return;
-                                            
+
                                             const selectedIds = [];
                                             document.querySelectorAll(".cart-item-checkbox:checked").forEach(cb => {
                                                 selectedIds.push(cb.dataset.variantId);
                                             });
-                                            
+
                                             if (selectedIds.length > 0) {
                                                 window.location.href = contextPath + "/checkout?variants=" + selectedIds.join(",");
                                             }
