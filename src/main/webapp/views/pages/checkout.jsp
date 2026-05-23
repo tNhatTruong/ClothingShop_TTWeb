@@ -139,7 +139,7 @@
                                 <%-- TRƯỜNG HỢP 1: THANH TOÁN TỪ GIỎ HÀNG (GET) --%>
                                 <c:when test="${isCartCheckout}">
                                     <%-- Đã sửa thành .item theo đúng chuẩn của Cart.java --%>
-                                    <c:forEach var="item" items="${sessionScope.cart.item}">
+                                    <c:forEach var="item" items="${checkoutItems}">
                                         <div class="d-flex align-items-center mb-3">
                                                 <%-- Đã sửa lại đường dẫn lấy Ảnh --%>
                                             <img src="${pageContext.request.contextPath}${item.variant.product.thumbnail}"

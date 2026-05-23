@@ -54,6 +54,13 @@ public class ProductController extends HttpServlet {
 
                 title = "Kết quả tìm kiếm: " + searchParam;
             }
+            else if (cateIdParam != null && priceRangeParam != null && !priceRangeParam.isEmpty()) {
+                // Lọc theo cả danh mục và khoảng giá
+                int cateId = Integer.parseInt(cateIdParam);
+                int rangeType = Integer.parseInt(priceRangeParam);
+                fullList = categoryDAO.getProductsByPriceRange(cateId, rangeType);
+                title = categoryDAO.getSubNameById(cateId) + " - Lọc theo giá";
+            }
             else if (cateIdParam != null) {
                 // Lọc theo danh mục con
                 int cateId = Integer.parseInt(cateIdParam);
@@ -75,15 +82,8 @@ public class ProductController extends HttpServlet {
             }
             else if (priceRangeParam != null && !priceRangeParam.isEmpty()) {
                 int rangeType = Integer.parseInt(priceRangeParam);
-
-                if (cateIdParam != null) {
-                    int cateId = Integer.parseInt(cateIdParam);
-                    fullList = categoryDAO.getProductsByPriceRange(cateId, rangeType);
-                    title = categoryDAO.getSubNameById(cateId) + " - Lọc theo giá";
-                } else {
-                    fullList = productDAO.getAllProductsByPriceRange(rangeType);
-                    title = "Lọc theo giá";
-                }
+                fullList = productDAO.getAllProductsByPriceRange(rangeType);
+                title = "Lọc theo giá";
             }
 
             else {

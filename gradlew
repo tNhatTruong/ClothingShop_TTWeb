@@ -114,6 +114,7 @@ case "$( uname )" in                #(
   NONSTOP* )        nonstop=true ;;
 esac
 
+CLASSPATH="\\\"\\\""
 
 
 # Determine the Java command to use to start the JVM.

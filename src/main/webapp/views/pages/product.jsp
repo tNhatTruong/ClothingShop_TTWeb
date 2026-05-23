@@ -256,7 +256,7 @@
 <script>
     const contextPath = "<%= request.getContextPath() %>";
 </script>
-<script src="${root}/js/add-cart.js"></script>
+<script src="${root}/js/add-cart.js?v=<%= System.currentTimeMillis() %>"></script>
 <script src="${root}/js/main.js"></script>
 <script>
     function toggleSidebar() {
@@ -280,24 +280,34 @@
     });
     document.addEventListener("DOMContentLoaded", function() {
         function setupToggle(toggleClass, hiddenClass) {
+            const cleanClassName = hiddenClass.replace('.', '');
+            const expandedClassName = cleanClassName + '-expanded';
+            const selector = hiddenClass + ', .' + expandedClassName;
+
             document.querySelectorAll(toggleClass).forEach(function(toggle) {
                 toggle.addEventListener("click", function(e) {
                     e.preventDefault();
                     const parent = toggle.closest(".filter-section");
-                    const hiddenItems = parent.querySelectorAll(hiddenClass);
-                    if (hiddenItems.length === 0) return;
+                    const items = parent.querySelectorAll(selector);
+                    if (items.length === 0) return;
 
-                    const isHidden = hiddenItems[0].classList.contains(hiddenClass.replace('.', ''));
+                    const isHidden = items[0].classList.contains(cleanClassName);
 
-                    hiddenItems.forEach(function(el) {
-                        el.classList.toggle(hiddenClass.replace('.', ''));
+                    items.forEach(function(el) {
+                        if (isHidden) {
+                            el.classList.remove(cleanClassName);
+                            el.classList.add(expandedClassName);
+                        } else {
+                            el.classList.remove(expandedClassName);
+                            el.classList.add(cleanClassName);
+                        }
                     });
 
-                    const totalHidden = hiddenItems.length;
+                    const totalItems = items.length;
                     if (isHidden) {
                         toggle.innerHTML = 'Thu gọn <i class="bi bi-chevron-up"></i>';
                     } else {
-                        toggle.innerHTML = 'Xem thêm ('+ totalHidden +') <i class="bi bi-chevron-down"></i>';
+                        toggle.innerHTML = 'Xem thêm (' + totalItems + ') <i class="bi bi-chevron-down"></i>';
                     }
                 });
             });

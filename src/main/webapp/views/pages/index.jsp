@@ -290,7 +290,7 @@
 
 <script src="${root}/js/main.js"></script>
 <script src="${root}/js/home.js"></script>
-<script src="${root}/js/add-cart.js"></script>
+<script src="${root}/js/add-cart.js?v=<%= System.currentTimeMillis() %>"></script>
 <script>
     const contextPath = "<%= request.getContextPath() %>";
 </script>

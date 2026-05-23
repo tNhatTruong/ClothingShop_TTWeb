@@ -33,13 +33,16 @@ public class JDBIConnector {
             }
             prop.load(input);
 
-            // Cấu hình Datasource từ thông tin trong file properties
+            // Cấu hình Datasource từ thông tin trong file properties hoặc biến môi trường (Docker)
             MysqlDataSource dataSource = new MysqlDataSource();
 
-            // Lấy trực tiếp URL full từ file
-            dataSource.setUrl(prop.getProperty("db.url"));
-            dataSource.setUser(prop.getProperty("db.username")); // Lưu ý: file bạn đặt là db.username
-            dataSource.setPassword(prop.getProperty("db.password"));
+            String dbUrl = System.getenv("DB_URL") != null ? System.getenv("DB_URL") : prop.getProperty("db.url");
+            String dbUser = System.getenv("DB_USER") != null ? System.getenv("DB_USER") : prop.getProperty("db.username");
+            String dbPass = System.getenv("DB_PASS") != null ? System.getenv("DB_PASS") : prop.getProperty("db.password");
+
+            dataSource.setUrl(dbUrl);
+            dataSource.setUser(dbUser);
+            dataSource.setPassword(dbPass);
 
             try {
                 dataSource.setAutoReconnect(true);

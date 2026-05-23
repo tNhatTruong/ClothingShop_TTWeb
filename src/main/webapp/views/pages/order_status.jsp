@@ -134,7 +134,7 @@
         </c:choose>
 
     <div class="box-btn">
-        <a class="btn btn-primary btn-back" href="cart.jsp">
+        <a class="btn btn-primary btn-back" href="${root}/cart">
             <i class="fas fa-arrow-left"></i> Quay lại
         </a>
         <button class="btn btn-primary btn-danger">

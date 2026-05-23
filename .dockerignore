@@ -1,0 +1,24 @@
+# IDE và công cụ build
+.gradle/
+.idea/
+bin/
+out/
+
+# Version control
+.git/
+.gitignore
+
+# Tài liệu
+*.md
+
+# Docker (không cần đưa file cấu hình vào bên trong chính nó)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Build output: Lờ đi tất cả trừ file war
+build/*
+!build/libs/
+
+# Database Init
+init-db/

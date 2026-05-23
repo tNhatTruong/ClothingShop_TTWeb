@@ -156,9 +156,9 @@
         </c:choose>
         </div>
 
-        <a class="cart-link" href="${root}/views/pages/cart.jsp">
+        <a class="cart-link" href="${root}/cart">
         <i class="fas fa-shopping-bag"></i>
-        <span class="cart-badge" id="cartBadge">${sessionScope.cart != null ? sessionScope.cart.totalQuantity : 0}
+        <span class="cart-badge" id="cartBadge">${sessionScope.cart != null ? sessionScope.cart.getItem().size() : 0}
         </span>
         </a>
         </div>

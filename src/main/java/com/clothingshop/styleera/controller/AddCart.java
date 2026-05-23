@@ -59,7 +59,8 @@ public class AddCart extends HttpServlet {
             out.print("{"
                     + "\"status\":\"success\","
                     + "\"msg\":\"Đã thêm vào giỏ hàng thành công\","
-                    + "\"totalQuantity\":" + cart.getTotalQuantity()
+                    + "\"totalQuantity\":" + cart.getTotalQuantity() + ","
+                    + "\"cartSize\":" + cart.getItem().size()
                     + "}");
 
         } catch (Exception e) {

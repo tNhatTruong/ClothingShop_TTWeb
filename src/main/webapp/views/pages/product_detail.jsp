@@ -114,7 +114,8 @@
                             </button>
                             <%-- Nút thêm vào giỏ hàng--%>
                             <button class="btn btn-primary validate_order" type="button"
-                                    onclick="addToCart(${product.getDefaultVariantId()})">
+                                    data-variant-id="${product.defaultVariantId}"
+                                    onclick="addToCart(this.getAttribute('data-variant-id'))">
                                 Thêm vào giỏ hàng
                             </button>
                         </div>
@@ -455,7 +456,7 @@
     const contextPath = "<%= request.getContextPath() %>";
 </script>
 <%--Xử lý sự kiện trong product - thêm giỏ hàng--%>
-<script src="${root}/js/add-cart.js"></script>
+<script src="${root}/js/add-cart.js?v=<%= System.currentTimeMillis() %>"></script>
 </body>
 
 </html>
