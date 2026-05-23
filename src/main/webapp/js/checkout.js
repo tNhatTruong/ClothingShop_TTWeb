@@ -170,4 +170,17 @@ document.addEventListener('DOMContentLoaded', function () {
         if(params.has('eta')) setText('shipETA', params.get('eta'));
         if(params.has('pay')) setText('payMethod', params.get('pay'));
     })();
+
+    // Tự động điền ngày hôm nay vào ô "Ngày đặt hàng"
+    const orderDateInput = document.getElementById('input-shipping-custom-field-31');
+    if (orderDateInput && !orderDateInput.value) {
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+        const yyyy = today.getFullYear();
+
+        // Định dạng DD/MM/YYYY theo VN
+        orderDateInput.value = `${dd}/${mm}/${yyyy}`;
+        orderDateInput.readOnly = true;
+    }
 });
