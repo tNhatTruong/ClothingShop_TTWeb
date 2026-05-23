@@ -88,7 +88,7 @@
                                                                             </td>
                                                                             <td>
                                                                                 <div class="product-item">
-                                                                                    <p>${item.variant.product.product_name}
+                                                                                    <p class="fw-bold mb-0">${item.variant.product.product_name}
                                                                                     </p>
                                                                                 </div>
                                                                             </td>

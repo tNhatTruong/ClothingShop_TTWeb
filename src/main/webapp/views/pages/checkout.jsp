@@ -221,47 +221,33 @@
                                     <fieldset>
                                         <div class="input-group">
                                             <div class="input-payment-method-group">
+
                                                 <div class="form-check">
-                                                    <input type="radio" name="payment_method" value="bank_transfer"
-                                                           id="input-payment-method-bank_transfer"
-                                                           class="form-check-input input-payment-method">
-                                                    <label for="input-payment-method-bank_transfer" class="form-check-label">
-                                                        <img class="payment-method-icon" src="${root}/images/image_product/logoNH.png">Chuyển khoản ngân hàng
-                                                        <span class="payment-brand-icon-bank_transfer"></span>
+                                                    <input type="radio" name="payment_method" value="vnpay"
+                                                           id="input-payment-method-vnpay"
+                                                           class="form-check-input input-payment-method" checked="">
+                                                    <label for="input-payment-method-vnpay" class="form-check-label">
+                                                        <img class="payment-method-icon" src="${root}/images/image_product/vnpay.png"> Thanh toán qua VNPay
+                                                        <span class="payment-brand-icon-vnpay"></span>
                                                     </label>
                                                 </div>
-                                                <div class="form-check">
-                                                    <input type="radio" name="payment_method" value="cheque"
-                                                           id="input-payment-method-cheque"
-                                                           class="form-check-input input-payment-method">
-                                                    <label for="input-payment-method-cheque" class="form-check-label">
-                                                        <img class="payment-method-icon" src="${root}/images/image_product/momo.png">Ví điện tử Momo
-                                                        <span class="payment-brand-icon-cheque"></span>
-                                                    </label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input type="radio" name="payment_method" value="paypal"
-                                                           id="input-payment-method-paypal"
-                                                           class="form-check-input input-payment-method">
-                                                    <label for="input-payment-method-paypal" class="form-check-label">
-                                                        <img class="payment-method-icon" src="${root}/images/image_product/visa.png"> Thẻ Visa
-                                                        <span class="payment-brand-icon-paypal"></span>
-                                                    </label>
-                                                </div>
+
                                                 <div class="form-check">
                                                     <input type="radio" name="payment_method" value="cod"
                                                            id="input-payment-method-cod"
                                                            class="form-check-input input-payment-method">
                                                     <label for="input-payment-method-cod" class="form-check-label">
-                                                        <img class="payment-method-icon" src="${root}/images/image_product/logothanhtoan.png"> Thanh toán khi giao hàng
+                                                        <img class="payment-method-icon" src="${root}/images/image_product/logothanhtoan.png"> Thanh toán khi giao hàng (COD)
                                                         <span class="payment-brand-icon-cod"></span>
                                                     </label>
                                                 </div>
+
                                             </div>
                                             <button type="button" id="button-payment-method" class="btn btn-light d-none"><i class="fa-solid fa-rotate"></i></button>
                                         </div>
                                     </fieldset>
                                 </form>
+
                                 <div class="mb-2 mt-3">
                                     <div class="form-check text-end">
                                         <input type="checkbox" name="agree" value="1" id="input-agree" class="form-check-input" checked="">
@@ -272,9 +258,8 @@
                                 </div>
                                 <hr>
                                 <div class="text-end">
-                                    <button type="button" id="validate_order" class="btn btn-primary">Xác nhận đơn hàng</button>
+                                    <button  type="button" id="validate_order" class="btn btn-primary">Xác nhận đơn hàng</button>
                                 </div>
-                                <div class="mt-3" id="paypal-button-container"></div>
                             </div>
                         </div>
                     </div>
