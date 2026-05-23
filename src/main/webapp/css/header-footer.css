@@ -1,3 +1,4 @@
+﻿@import url('variables.css');
 * {
     margin: 0;
     padding: 0;
@@ -5,7 +6,7 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-main);
     color: #333;
     line-height: 1.6;
 }
@@ -1024,7 +1025,7 @@ img:not([src]) {
     color: #888;
 }
 
-/* Nút Back to Top */
+/* Nút Back to Top */   
 #backToTopBtn {
     display: none; /* Ẩn đi lúc đầu */
     position: fixed;
@@ -1047,3 +1048,4 @@ img:not([src]) {
 #backToTopBtn:hover {
     background-color: #555;
 }
+

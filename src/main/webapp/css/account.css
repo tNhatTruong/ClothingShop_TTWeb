@@ -1,3 +1,4 @@
+﻿@import url('variables.css');
 /* ===== COLOR PALETTE ===== */
 :root {
     --color-beige: #F5F0E6;
@@ -175,3 +176,4 @@ span#emailInput {
 #accountInfoForm .form-group select {
     margin-top: 5px;
 }
+

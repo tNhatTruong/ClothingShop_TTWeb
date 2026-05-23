@@ -1,3 +1,4 @@
+﻿@import url('variables.css');
 /* ===== product.css ===== */
 
 /* SỬA ĐỔI: Set màu nền cho body để phủ kín mọi khoảng trắng */
@@ -329,6 +330,7 @@ body {
     margin-bottom: 15px;
     width: fit-content;
 }
+
 /* 1. Thiết lập mặc định cho nút X (Ẩn trên Desktop) */
 .btn-close-sidebar {
     display: none; /* Mặc định ẩn */

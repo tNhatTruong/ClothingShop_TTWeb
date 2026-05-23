@@ -1,3 +1,4 @@
+﻿@import url('variables.css');
 /* Auth Base Layout */
 .auth-container {
     min-height: calc(100vh - 200px);
@@ -346,4 +347,5 @@
         gap: 15px;
     }
 }
+
 

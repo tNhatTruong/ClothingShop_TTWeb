@@ -1,3 +1,4 @@
+﻿@import url('variables.css');
 * {
     margin: 0;
     padding: 0;
@@ -10,7 +11,7 @@ body {
     line-height: 1.5;
 }
 p{
-    font-family: "Varela Round", sans-serif;
+    font-family: var(--font-main);
     font-weight: 500;
     text-align: justify;
 
@@ -246,3 +247,5 @@ p{
         border-radius: 10px;
     }
 }
+
+

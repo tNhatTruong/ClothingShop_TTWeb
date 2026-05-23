@@ -1,3 +1,4 @@
+﻿@import url('variables.css');
 /* ===== MAIN LAYOUT ===== */
 .orders-history {
     background: #f5f0e6;
@@ -109,3 +110,4 @@
         font-size: 12px;
     }
 }
+
