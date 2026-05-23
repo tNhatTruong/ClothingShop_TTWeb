@@ -60,19 +60,79 @@ body {
 }
 
 .quantity-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e1e1e1;
+    border-radius: 30px; /* Bo góc tròn mềm mại giống nút Tiếp tục mua sắm */
+    background-color: #ffffff;
+    padding: 3px 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Đổ bóng nhẹ */
+    width: fit-content;
+    margin: 0 auto; /* Giữ cho cụm này ở giữa cột */
+}
+
+/* Nút cộng trừ */
+.qty-btn {
+    background-color: #F5F0E6;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    cursor: pointer;
+    color: #212121;
+    transition: all 0.3s ease;
 }
 
-.quantity-item input {
+.qty-btn i {
+    font-size: 12px;
+}
+
+/* Hiệu ứng khi hover và click vào nút */
+.qty-btn:hover {
+    background-color: #D4AF37; /* Lấy theo màu hover của breadcrumb */
+    color: #ffffff;
+    transform: scale(1.1);
+}
+
+.qty-btn:active {
+    transform: scale(0.95);
+    background-color: #b8962e;
+}
+
+/* Ô nhập số lượng */
+.quantity-item input.qty-input {
     border: none;
-    width: 50px;
+    width: 40px;
     text-align: center;
     font-size: 16px;
-    box-sizing: border-box;
+    font-weight: bold;
+    color: #333;
+    background: transparent;
+    outline: none;
+    pointer-events: none;
     margin: 0;
+}
+
+/* Điều chỉnh lại cho Mobile */
+@media (max-width: 767px) {
+    .quantity-item {
+        padding: 2px 4px;
+    }
+
+    .qty-btn {
+        width: 25px;
+        height: 25px;
+    }
+
+    .quantity-item input.qty-input {
+        width: 30px;
+        font-size: 14px;
+        margin: 0 2px;
+    }
 }
 
 .my_button {
@@ -116,20 +176,6 @@ body {
 
 .cart_price {
     font-weight: bold;
-}
-
-.fa-less-than,
-.fa-greater-than {
-    cursor: pointer;
-    font-size: 10px;
-    padding: 5px;
-    transition: transform 0.3s ease;
-
-}
-
-.fa-less-than:hover,
-.fa-greater-than:hover {
-    transform: translateY(2px);
 }
 
 .my_button:hover {
@@ -218,6 +264,44 @@ body {
 .btn .btn-danger:active {
     transform: rotateZ(0deg);
     background-color: #dc3545 !important;
+}
+
+.btn-remove {
+    background: transparent;
+    border: none;
+    padding: 5px;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.closed {
+    font-size: 24px;
+    color: #dc3545 !important;
+    background-color: #ffffff;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(220, 53, 69, 0.2);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.btn-remove:hover .closed {
+    color: #b02a37 !important;
+    box-shadow: 0 4px 10px rgba(220, 53, 69, 0.4);
+    transform: scale(1.15);
+}
+
+.btn-remove:active .closed {
+    transform: scale(0.9);
+    box-shadow: 0 1px 3px rgba(220, 53, 69, 0.2);
+}
+
+@media (max-width: 767px) {
+    .closed {
+        font-size: 20px;
+    }
 }
 
 .form-right {

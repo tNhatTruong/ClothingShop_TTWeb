@@ -258,7 +258,7 @@
                                 </div>
                                 <hr>
                                 <div class="text-end">
-                                    <button type="button" id="validate_order" class="btn btn-primary">Xác nhận đơn hàng</button>
+                                    <button  type="button" id="validate_order" class="btn btn-primary">Xác nhận đơn hàng</button>
                                 </div>
                             </div>
                         </div>
