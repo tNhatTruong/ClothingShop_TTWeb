@@ -1,6 +1,8 @@
 package com.clothingshop.styleera.controller;
 
+import com.clothingshop.styleera.dao.CartDao;
 import com.clothingshop.styleera.model.Cart;
+import com.clothingshop.styleera.model.User;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -43,6 +45,13 @@ public class RemoveItem extends HttpServlet {
         }
 
         cart.removeItem(variantId);
+
+        // Đồng bộ xóa với Database nếu đang đăng nhập
+        User user = (User) session.getAttribute("auth");
+        if (user != null) {
+            CartDao cartDao = new CartDao();
+            cartDao.removeCartItem(user.getId(), variantId);
+        }
 
         if (cart.getTotalQuantity() <= 0) {
             session.removeAttribute("cart");

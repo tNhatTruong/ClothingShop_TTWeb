@@ -1,7 +1,9 @@
 package com.clothingshop.styleera.controller;
 
+import com.clothingshop.styleera.dao.CartDao;
 import com.clothingshop.styleera.model.Cart;
 import com.clothingshop.styleera.model.CartItem;
+import com.clothingshop.styleera.model.User;
 import com.google.gson.Gson;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -91,6 +93,13 @@ public class UpdateCart extends HttpServlet {
 
             // Lưu lại session (quan trọng để đồng bộ)
             session.setAttribute("cart", cart);
+
+            // Đồng bộ cập nhật số lượng với Database nếu đang đăng nhập
+            User user = (User) session.getAttribute("auth");
+            if (user != null) {
+                CartDao cartDao = new CartDao();
+                cartDao.updateCartItemQuantity(user.getId(), variantId, newQty);
+            }
 
             // 7. Tính toán các con số mới để trả về cho Frontend cập nhật ngay lập tức
             double itemPrice = item.getVariant().getProduct().getPrice();
