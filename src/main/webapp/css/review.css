@@ -1,5 +1,6 @@
+﻿@import url('variables.css');
 body {
-    font-family: Arial, sans-serif;
+    font-family: var(--font-main);
     background: #f6f6f6;
     padding: 30px;
 }
@@ -142,3 +143,5 @@ select {
     from { transform: scale(0.9); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
 }
+
+

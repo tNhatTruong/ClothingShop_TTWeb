@@ -90,4 +90,27 @@ public class CartDao {
             }
         });
     }
+
+    public void removeCartItem(int userId, int variantId) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        jdbi.useHandle(handle -> {
+            String sqlDelete = "DELETE FROM cartitem WHERE user_id = ? AND variant_id = ?";
+            handle.createUpdate(sqlDelete)
+                    .bind(0, userId)
+                    .bind(1, variantId)
+                    .execute();
+        });
+    }
+
+    public void updateCartItemQuantity(int userId, int variantId, int newQuantity) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        jdbi.useHandle(handle -> {
+            String sqlUpdate = "UPDATE cartitem SET quantity = ? WHERE user_id = ? AND variant_id = ?";
+            handle.createUpdate(sqlUpdate)
+                    .bind(0, newQuantity)
+                    .bind(1, userId)
+                    .bind(2, variantId)
+                    .execute();
+        });
+    }
 }

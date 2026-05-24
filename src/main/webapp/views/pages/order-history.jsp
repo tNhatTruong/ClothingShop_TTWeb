@@ -51,7 +51,7 @@
                     <td>
                         <button class="btn-primary btn-view-details">Xem chi tiết</button>
                         <button class="btn-secondary btn-reorder">Mua lại</button>
-                        <button class="btn-secondary btn-reorder" onclick="location.href='review.jsp'">Đánh giá</button>
+                        <button class="btn-secondary btn-reorder" onclick="location.href='${root}/review'">Đánh giá</button>
                     </td>
                 </tr>
                 <tr class="order-details" style="display: none;">
@@ -74,7 +74,7 @@
                     <td>
                         <button class="btn-primary btn-view-details">Xem chi tiết</button>
                         <button class="btn-secondary btn-reorder">Mua lại</button>
-                        <button class="btn-secondary btn-reorder" onclick="location.href='review.jsp'">Đánh giá</button>
+                        <button class="btn-secondary btn-reorder" onclick="location.href='${root}/review'">Đánh giá</button>
                     </td>
                 </tr>
                 <tr class="order-details" style="display: none;">
@@ -97,7 +97,7 @@
                     <td>
                         <button class="btn-primary btn-view-details">Xem chi tiết</button>
                         <button class="btn-secondary btn-reorder">Mua lại</button>
-                        <button class="btn-secondary btn-reorder" onclick="location.href='review.jsp'">Đánh giá</button>
+                        <button class="btn-secondary btn-reorder" onclick="location.href='${root}/review'">Đánh giá</button>
                     </td>
                 </tr>
                 <tr class="order-details" style="display: none;">
@@ -120,7 +120,7 @@
                     <td>
                         <button class="btn-primary btn-view-details">Xem chi tiết</button>
                         <button class="btn-secondary btn-reorder">Mua lại</button>
-                        <button class="btn-secondary btn-reorder" onclick="location.href='review.jsp'">Đánh giá</button>
+                        <button class="btn-secondary btn-reorder" onclick="location.href='${root}/review'">Đánh giá</button>
                     </td>
                 </tr>
                 <tr class="order-details" style="display: none;">
@@ -143,7 +143,7 @@
                     <td>
                         <button class="btn-primary btn-view-details">Xem chi tiết</button>
                         <button class="btn-secondary btn-reorder">Mua lại</button>
-                        <button class="btn-secondary btn-reorder" onclick="location.href='review.jsp'">Đánh giá</button>
+                        <button class="btn-secondary btn-reorder" onclick="location.href='${root}/review'">Đánh giá</button>
                     </td>
                 </tr>
                 <tr class="order-details" style="display: none;">

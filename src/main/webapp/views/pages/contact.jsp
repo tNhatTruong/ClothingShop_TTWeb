@@ -22,7 +22,7 @@
 <main class="container product-page">
     <nav aria-label="breadcrumb" class="mt-3 mb-3">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.jsp">Trang Chủ</a></li>
+            <li class="breadcrumb-item"><a href="${root}/home">Trang Chủ</a></li>
             <li class="breadcrumb-item active" id="breadcrumb-category">Liên hệ</li>
         </ol>
     </nav>

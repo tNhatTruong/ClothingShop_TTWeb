@@ -1,3 +1,4 @@
+﻿@import url('variables.css');
 :root {
     --bg: #f6efe6;
     --card: #fff;
@@ -7,7 +8,7 @@
     --blue: #0a66ff;
     --radius: 12px;
     --maxw: 1100px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    font-family: var(--font-main);
 }
 html,
 body {
@@ -178,7 +179,7 @@ body {
     font-weight: 600
 }
 
-/* right column: order details card (mô phỏng giống bạn) */
+/* right column: order details card */
 .summary-card {
     background: var(--card);
     border-radius: var(--radius);
@@ -304,3 +305,4 @@ body {
     padding: 20px;
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28)
 }
+

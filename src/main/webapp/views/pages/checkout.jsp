@@ -278,7 +278,7 @@
 </script>
 <script>
     document.getElementById("validate_order").addEventListener("click", function () {
-        window.location.href = "order_success.jsp";
+        window.location.href = contextPath + "/order-success";
     });
 </script>
 </body>

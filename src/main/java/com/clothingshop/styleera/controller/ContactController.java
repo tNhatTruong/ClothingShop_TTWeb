@@ -58,7 +58,7 @@ public class ContactController extends HttpServlet {
         }
 
         if (!valid) {
-            request.getRequestDispatcher("/contact")
+            request.getRequestDispatcher("/views/pages/contact.jsp")
                     .forward(request, response);
             return;
         }
@@ -86,7 +86,7 @@ public class ContactController extends HttpServlet {
                     "messageError",
                     "Không thể gửi email. Vui lòng thử lại sau!"
             );
-            request.getRequestDispatcher("/contact")
+            request.getRequestDispatcher("/views/pages/contact.jsp")
                     .forward(request, response);
         }
     }
