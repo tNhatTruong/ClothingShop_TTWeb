@@ -1,4 +1,4 @@
-﻿@import url('variables.css');
+@import url('variables.css');
 /* ===== product.css ===== */
 
 /* SỬA ĐỔI: Set màu nền cho body để phủ kín mọi khoảng trắng */
@@ -150,33 +150,40 @@ body {
 }
 
 .product-card {
-    border: 1px solid #eee;
-    border-radius: 8px;
-    padding: 12px;
     background: #fff;
+    border-radius: 8px;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     flex-direction: column;
-    transition: transform 0.2s, box-shadow 0.2s;
-    min-height: 360px;
+    height: 100%;
+    overflow: hidden;
     position: relative;
 }
 
 .product-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 .product-image {
     position: relative;
-    margin-bottom: 10px;
-    height: 180px;
+    padding-top: 125%;
+    height: 0;
     overflow: hidden;
+    background: #f8f9fa;
+    border-radius: 8px 8px 0 0;
 }
 
 .product-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    border-radius: 8px;
-    transition: transform 0.3s;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
 }
 
 .product-card:hover .product-image img {
@@ -185,78 +192,100 @@ body {
 
 .product-badge {
     position: absolute;
-    top: 8px;
-    left: 8px;
-    padding: 4px 8px;
-    font-size: 0.75rem;
-    font-weight: bold;
+    top: 10px;
+    left: 10px;
+    padding: 4px 10px;
+    font-size: 0.7rem;
+    font-weight: 700;
     color: #fff;
-    border-radius: 4px;
+    border-radius: 2px;
     text-transform: uppercase;
+    letter-spacing: 1px;
+    z-index: 2;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.badge-new { background: #28a745; }
-.badge-bestseller { background: #ffc107; }
+.badge-new { background: #212121; }
+.badge-bestseller { background: #D4AF37; }
+
+/* --- Content Area --- */
+.product-details {
+    padding: 12px 15px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
+}
+
+.product-info {
+    margin-bottom: 10px;
+}
 
 .product-name {
-    font-size: 1rem;
-    font-weight: 500;
-    margin: 0 0 5px 0;
-    /* Giới hạn tên sản phẩm 2 dòng */
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #212121;
+    margin-bottom: 5px;
+    line-height: 1.4;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    height: 2.8em;
 }
 
-.product-price {
-    font-size: 1rem;
-    font-weight: bold;
-    color: #e63946;
-    margin-top: 8px;
-}
-
-.product-footer {
+.product-rating {
+    font-size: 0.8rem;
+    color: #D4AF37;
+    margin-bottom: 5px;
     display: flex;
+    gap: 3px;
+}
+
+.product-bottom {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
     margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
 }
 
-.product-rating i {
-    color: #f4c150;
-    margin-right: 2px;
-    font-size: 0.85rem;
+.product-price .price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #e63946;
 }
 
-/* Cart button nằm trong khung sản phẩm */
 .btn-cart {
-    background: #E0D6C8;
-    border: none;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    width: 36px;
-    height: 36px;
+    border: 1px solid #eee;
+    background: #fff;
+    color: #212121;
     display: flex;
-    justify-content: center;
     align-items: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    justify-content: center;
     cursor: pointer;
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    z-index: 10;
-    transition: all 0.2s;
-    pointer-events: auto;
+    transition: all 0.2s ease;
 }
 
 .btn-cart i {
-    color: #212121;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .btn-cart:hover {
-    background: #d4c8b0;
-    transform: scale(1.1);
+    background: #212121;
+    color: #D4AF37;
+    border-color: #212121;
+}
+
+.btn-cart:disabled {
+    background: #f5f5f5;
+    color: #ccc;
+    cursor: not-allowed;
+    border-color: #f5f5f5;
 }
 
 /* ===== Responsive ===== */
@@ -268,7 +297,8 @@ body {
 
 @media (max-width: 768px) {
     .product-image {
-        height: 180px;
+        padding-top: 125%;
+        height: 0;
     }
 }
 

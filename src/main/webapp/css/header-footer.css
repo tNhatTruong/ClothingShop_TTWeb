@@ -39,7 +39,7 @@ img {
 .header-container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 20px 40px;
+    padding: 16px 40px;
 }
 
 .header-main-row {
@@ -78,7 +78,7 @@ img {
 
 .brand-logo img {
     height: 45px;
-    width: 120px;
+    width: auto;
 }
 
 /* Navigation Menu */
@@ -216,7 +216,7 @@ img {
 .header-right-section {
     display: flex;
     align-items: center;
-    gap: 25px;
+    gap: 20px; /* Reduced from 25px */
     flex: 0 0 auto;
 }
 

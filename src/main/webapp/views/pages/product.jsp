@@ -177,29 +177,36 @@
                     %>
                     <div class="col-lg-4 col-md-6 col-6">
                         <div class="product-card">
-                            <a href="${root}/product_detail?id=<%=p.getProduct_id()%>"
-                               class="product-card-link">
+                            <a href="${root}/product_detail?id=<%=p.getProduct_id()%>" class="product-card-link">
                                 <div class="product-image">
                                     <span class="product-badge badge-new">NEW</span>
-                                    <img src="<%= imgPath %>" alt="<%=p.getProduct_name()%>">
-                                </div>
-                                <div class="product-info">
-                                    <h5 class="product-name"><%=p.getProduct_name()%></h5>
-                                    <p class="product-price"><%=String.format("%,.0f", p.getPrice())%> VNĐ</p>
+                                    <img src="<%= imgPath %>" alt="<%=p.getProduct_name()%>" loading="lazy">
                                 </div>
                             </a>
-                            <div class="product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
+                            <div class="product-details">
+                                <div class="product-info">
+                                    <a href="${root}/product_detail?id=<%=p.getProduct_id()%>" style="text-decoration: none;">
+                                        <h4 class="product-name"><%=p.getProduct_name()%></h4>
+                                    </a>
+                                    <div class="product-rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </div>
+                                <div class="product-bottom">
+                                    <div class="product-price">
+                                        <span class="price"><%=String.format("%,.0f", p.getPrice())%>₫</span>
+                                    </div>
+                                    <button class="btn-cart" type="button" title="Thêm vào giỏ"
+                                            <%= p.getDefaultVariantId() == null ? "disabled" : "" %>
+                                            onclick="addToCart(<%= p.getDefaultVariantId() %>)">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <button class="btn-cart" type="button"
-                                    <%= p.getDefaultVariantId() == null ? "disabled" : "" %>
-                                    onclick="addToCart(<%= p.getDefaultVariantId() %>)">
-                                <i class="fas fa-shopping-cart"></i>
-                            </button>
                         </div>
                     </div>
                     <% }
