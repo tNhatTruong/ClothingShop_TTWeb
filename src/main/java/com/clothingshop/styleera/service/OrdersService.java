@@ -13,5 +13,7 @@ public class OrdersService {
     public List<Orders> getLatestOrders(int limit){
         return ordersDAO.getLatestOrders(limit);
     }
-
+    public double getTotalRevenue() {
+        return ordersDAO.countTotalRevenue();
+    }
 }

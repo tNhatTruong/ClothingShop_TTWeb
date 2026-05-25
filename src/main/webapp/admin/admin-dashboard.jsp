@@ -73,8 +73,8 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div>
-                                    <p class="text-muted small mb-1">Tổng giá tiền các sản phẩm</p>
-                                    <h3 class="mb-0"><fmt:formatNumber value="${totalProductPrice}" pattern="#,### VNĐ"/></h3>
+                                    <p class="text-muted small mb-1">Doanh Thu (Đã Giao)</p>
+                                    <h3 class="mb-0"><fmt:formatNumber value="${totalRevenue}" pattern="#,### VNĐ"/></h3>
                                 </div>
                                 <div class="stat-icon bg-warning text-white rounded-circle p-3">
                                     <i class="fas fa-dollar-sign fa-lg"></i>
@@ -90,8 +90,8 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div>
-                                    <p class="text-muted small mb-1">Tổng Sản Phẩm hiện có</p>
-                                    <h3 class="mb-0">${totalQuantity} sản phẩm</h3>
+                                    <p class="text-muted small mb-1">Tổng Sản Phẩm</p>
+                                    <h3 class="mb-0">${totalProducts} sản phẩm</h3>
                                 </div>
                                 <div class="stat-icon bg-danger text-white rounded-circle p-3">
                                     <i class="fas fa-box fa-lg"></i>

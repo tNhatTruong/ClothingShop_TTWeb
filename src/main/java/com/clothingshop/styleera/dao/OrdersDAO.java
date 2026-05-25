@@ -29,4 +29,13 @@ public class OrdersDAO {
         );
     }
 
+    // tính tổng doanh thu từ các đơn hàng đã giao thành công
+    public double countTotalRevenue() {
+        return JDBIConnector.getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT COALESCE(SUM(total_price), 0) FROM orders WHERE status = 'Đã Giao'")
+                        .mapTo(Double.class)
+                        .one()
+        );
+    }
+
 }
