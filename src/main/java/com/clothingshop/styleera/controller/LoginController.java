@@ -53,6 +53,7 @@ public class LoginController extends HttpServlet {
             // 3. Đăng nhập thành công
             // 30 phút * 60 giây = 1800 giây
             // Nếu user không làm gì trong 30p, server tự hủy session này.
+            user.setPassword_hash(null); // Tẩy rửa mật khẩu băm để tránh rò rỉ dữ liệu nhạy cảm
             HttpSession session = request.getSession();
             session.setAttribute("auth", user);
             session.setAttribute("currentUser", user);

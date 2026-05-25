@@ -56,6 +56,7 @@ public class AdminLoginController extends HttpServlet {
 
             if (user != null && PasswordUtils.checkPassword(password, user.getPassword_hash())) {
                 if ("Admin".equalsIgnoreCase(user.getRole())) {
+                    user.setPassword_hash(null); // Tẩy rửa mật khẩu băm để tránh rò rỉ dữ liệu nhạy cảm
                     HttpSession session = request.getSession();
                     session.setAttribute("auth", user);
                     session.setAttribute("currentUser", user);

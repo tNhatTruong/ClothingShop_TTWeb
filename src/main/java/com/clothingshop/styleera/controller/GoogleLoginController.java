@@ -71,6 +71,7 @@ public class GoogleLoginController extends HttpServlet {
             }
 
             // 4. Tạo Session Đăng nhập
+            user.setPassword_hash(null); // Tẩy rửa mật khẩu băm để tránh rò rỉ dữ liệu nhạy cảm
             HttpSession session = request.getSession();
             session.setAttribute("auth", user);
 
