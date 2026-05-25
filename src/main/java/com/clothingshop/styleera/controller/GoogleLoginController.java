@@ -108,7 +108,7 @@ public class GoogleLoginController extends HttpServlet {
             session.removeAttribute("returnUrl"); // Xóa sau khi dùng
 
             if ("Admin".equalsIgnoreCase(user.getRole())) {
-                response.sendRedirect(request.getContextPath() + "/admin-dashboard.jsp");
+                response.sendRedirect(request.getContextPath() + "/AdminDashboard");
             } else if (returnUrl != null && !returnUrl.isEmpty()) {
                 response.sendRedirect(returnUrl);
             } else {

@@ -32,7 +32,12 @@ public class AdminDashboardController extends HttpServlet {
         List<User> userTotal = userService.getAllUsers();
         double totalProductPrice = productService.getTotalProductPrice();
         List<Orders> latestOrders = ordersService.getLatestOrders(4);
+        List<String> revenueChartLabels = ordersService.getRevenueChartLabels();
+        List<Double> revenueChartData = ordersService.getRevenueChartData();
 
+        request.setAttribute("dashboardLoaded", true);
+        request.setAttribute("revenueChartLabels", revenueChartLabels);
+        request.setAttribute("revenueChartData", revenueChartData);
         request.setAttribute("latestOrders", latestOrders);
         request.setAttribute("totalProductPrice", totalProductPrice);
         request.setAttribute("totalOrders", totalOrders);

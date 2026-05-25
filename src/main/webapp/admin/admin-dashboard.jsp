@@ -2,6 +2,9 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="root" value="${pageContext.request.contextPath}" scope="request" />
+<c:if test="${empty dashboardLoaded}">
+    <c:redirect url="${root}/AdminDashboard"/>
+</c:if>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -242,6 +245,21 @@
 
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+<script>
+    window.dashboardChartData = {
+        labels: [
+            <c:forEach items="${revenueChartLabels}" var="label" varStatus="s">
+            "${label}"<c:if test="${!s.last}">,</c:if>
+            </c:forEach>
+        ],
+        data: [
+            <c:forEach items="${revenueChartData}" var="amount" varStatus="s">
+            ${amount}<c:if test="${!s.last}">,</c:if>
+            </c:forEach>
+        ]
+    };
+</script>
 
 <!-- Custom JS -->
 <script src="${root}/admin/js/admin-common.js"></script>
