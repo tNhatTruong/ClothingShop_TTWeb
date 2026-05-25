@@ -55,6 +55,12 @@ public class AdminLoginController extends HttpServlet {
             User user = userDAO.findByEmail(email);
 
             if (user != null && PasswordUtils.checkPassword(password, user.getPassword_hash())) {
+                if ("BANNED".equalsIgnoreCase(user.getStatus())) {
+                    request.setAttribute("errorMsg", "Tài khoản của bạn đã bị khóa do vi phạm chính sách.");
+                    request.setAttribute("email", email);
+                    request.getRequestDispatcher("/admin/admin-login.jsp").forward(request, response);
+                    return;
+                }
                 if ("Admin".equalsIgnoreCase(user.getRole())) {
                     user.setPassword_hash(null); // Tẩy rửa mật khẩu băm để tránh rò rỉ dữ liệu nhạy cảm
                     HttpSession session = request.getSession();

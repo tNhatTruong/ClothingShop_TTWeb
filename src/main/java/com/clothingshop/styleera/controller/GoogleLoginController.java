@@ -70,6 +70,12 @@ public class GoogleLoginController extends HttpServlet {
                 }
             }
 
+            // 3.5 Kiểm tra tài khoản bị khóa
+            if ("BANNED".equalsIgnoreCase(user.getStatus())) {
+                response.sendRedirect(request.getContextPath() + "/login?error=banned");
+                return;
+            }
+
             // 4. Tạo Session Đăng nhập
             user.setPassword_hash(null); // Tẩy rửa mật khẩu băm để tránh rò rỉ dữ liệu nhạy cảm
             HttpSession session = request.getSession();

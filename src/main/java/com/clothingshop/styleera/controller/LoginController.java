@@ -25,6 +25,11 @@ public class LoginController extends HttpServlet {
         if (referer != null && !referer.contains("/login") && !referer.contains("/register") && !referer.contains("/verify") && !referer.contains("/reset-password")) {
             session.setAttribute("returnUrl", referer);
         }
+
+        String errorParam = request.getParameter("error");
+        if ("banned".equalsIgnoreCase(errorParam)) {
+            request.setAttribute("errorMsg", "Tài khoản của bạn đã bị khóa do vi phạm chính sách.");
+        }
         
         request.getRequestDispatcher("/views/pages/login.jsp").forward(request, response);
     }
@@ -47,6 +52,14 @@ public class LoginController extends HttpServlet {
                 request.setAttribute("email", email);
                 // Chuyển sang trang verify.jsp để nhập mã (Đúng logic)
                 request.getRequestDispatcher("views/pages/verify.jsp").forward(request, response);
+                return;
+            }
+
+            // 2.5 Kiểm tra tài khoản bị khóa
+            if ("BANNED".equalsIgnoreCase(user.getStatus())) {
+                request.setAttribute("errorMsg", "Tài khoản của bạn đã bị khóa do vi phạm chính sách.");
+                request.setAttribute("email", email);
+                request.getRequestDispatcher("/views/pages/login.jsp").forward(request, response);
                 return;
             }
 

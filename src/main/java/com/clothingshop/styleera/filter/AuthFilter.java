@@ -1,5 +1,7 @@
 package com.clothingshop.styleera.filter;
 
+import com.clothingshop.styleera.model.User;
+import com.clothingshop.styleera.dao.UserDAO;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,6 +38,21 @@ public class AuthFilter implements Filter {
         // 3. Logic kiểm tra Session
         HttpSession session = req.getSession(false); // false: Chỉ lấy session cũ, không tạo mới
         boolean isLoggedIn = (session != null && session.getAttribute("auth") != null);
+
+        // 3.5 Kiểm tra nếu đã đăng nhập và bị khóa thì hủy session lập tức
+        if (isLoggedIn) {
+            User sessionUser = (User) session.getAttribute("auth");
+            boolean isAuthPath = path.contains("/login") || path.contains("/logout") || path.contains("/register") || path.contains("/verify");
+            if (!isAuthPath) {
+                UserDAO userDAO = new UserDAO();
+                User latestUser = userDAO.findByEmail(sessionUser.getEmail());
+                if (latestUser != null && "BANNED".equalsIgnoreCase(latestUser.getStatus())) {
+                    session.invalidate();
+                    res.sendRedirect(req.getContextPath() + "/login?error=banned");
+                    return;
+                }
+            }
+        }
 
         if (isProtectedPage) {
             if (!isLoggedIn) {

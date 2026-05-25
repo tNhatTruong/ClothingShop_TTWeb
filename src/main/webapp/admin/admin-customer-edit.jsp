@@ -128,10 +128,13 @@
                                                     <td>
                                                         <c:choose>
                                                             <c:when test="${u.status eq 'Hoạt Động'}">
-                                                                <span class="badge bg-success fw-bold">${u.status}</span>
+                                                                <span class="badge bg-success fw-bold status-badge" data-user-id="${u.id}">${u.status}</span>
+                                                            </c:when>
+                                                            <c:when test="${u.status eq 'BANNED'}">
+                                                                <span class="badge bg-dark fw-bold status-badge" data-user-id="${u.id}">Bị Khóa</span>
                                                             </c:when>
                                                             <c:otherwise>
-                                                                <span class="badge bg-danger fw-bold">${u.status}</span>
+                                                                <span class="badge bg-danger fw-bold status-badge" data-user-id="${u.id}">${u.status}</span>
                                                             </c:otherwise>
                                                         </c:choose>
                                                     </td>
@@ -139,6 +142,27 @@
                                                         <a href="admin/admin-form-user.jsp?id=U001" class="btn btn-sm btn-warning" title="Chỉnh sửa">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
+                                                        <c:choose>
+                                                            <c:when test="${u.role eq 'Admin'}">
+                                                                <button class="btn btn-sm btn-secondary ms-1" disabled title="Tài khoản Admin không thể tác động">
+                                                                    <i class="fas fa-user-shield"></i>
+                                                                </button>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <c:choose>
+                                                                    <c:when test="${u.status eq 'BANNED'}">
+                                                                        <button class="btn btn-sm btn-success ms-1 btn-toggle-ban" data-user-id="${u.id}" data-action="unban" title="Mở khóa tài khoản">
+                                                                            <i class="fas fa-unlock"></i> Mở khóa
+                                                                        </button>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <button class="btn btn-sm btn-danger ms-1 btn-toggle-ban" data-user-id="${u.id}" data-action="ban" title="Khóa tài khoản">
+                                                                            <i class="fas fa-ban"></i> Khóa
+                                                                        </button>
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </c:otherwise>
+                                                        </c:choose>
                                                     </td>
                                                 </tr>
                                             </c:forEach>
@@ -246,5 +270,76 @@
 <%--        </div>--%>
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const contextPath = '${root}';
+
+    // Thao tác Khóa / Mở khóa động bằng AJAX Fetch
+    // Dùng Event Delegation để bắt các sự kiện click động (phòng trường hợp render động sau này)
+    document.addEventListener("click", function(e) {
+        const btn = e.target.closest(".btn-toggle-ban");
+        if (!btn) return;
+
+        e.preventDefault();
+        const userId = btn.getAttribute("data-user-id");
+        const action = btn.getAttribute("data-action");
+        const actionText = action === "ban" ? "KHÓA" : "MỞ KHÓA";
+
+        if (!confirm("Bạn có chắc chắn muốn " + actionText + " tài khoản này?")) {
+            return;
+        }
+
+        // Gửi AJAX POST yêu cầu cập nhật trạng thái
+        fetch(contextPath + "/admin/ban-user", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "user_id=" + encodeURIComponent(userId) + "&action=" + encodeURIComponent(action)
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw new Error(err.message || "Lỗi hệ thống"); });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === "success") {
+                alert(data.message);
+                
+                // 1. Cập nhật Badge Trạng Thái
+                const statusBadge = document.querySelector(".status-badge[data-user-id='" + userId + "']");
+                if (statusBadge) {
+                    if (data.newStatus === "BANNED") {
+                        statusBadge.className = "badge bg-dark fw-bold status-badge";
+                        statusBadge.textContent = "Bị Khóa";
+                    } else {
+                        statusBadge.className = "badge bg-success fw-bold status-badge";
+                        statusBadge.textContent = "Hoạt Động";
+                    }
+                }
+
+                // 2. Cập nhật Nút Hành Động
+                if (data.newStatus === "BANNED") {
+                    btn.className = "btn btn-sm btn-success ms-1 btn-toggle-ban";
+                    btn.setAttribute("data-action", "unban");
+                    btn.setAttribute("title", "Mở khóa tài khoản");
+                    btn.innerHTML = '<i class="fas fa-unlock"></i> Mở khóa';
+                } else {
+                    btn.className = "btn btn-sm btn-danger ms-1 btn-toggle-ban";
+                    btn.setAttribute("data-action", "ban");
+                    btn.setAttribute("title", "Khóa tài khoản");
+                    btn.innerHTML = '<i class="fas fa-ban"></i> Khóa';
+                }
+            } else {
+                alert(data.message || "Có lỗi xảy ra, vui lòng thử lại!");
+            }
+        })
+        .catch(error => {
+            alert("Lỗi: " + error.message);
+        });
+    });
+});
+</script>
 </body>
 </html>
