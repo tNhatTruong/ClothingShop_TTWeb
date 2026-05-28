@@ -34,29 +34,47 @@
                                         <option>--- Vui lòng chọn ---</option>
                                     </select>
                                 </div>
-                                <br/>
-                                <div id="shipping-new">
-                                    <form autocomplete="off" id="form-shipping-address" class="section-shipping-address">
+                                                              <div id="shipping-new">
+                                    <form action="${root}/place-order" method="POST" autocomplete="off" id="form-shipping-address" class="section-shipping-address needs-validation" novalidate>
+                                        <!-- Hidden parameters to retain checkout state upon validation failure -->
+                                        <input type="hidden" name="isCartCheckout" value="${isCartCheckout}" />
+                                        <input type="hidden" name="isBuyNow" value="${isBuyNow}" />
+                                        <input type="hidden" name="variants" value="${param.variants}" />
+                                        <input type="hidden" name="productName" value="${cName}" />
+                                        <input type="hidden" name="productImage" value="${cImage}" />
+                                        <input type="hidden" name="selectedSize" value="${cSize}" />
+                                        <input type="hidden" name="selectedColor" value="${cColor}" />
+                                        <input type="hidden" name="variantId" value="${cVariantId}" />
+                                        <input type="hidden" name="productPrice" value="${cPrice}" />
+                                        <input type="hidden" name="quantity" value="${cQty}" />
+                                        <input type="hidden" name="payment_method" id="hidden-payment-method" value="vnpay" />
+
+                                        <c:if test="${not empty errorMessage}">
+                                            <div class="alert alert-danger mb-3" role="alert">
+                                                ${errorMessage}
+                                            </div>
+                                        </c:if>
+
                                         <div class="row row-cols-1 row-cols-md-2">
 
                                             <div class="col mb-3 required order-1">
                                                 <label for="input-shipping-firstname" class="form-label">Họ tên</label>
                                                 <input type="text"
                                                        name="fullname"
-                                                       value="${sessionScope.auth.user_name}"
+                                                       value="${not empty fullname ? fullname : sessionScope.auth.user_name}"
                                                        placeholder="Họ tên" id="input-shipping-firstname"
-                                                       class="form-control"/>
-                                                <div id="error-shipping-firstname" class="invalid-feedback"></div>
+                                                       class="form-control" required/>
+                                                <div id="error-shipping-firstname" class="invalid-feedback">Vui lòng điền họ tên.</div>
                                             </div>
 
                                             <div class="col col-md-12 mb-3 required order-3">
                                                 <label for="input-shipping-address-1" class="form-label">Địa chỉ</label>
                                                 <input type="text"
                                                        name="address"
-                                                       value="${userAddress.street}"
+                                                       value="${not empty address ? address : (not empty userAddress ? userAddress.street : '')}"
                                                        placeholder="Địa chỉ" id="input-shipping-address-1"
-                                                       class="form-control"/>
-                                                <div id="error-shipping-address-1" class="invalid-feedback"></div>
+                                                       class="form-control" required/>
+                                                <div id="error-shipping-address-1" class="invalid-feedback">Vui lòng điền địa chỉ giao hàng.</div>
                                             </div>
 
                                             <div class="col mb-3 required d-none"></div>
@@ -65,10 +83,13 @@
                                                 <label for="input-shipping-custom-field-29" class="form-label">Điện thoại</label>
                                                 <input type="text" autocomplete="off"
                                                        name="phone"
-                                                       value="${sessionScope.auth.phone}"
+                                                       value="${not empty phone ? phone : sessionScope.auth.phone}"
                                                        placeholder="Điện thoại" id="input-shipping-custom-field-29"
-                                                       class="form-control"/>
-                                                <div id="error-shipping-custom-field-29" class="invalid-feedback"></div>
+                                                       class="form-control"
+                                                       required
+                                                       pattern="^(0|\+?84)[3|5|7|8|9][0-9]{8}$"
+                                                       oninput="this.value = this.value.replace(/[^0-9+]/g, '');"/>
+                                                <div id="error-shipping-custom-field-29" class="invalid-feedback">Số điện thoại không hợp lệ (Bắt đầu bằng 0 hoặc 84, theo sau là 9 chữ số).</div>
                                             </div>
 
                                             <div class="col col-md-12 mb-3 order-4"> <div class="row">
@@ -120,13 +141,13 @@
                                             <div class="col col-md-12 mb-3 custom-field custom-field-33">
                                                 <label for="input-shipping-custom-field-33" class="form-label">Ghi chú [Cho shop]</label>
                                                 <textarea name="note" rows="2" placeholder="" id="input-shipping-custom-field-33"
-                                                          class="form-control"></textarea>
+                                                           class="form-control"></textarea>
                                             </div>
 
                                             <div class="col col-md-12 mb-3 custom-field custom-field-34">
                                                 <label for="input-shipping-custom-field-34" class="form-label">Yêu cầu, lưu ý [cho shop]</label>
                                                 <textarea name="request" rows="2" placeholder="" id="input-shipping-custom-field-34"
-                                                          class="form-control"></textarea>
+                                                           class="form-control"></textarea>
                                             </div>
                                         </div>
                                     </form>
@@ -278,7 +299,27 @@
 </script>
 <script>
     document.getElementById("validate_order").addEventListener("click", function () {
-        window.location.href = contextPath + "/order-success";
+        const form = document.getElementById("form-shipping-address");
+        if (form) {
+            // Update hidden payment_method value before submitting
+            const selectedPayment = document.querySelector('input[name="payment_method"]:checked');
+            const hiddenPayment = document.getElementById("hidden-payment-method");
+            if (selectedPayment && hiddenPayment) {
+                hiddenPayment.value = selectedPayment.value;
+            }
+
+            if (form.checkValidity() === false) {
+                form.classList.add('was-validated');
+                // Scroll to the first invalid element
+                const firstInvalid = form.querySelector(':invalid');
+                if (firstInvalid) {
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstInvalid.focus();
+                }
+            } else {
+                form.submit();
+            }
+        }
     });
 </script>
 </body>

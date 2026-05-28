@@ -582,4 +582,12 @@ public class ProductDAO {
         });
     }
 
+    // 26. Đếm tổng số sản phẩm
+    public int countTotalProducts() {
+        return JDBIConnector.getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT COUNT(*) FROM products")
+                        .mapTo(Integer.class)
+                        .one()
+        );
+    }
 }

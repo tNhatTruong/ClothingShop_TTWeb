@@ -70,7 +70,14 @@ public class GoogleLoginController extends HttpServlet {
                 }
             }
 
+            // 3.5 Kiểm tra tài khoản bị khóa
+            if ("BANNED".equalsIgnoreCase(user.getStatus())) {
+                response.sendRedirect(request.getContextPath() + "/login?error=banned");
+                return;
+            }
+
             // 4. Tạo Session Đăng nhập
+            user.setPassword_hash(null); // Tẩy rửa mật khẩu băm để tránh rò rỉ dữ liệu nhạy cảm
             HttpSession session = request.getSession();
             session.setAttribute("auth", user);
 
@@ -101,7 +108,7 @@ public class GoogleLoginController extends HttpServlet {
             session.removeAttribute("returnUrl"); // Xóa sau khi dùng
 
             if ("Admin".equalsIgnoreCase(user.getRole())) {
-                response.sendRedirect(request.getContextPath() + "/admin-dashboard.jsp");
+                response.sendRedirect(request.getContextPath() + "/AdminDashboard");
             } else if (returnUrl != null && !returnUrl.isEmpty()) {
                 response.sendRedirect(returnUrl);
             } else {

@@ -25,6 +25,11 @@ public class LoginController extends HttpServlet {
         if (referer != null && !referer.contains("/login") && !referer.contains("/register") && !referer.contains("/verify") && !referer.contains("/reset-password")) {
             session.setAttribute("returnUrl", referer);
         }
+
+        String errorParam = request.getParameter("error");
+        if ("banned".equalsIgnoreCase(errorParam)) {
+            request.setAttribute("errorMsg", "Tài khoản của bạn đã bị khóa do vi phạm chính sách.");
+        }
         
         request.getRequestDispatcher("/views/pages/login.jsp").forward(request, response);
     }
@@ -50,9 +55,18 @@ public class LoginController extends HttpServlet {
                 return;
             }
 
+            // 2.5 Kiểm tra tài khoản bị khóa
+            if ("BANNED".equalsIgnoreCase(user.getStatus())) {
+                request.setAttribute("errorMsg", "Tài khoản của bạn đã bị khóa do vi phạm chính sách.");
+                request.setAttribute("email", email);
+                request.getRequestDispatcher("/views/pages/login.jsp").forward(request, response);
+                return;
+            }
+
             // 3. Đăng nhập thành công
             // 30 phút * 60 giây = 1800 giây
             // Nếu user không làm gì trong 30p, server tự hủy session này.
+            user.setPassword_hash(null); // Tẩy rửa mật khẩu băm để tránh rò rỉ dữ liệu nhạy cảm
             HttpSession session = request.getSession();
             session.setAttribute("auth", user);
             session.setAttribute("currentUser", user);
@@ -88,7 +102,7 @@ public class LoginController extends HttpServlet {
             session.removeAttribute("returnUrl"); // Xóa sau khi dùng
 
             if ("Admin".equalsIgnoreCase(user.getRole())) {
-                response.sendRedirect(request.getContextPath() + "/admin-dashboard.jsp");
+                response.sendRedirect(request.getContextPath() + "/AdminDashboard");
             } else if (returnUrl != null && !returnUrl.isEmpty()) {
                 response.sendRedirect(returnUrl);
             } else {

@@ -144,4 +144,33 @@ public class UserDAO {
                         .list()
         );
     }
+
+    // 12. Ban/Block user
+    public void banUser(int userId) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        jdbi.useHandle(handle -> {
+            String sql = "UPDATE users SET status = 'BANNED' WHERE id = ?";
+            handle.createUpdate(sql).bind(0, userId).execute();
+        });
+    }
+
+    // 13. Unban/Unblock user
+    public void unbanUser(int userId) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        jdbi.useHandle(handle -> {
+            String sql = "UPDATE users SET status = 'Hoạt Động' WHERE id = ?";
+            handle.createUpdate(sql).bind(0, userId).execute();
+        });
+    }
+
+    // 14. Tìm User theo ID
+    public User findById(int userId) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        return jdbi.withHandle(handle ->
+                handle.createQuery("SELECT * FROM users WHERE id = ?")
+                        .bind(0, userId)
+                        .mapToBean(User.class)
+                        .findOne().orElse(null)
+        );
+    }
 }

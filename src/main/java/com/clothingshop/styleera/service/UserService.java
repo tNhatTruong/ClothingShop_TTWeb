@@ -23,4 +23,16 @@ public class UserService {
         }
         return users;
     }
+
+    public void banUser(int userId) {
+        userDAO.banUser(userId);
+    }
+
+    public void unbanUser(int userId) {
+        userDAO.unbanUser(userId);
+    }
+
+    public User findById(int userId) {
+        return userDAO.findById(userId);
+    }
 }

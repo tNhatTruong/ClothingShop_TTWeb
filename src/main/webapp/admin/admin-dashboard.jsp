@@ -2,6 +2,9 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="root" value="${pageContext.request.contextPath}" scope="request" />
+<c:if test="${empty dashboardLoaded}">
+    <c:redirect url="${root}/AdminDashboard"/>
+</c:if>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -73,8 +76,8 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div>
-                                    <p class="text-muted small mb-1">Tổng giá tiền các sản phẩm</p>
-                                    <h3 class="mb-0"><fmt:formatNumber value="${totalProductPrice}" pattern="#,### VNĐ"/></h3>
+                                    <p class="text-muted small mb-1">Doanh Thu (Đã Giao)</p>
+                                    <h3 class="mb-0"><fmt:formatNumber value="${totalRevenue}" pattern="#,### VNĐ"/></h3>
                                 </div>
                                 <div class="stat-icon bg-warning text-white rounded-circle p-3">
                                     <i class="fas fa-dollar-sign fa-lg"></i>
@@ -90,8 +93,8 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div>
-                                    <p class="text-muted small mb-1">Tổng Sản Phẩm hiện có</p>
-                                    <h3 class="mb-0">${totalQuantity} sản phẩm</h3>
+                                    <p class="text-muted small mb-1">Tổng Sản Phẩm</p>
+                                    <h3 class="mb-0">${totalProducts} sản phẩm</h3>
                                 </div>
                                 <div class="stat-icon bg-danger text-white rounded-circle p-3">
                                     <i class="fas fa-box fa-lg"></i>
@@ -242,6 +245,21 @@
 
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+<script>
+    window.dashboardChartData = {
+        labels: [
+            <c:forEach items="${revenueChartLabels}" var="label" varStatus="s">
+            "${label}"<c:if test="${!s.last}">,</c:if>
+            </c:forEach>
+        ],
+        data: [
+            <c:forEach items="${revenueChartData}" var="amount" varStatus="s">
+            ${amount}<c:if test="${!s.last}">,</c:if>
+            </c:forEach>
+        ]
+    };
+</script>
 
 <!-- Custom JS -->
 <script src="${root}/admin/js/admin-common.js"></script>

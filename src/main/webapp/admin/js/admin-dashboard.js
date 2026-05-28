@@ -1,35 +1,65 @@
 let revenueChart = null;
-let categoryChart = null;
 
 document.addEventListener("DOMContentLoaded", function () {
     initializeDashboard();
 });
 
 function initializeDashboard() {
-    createRevenueChart();
-    createCategoryChart();
-    loadDashboardData();
+    const revenueCanvas = document.getElementById("revenueChart");
+    if (revenueCanvas) {
+        createRevenueChart(revenueCanvas);
+    }
+
+    const sidebarToggle = document.getElementById("sidebarToggle");
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener("click", function () {
+            document.querySelector(".admin-sidebar").classList.toggle("active");
+        });
+    }
+
+    const targetCanvas = document.getElementById("targetChart");
+    if (targetCanvas) {
+        initializeTargetChart(targetCanvas);
+    }
 }
 
-// Create Revenue Chart
-function createRevenueChart() {
-    const ctx = document.getElementById("revenueChart").getContext("2d");
+function getDashboardChartConfig() {
+    const chartData = window.dashboardChartData;
+    if (chartData && chartData.labels && chartData.labels.length > 0) {
+        return {
+            labels: chartData.labels,
+            data: chartData.data || [],
+        };
+    }
+
+    return {
+        labels: [],
+        data: [],
+    };
+}
+
+function formatRevenueTick(value) {
+    if (value >= 1_000_000) {
+        return (value / 1_000_000).toFixed(1) + "M";
+    }
+    if (value >= 1_000) {
+        return Math.round(value / 1_000) + "K";
+    }
+    return value;
+}
+
+function createRevenueChart(canvas) {
+    const config = getDashboardChartConfig();
+    const ctx = canvas.getContext("2d");
 
     revenueChart = new Chart(ctx, {
         type: "bar",
         data: {
-            labels: [
-                "Tháng 7",
-                "Tháng 8",
-                "Tháng 9",
-                "Tháng 10",
-                "Tháng 11",
-                "Tháng 12",
-            ],
+            labels: config.labels,
             datasets: [
                 {
-                    label: "Doanh Thu (triệu đ)",
-                    data: [65, 78, 90, 81, 95, 120],
+                    label: "Doanh Thu (VNĐ)",
+                    data: config.data,
                     backgroundColor: "#667eea",
                     borderColor: "#667eea",
                     borderWidth: 1,
@@ -40,7 +70,6 @@ function createRevenueChart() {
         options: {
             responsive: true,
             maintainAspectRatio: true,
-            indexAxis: undefined,
             plugins: {
                 legend: {
                     display: true,
@@ -56,7 +85,7 @@ function createRevenueChart() {
                     },
                     ticks: {
                         callback: function (value) {
-                            return value + "M";
+                            return formatRevenueTick(value);
                         },
                     },
                 },
@@ -70,106 +99,18 @@ function createRevenueChart() {
     });
 }
 
-// Create Category Chart (Pie)
-function createCategoryChart() {
-    const ctx = document.getElementById("categoryChart").getContext("2d");
-
-    categoryChart = new Chart(ctx, {
-        type: "doughnut",
-        data: {
-            labels: ["Nam", "Nữ", "Đồ Đôi"],
-            datasets: [
-                {
-                    label: "Phần trăm bán hàng",
-                    data: [45, 35, 20],
-                    backgroundColor: ["#667eea", "#28a745", "#ffc107"],
-                    borderColor: "#fff",
-                    borderWidth: 2,
-                },
-            ],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: {
-                    position: "bottom",
-                    labels: {
-                        padding: 15,
-                        font: {
-                            size: 12,
-                        },
-                    },
-                },
-            },
-        },
-    });
-}
-
-function loadDashboardData() {
-    // Simulate loading data from API
-    console.log("Loading dashboard data...");
-
-    // You can replace these with actual API calls
-    updateStatCards();
-    updateRecentOrders();
-}
-
-// Update Stat Cards
-function updateStatCards() {
-    const stats = [
-        {value: "2.5M", label: "Doanh Thu", change: "12.5%"},
-        {value: "1,234", label: "Đơn Hàng", change: "8.2%"},
-        {value: "856", label: "Khách Hàng", change: "5.3%"},
-        {value: "342", label: "Sản Phẩm", change: "0%"},
-    ];
-
-    console.log("Stats updated:", stats);
-}
-
-// Update Recent Orders
-function updateRecentOrders() {
-    const orders = [
-        {
-            id: "#985106",
-            customer: "Nguyễn Văn A",
-            date: "14/11/2025",
-            total: "500,000đ",
-            status: "Chờ Xác Nhận",
-        },
-        {
-            id: "#985105",
-            customer: "Trần Thị B",
-            date: "13/11/2025",
-            total: "750,000đ",
-            status: "Đang Giao",
-        },
-        {
-            id: "#985104",
-            customer: "Lê Văn C",
-            date: "12/11/2025",
-            total: "1,200,000đ",
-            status: "Đã Giao",
-        },
-    ];
-
-    console.log("Recent orders updated:", orders);
-}
-
-// Refresh dashboard data
 function refreshDashboard() {
-    loadDashboardData();
-    showSuccess("Dữ liệu đã được cập nhật!");
+    window.location.reload();
 }
 
-// Export dashboard data
 function exportDashboardData() {
+    const statCards = document.querySelectorAll(".stat-card h3");
     const data = {
-        timestamp: new Date(),
-        revenue: "2.5M",
-        orders: "1,234",
-        customers: "856",
-        products: "342",
+        timestamp: new Date().toISOString(),
+        users: statCards[0] ? statCards[0].textContent.trim() : "",
+        orders: statCards[1] ? statCards[1].textContent.trim() : "",
+        revenue: statCards[2] ? statCards[2].textContent.trim() : "",
+        products: statCards[3] ? statCards[3].textContent.trim() : "",
     };
 
     const dataStr = JSON.stringify(data, null, 2);
@@ -179,9 +120,9 @@ function exportDashboardData() {
     link.href = url;
     link.download = `dashboard-${new Date().getTime()}.json`;
     link.click();
+    URL.revokeObjectURL(url);
 }
 
-// Update chart with new data
 function updateChartData(newData) {
     if (revenueChart) {
         revenueChart.data.datasets[0].data = newData;
@@ -189,12 +130,8 @@ function updateChartData(newData) {
     }
 }
 
-document.getElementById("sidebarToggle").addEventListener("click", function () {
-    document.querySelector(".admin-sidebar").classList.toggle("active");
-});
-
-function initializeTargetChart() {
-    const ctx = document.getElementById("targetChart").getContext("2d");
+function initializeTargetChart(canvas) {
+    const ctx = canvas.getContext("2d");
     new Chart(ctx, {
         type: "doughnut",
         data: {
@@ -216,5 +153,3 @@ function initializeTargetChart() {
         },
     });
 }
-
-document.addEventListener("DOMContentLoaded", initializeTargetChart);

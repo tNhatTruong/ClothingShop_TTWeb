@@ -57,6 +57,10 @@ public class ProductService {
     public Product getProductEditById(int id) {
         return productDAO.findProductEditById(id);
     }
+    public int getTotalProducts() {
+        return productDAO.countTotalProducts();
+    }
+
     public double getTotalProductPrice() {
         return productDAO.getTotalProductPrice();
     }
