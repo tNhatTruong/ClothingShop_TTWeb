@@ -48,51 +48,60 @@ public class ProductController extends HttpServlet {
 
         // 3. Logic lọc sản phẩm
         try {
-            if (searchParam != null && !searchParam.isEmpty()) {
-                // Xử lý tìm kiếm
-                fullList = productService.findAll();
+            List<Product> baseList;
 
+            // BƯỚC 1: LẤY DANH SÁCH GỐC (Tìm kiếm hoặc Danh mục)
+            if (searchParam != null && !searchParam.isEmpty()) {
+                baseList = productService.findAll();
+                if (baseList != null) {
+                    baseList.removeIf(p -> p.getProduct_name() == null ||
+                            !p.getProduct_name().toLowerCase().contains(searchParam.toLowerCase()));
+                }
                 title = "Kết quả tìm kiếm: " + searchParam;
             }
-            else if (cateIdParam != null && priceRangeParam != null && !priceRangeParam.isEmpty()) {
-                // Lọc theo cả danh mục và khoảng giá
+            else if (cateIdParam != null && !cateIdParam.isEmpty()) {
                 int cateId = Integer.parseInt(cateIdParam);
-                int rangeType = Integer.parseInt(priceRangeParam);
-                fullList = categoryDAO.getProductsByPriceRange(cateId, rangeType);
-                title = categoryDAO.getSubNameById(cateId) + " - Lọc theo giá";
-            }
-            else if (cateIdParam != null) {
-                // Lọc theo danh mục con
-                int cateId = Integer.parseInt(cateIdParam);
-                fullList = productService.findBySubCategoryId(cateId);
+                baseList = productService.findBySubCategoryId(cateId);
                 title = categoryDAO.getSubNameById(cateId);
             }
-            else if (parentIdParam != null) {
-                // Lọc theo danh mục cha
+            else if (parentIdParam != null && !parentIdParam.isEmpty()) {
                 int parentId = Integer.parseInt(parentIdParam);
-                fullList = productService.findByParentCategoryId(parentId);
+                baseList = productService.findByParentCategoryId(parentId);
                 title = categoryDAO.getParentNameById(parentId);
             }
-            else if (sortParam != null) {
-                // Sắp xếp
-                fullList = productDAO.findAllSorted(sortParam);
-                if(sortParam.equals("newest")) title = "Hàng Mới Về";
-                else if(sortParam.equals("bestseller")) title = "Sản Phẩm Bán Chạy";
-                else title = "Tất cả sản phẩm";
-            }
-            else if (priceRangeParam != null && !priceRangeParam.isEmpty()) {
-                int rangeType = Integer.parseInt(priceRangeParam);
-                fullList = productDAO.getAllProductsByPriceRange(rangeType);
-                title = "Lọc theo giá";
+            else {
+                baseList = productService.findAll();
             }
 
-            else {
-                // Mặc định lấy tất cả
-                fullList = productService.findAll();
+            // Bọc vào ArrayList mới để có thể chỉnh sửa
+            fullList = (baseList != null) ? new ArrayList<>(baseList) : new ArrayList<>();
+
+            // BƯỚC 2: LỌC TIẾP THEO GIÁ
+            if (priceRangeParam != null && !priceRangeParam.isEmpty()) {
+                int rangeType = Integer.parseInt(priceRangeParam);
+                fullList.removeIf(p -> {
+                    double price = p.getPrice();
+                    if (rangeType == 1) return price >= 200000;
+                    if (rangeType == 2) return (price < 200000 || price > 500000);
+                    if (rangeType == 3) return price <= 500000;
+                    return false;
+                });
+                title += " - Lọc theo giá";
+            }
+
+            // BƯỚC 3: SẮP XẾP DANH SÁCH
+            if (sortParam != null && !sortParam.isEmpty()) {
+                if (sortParam.equals("price_asc")) {
+                    fullList.sort((p1, p2) -> Double.compare(p1.getPrice(), p2.getPrice()));
+                } else if (sortParam.equals("price_desc")) {
+                    fullList.sort((p1, p2) -> Double.compare(p2.getPrice(), p1.getPrice()));
+                } else if (sortParam.equals("newest") || sortParam.equals("bestseller")) {
+                    fullList.sort((p1, p2) -> Integer.compare(p2.getProduct_id(), p1.getProduct_id()));
+                }
             }
 
         } catch (NumberFormatException e) {
-            fullList = productService.findAll();
+            fullList = (productService.findAll() != null) ? new ArrayList<>(productService.findAll()) : new ArrayList<>();
         }
 
         // 4. XỬ LÝ PHÂN TRANG (PAGINATION LOGIC)
@@ -135,6 +144,7 @@ public class ProductController extends HttpServlet {
         request.setAttribute("currentCate", cateIdParam);
         request.setAttribute("currentParent", parentIdParam);
         request.setAttribute("currentSearch", searchParam);
+        request.setAttribute("currentPriceRange", priceRangeParam);
 
         request.setAttribute("listSizes", variantDAO.getAllSizes());
         request.setAttribute("listColors", variantDAO.getAllColors());

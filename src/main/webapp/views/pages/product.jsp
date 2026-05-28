@@ -90,6 +90,13 @@
                                 <input type="hidden" name="parentId" value="${currentParent}" />
                             </c:if>
 
+                            <c:if test="${not empty currentSort}">
+                                <input type="hidden" name="sort" value="${currentSort}" />
+                            </c:if>
+                            <c:if test="${not empty currentSearch}">
+                                <input type="hidden" name="search" value="${currentSearch}" />
+                            </c:if>
+
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="priceRange" value="1"
                                        id="priceRange1" ${currentPriceRange == '1' ? 'checked' : ''}>
@@ -158,12 +165,12 @@
                 <div class="filter-overlay" id="filterOverlay" onclick="toggleSidebar()"></div>
                 <div class="sort-bar d-flex justify-content-between align-items-center mb-3">
                     <span class="text-muted">Hiển thị trang ${currentPage} / ${totalPages}</span>
-                    <select class="form-select w-auto" onchange="location = this.value;">
-                        <option value="${root}/product" ${empty currentSort ? 'selected' : ''}>Mặc định</option>
-                        <option value="${root}/product?sort=newest" ${currentSort == 'newest' ? 'selected' : ''}>Hàng mới về</option>
-                        <option value="${root}/product?sort=bestseller" ${currentSort == 'bestseller' ? 'selected' : ''}>Sản phẩm bán chạy</option>
-                        <option value="${root}/product?sort=price_asc" ${currentSort == 'price_asc' ? 'selected' : ''}>Giá tăng dần</option>
-                        <option value="${root}/product?sort=price_desc" ${currentSort == 'price_desc' ? 'selected' : ''}>Giá giảm dần</option>
+                    <select class="form-select w-auto" onchange="updateSort(this.value)">
+                        <option value="" ${empty param.sort ? 'selected' : ''}>Mặc định</option>
+                        <option value="newest" ${param.sort == 'newest' ? 'selected' : ''}>Hàng mới về</option>
+                        <option value="bestseller" ${param.sort == 'bestseller' ? 'selected' : ''}>Sản phẩm bán chạy</option>
+                        <option value="price_asc" ${param.sort == 'price_asc' ? 'selected' : ''}>Giá tăng dần</option>
+                        <option value="price_desc" ${param.sort == 'price_desc' ? 'selected' : ''}>Giá giảm dần</option>
                     </select>
                 </div>
 
@@ -221,21 +228,20 @@
                 <c:if test="${totalPages >= 1}">
                     <nav aria-label="Page navigation" class="mt-5">
                         <ul class="pagination justify-content-center">
-
                             <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                <a class="page-link" href="?page=${currentPage - 1}&cateId=${currentCate}&parentId=${currentParent}&sort=${currentSort}&search=${currentSearch}" aria-label="Previous">
+                                <a class="page-link" href="?page=${currentPage - 1}&cateId=${currentCate}&parentId=${currentParent}&sort=${currentSort}&search=${currentSearch}&priceRange=${currentPriceRange}" aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
 
                             <c:forEach begin="1" end="${totalPages}" var="i">
                                 <li class="page-item ${currentPage == i ? 'active' : ''}">
-                                    <a class="page-link" href="?page=${i}&cateId=${currentCate}&parentId=${currentParent}&sort=${currentSort}&search=${currentSearch}">${i}</a>
+                                    <a class="page-link" href="?page=${i}&cateId=${currentCate}&parentId=${currentParent}&sort=${currentSort}&search=${currentSearch}&priceRange=${currentPriceRange}">${i}</a>
                                 </li>
                             </c:forEach>
 
                             <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                                <a class="page-link" href="?page=${currentPage + 1}&cateId=${currentCate}&parentId=${currentParent}&sort=${currentSort}&search=${currentSearch}" aria-label="Next">
+                                <a class="page-link" href="?page=${currentPage + 1}&cateId=${currentCate}&parentId=${currentParent}&sort=${currentSort}&search=${currentSearch}&priceRange=${currentPriceRange}" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>
                             </li>
@@ -325,6 +331,16 @@
         setupToggle(".toggle-color", ".hidden-color");
 
     });
+    function updateSort(sortValue) {
+        const url = new URL(window.location.href);
+        if (sortValue) {
+            url.searchParams.set('sort', sortValue);
+        } else {
+            url.searchParams.delete('sort');
+        }
+        url.searchParams.set('page', '1');
+        window.location.href = url.toString();
+    }
 </script>
 </body>
 </html>
