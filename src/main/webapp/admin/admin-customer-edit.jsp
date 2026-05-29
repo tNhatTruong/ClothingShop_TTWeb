@@ -65,11 +65,8 @@
                                         <th>ID</th>
                                         <th>Họ Tên</th>
                                         <th>Điện thoại</th>
-                                        <th>Địa chỉ</th>
-                                        <th>Quận/Huyện</th>
-                                        <th>Tỉnh/Thành phố</th>
+                                        <th>Địa Chỉ</th>
                                         <th>Email</th>
-                                        <th>Mật khẩu</th>
                                         <th>Vai trò</th>
                                         <th>Trạng Thái</th>
                                         <th>Hành Động</th>
@@ -79,9 +76,9 @@
                                     <c:choose>
                                         <c:when test="${empty users}">
                                             <tr>
-                                                <td colspan="11" class="text-center text-muted">
+                                                <td colspan="8" class="text-center text-muted py-4">
                                                     <i class="fas fa-inbox fa-2x"></i>
-                                                    <p>Chưa có người dùng</p>
+                                                    <p class="mb-0">Chưa có người dùng</p>
                                                 </td>
                                             </tr>
                                         </c:when>
@@ -91,30 +88,15 @@
                                                     <td>#${u.id}</td>
                                                     <td style="min-width: 180px;"> <strong>${u.user_name}</strong> </td>
                                                     <td>${u.phone}</td>
-                                                    <td>
+                                                    <td style="max-width: 300px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
                                                         <c:choose>
                                                             <c:when test="${not empty u.addresses}">
-                                                                ${u.addresses[0].street}
+                                                                ${u.addresses[0].street}, ${u.addresses[0].district}, ${u.addresses[0].province}
                                                             </c:when>
                                                             <c:otherwise>—</c:otherwise>
                                                         </c:choose>
                                                     </td>
-                                                    <td>
-                                                        <c:choose>
-                                                            <c:when test="${not empty u.addresses}">
-                                                                ${u.addresses[0].district}
-                                                            </c:when>
-                                                            <c:otherwise>—</c:otherwise>
-                                                        </c:choose>
-                                                    </td>
-                                                    <td>    <c:choose>
-                                                        <c:when test="${not empty u.addresses}">
-                                                            ${u.addresses[0].province}
-                                                        </c:when>
-                                                        <c:otherwise>—</c:otherwise>
-                                                    </c:choose></td>
                                                     <td>${u.email}</td>
-                                                    <td><strong>${u.password_hash}</strong></td>
                                                     <td>
                                                         <c:choose>
                                                             <c:when test="${u.role eq 'User'}">
@@ -139,7 +121,7 @@
                                                         </c:choose>
                                                     </td>
                                                     <td>
-                                                        <a href="admin/admin-form-user.jsp?id=U001" class="btn btn-sm btn-warning" title="Chỉnh sửa">
+                                                        <a href="${root}/AdminEditUser?id=${u.id}" class="btn btn-sm btn-warning" title="Chỉnh sửa">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
                                                         <c:choose>
