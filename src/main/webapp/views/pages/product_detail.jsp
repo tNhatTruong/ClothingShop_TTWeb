@@ -3,7 +3,9 @@
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <c:set var="root" value="${pageContext.request.contextPath}" scope="request"/>
 <%@ page import="java.util.List" %>
+<%@ page import="com.clothingshop.styleera.model.Review" %>
 <%@ page import="com.clothingshop.styleera.model.Product" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -234,130 +236,62 @@
     <div class="reviews">
         <h2>ĐÁNH GIÁ SẢN PHẨM</h2>
         <div class="review-container">
-            <!-- Khối bên trái: Đánh giá của người dùng -->
-            <div class="left-block">
-                <div class="item">
-                    <!-- Phần đánh giá bên trái -->
-                    <div class="review-content">
-                        <div class="item_top">
-                            <div class="user">
-                                <img src="<c:url value='/images/image_product/user.png'/>"
-                                     alt="${rp.product_name}">
+            <%
+                // Lấy danh sách đánh giá từ request attribute do Controller gửi sang
+                List<Review> reviewList = (List<Review>) request.getAttribute("reviewList");
 
-                                <div class="infos">
-                                    <p><span class="reviews">T***h</span></p>
-                                    <p><span class="time">2025-20-11</span></p>
-                                </div>
-                            </div>
-                        </div>
+                if (reviewList != null && !reviewList.isEmpty()) {
+                    // Định dạng ngày tháng hiển thị theo kiểu năm-tháng-ngày giống form mẫu
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-                        <!-- Bao quanh item_mid và item_content để xếp ngang -->
-                        <div class="review-details">
-                            <div class="item_mid">
-                                <div class="rating">
-                                    <img src="../../images/image_product/start.png">
-                                    <img src="../../images/image_product/start.png">
-                                    <img src="../../images/image_product/start.png">
-                                    <img src="../../images/image_product/start.png">
-                                    <img src="../../images/image_product/start.png">
-                                </div>
-                            </div>
-                            <div class="item_content">
-                                <div class="item-content-main-content  ">
-                                    <div class="item-content-main-content-skuInfo">
-                                        <div class="skuInfo-item"><span class="skuInfo-label">Màu:&nbsp;</span><span
-                                                class="skuInfo-value">Xanh</span></div>
-                                        <div class="skuInfo-item"><span
-                                                class="skuInfo-label">Size:&nbsp;</span><span
-                                                class="skuInfo-value">L </span></div>
-                                    </div>
-                                    <div class="item-content-main-content-reviews">
-                                        <div class="item-content-main-content-reviews-item"><span>Áo đẹp, mặc mát,
-                                                    tôn dáng nha mn, cũng ít chỉ thừa, với giá này thì ok lắm</span>
-                                        </div>
-                                        <div class="item-content-main-content-reviews-item"><span
-                                                class="review-attribute">Chất liệu: </span><span>chất dày vải
-                                                    đẹp.</span>
-                                        </div>
-                                        <div class="item-content-main-content-reviews-item"><span
-                                                class="review-attribute">🎨Design:</span><span>rất sang trọng</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Phần ảnh bên phải -->
-                    <div class="right-block">
-
-                        <img src="<c:url value='/images/image_product/anh_polo1.png'/>"
-                             alt="${rp.product_name}">
-                        <img src="<c:url value='/images/image_product/anh_polo2.png'/>"
-                             alt="${rp.product_name}">
-                    </div>
-                </div>
-            </div>
-
+                    for (Review r : reviewList) {
+                        String formattedDate = sdf.format(r.getCreatedAt());
+            %>
             <div class="item">
-                <!-- Phần đánh giá bên trái -->
                 <div class="review-content">
                     <div class="item_top">
                         <div class="user">
-                            <img src="<c:url value='/images/image_product/user.png'/>"
-                                 alt="${rp.product_name}">
+                            <img src="<%= request.getContextPath() %>/images/image_product/user.png" alt="User Avatar">
+
                             <div class="infos">
-                                <p><span class="reviews">H***h</span></p>
-                                <p><span class="time">2025-21-11</span></p>
+                                <p><span class="reviews"><%= r.getFullName() %></span></p>
+                                <p><span class="time"><%= formattedDate %></span></p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Bao quanh item_mid và item_content để xếp ngang -->
                     <div class="review-details">
                         <div class="item_mid">
                             <div class="rating">
-                                <img src="../../images/image_product/start.png">
-                                <img src="../../images/image_product/start.png">
-                                <img src="../../images/image_product/start.png">
-                                <img src="../../images/image_product/start.png">
-
+                                <%
+                                    // Vòng lặp hiển thị chuẩn số ngôi sao dựa trên dữ liệu rating (1-5) trong DB
+                                    for (int i = 0; i < r.getRating(); i++) {
+                                %>
+                                <img src="<%= request.getContextPath() %>/images/image_product/start.png" alt="star">
+                                <% } %>
                             </div>
                         </div>
+
                         <div class="item_content">
-                            <div class="item-content-main-content  ">
-                                <div class="item-content-main-content-skuInfo">
-                                    <div class="skuInfo-item"><span class="skuInfo-label">Màu:&nbsp;</span><span
-                                            class="skuInfo-value">Đỏ</span></div>
-                                    <div class="skuInfo-item"><span class="skuInfo-label">Size:&nbsp;</span><span
-                                            class="skuInfo-value">XL</span></div>
-                                </div>
+                            <div class="item-content-main-content">
                                 <div class="item-content-main-content-reviews">
-                                    <div class="item-content-main-content-reviews-item"><span>Shop giao hàng nhanh,
-                                                đón gói cẩn thận, chất liệu áo mềm mịn sờ mát tay, màu áo rất đẹp</span>
-                                    </div>
-                                    <div class="item-content-main-content-reviews-item"><span
-                                            class="review-attribute">Chất liệu: </span><span>chất dày vải
-                                                đẹp.</span>
-                                    </div>
-                                    <div class="item-content-main-content-reviews-item"><span
-                                            class="review-attribute">🎨Design:</span><span>rất sang trọng</span>
+                                    <div class="item-content-main-content-reviews-item">
+                                        <span><%= r.getComment() %></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Phần ảnh bên phải -->
-                <div class="right-block">
-
-                    <img src="<c:url value='/images/image_product/anh1.1.png'/>"
-                         alt="${rp.product_name}">
-                    <img src="<c:url value='/images/image_product/anh1.1.2.png'/>"
-                         alt="${rp.product_name}">
-                </div>
             </div>
+            <%
+                }
+            } else {
+            %>
+            <div class="col-12 text-center py-5">
+                <p class="text-muted" style="font-style: italic;">Sản phẩm này chưa có lượt đánh giá nào từ khách hàng.</p>
+            </div>
+            <% } %>
         </div>
     </div>
     </div>
