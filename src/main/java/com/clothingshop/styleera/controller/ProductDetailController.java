@@ -1,8 +1,11 @@
 package com.clothingshop.styleera.controller;
 
+import com.clothingshop.styleera.dao.ReviewDAO;
 import com.clothingshop.styleera.model.Product;
+import com.clothingshop.styleera.model.Review;
 import com.clothingshop.styleera.model.Variants;
 import com.clothingshop.styleera.service.ProductService;
+import com.clothingshop.styleera.service.ReviewService;
 import com.clothingshop.styleera.service.VariantService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,11 +21,13 @@ public class ProductDetailController extends HttpServlet {
 
     private ProductService productService;
     private VariantService variantService;
+    private ReviewService reviewService;
 
     @Override
     public void init() throws ServletException {
         this.productService = new ProductService();
         this.variantService = new VariantService();
+        this.reviewService = new ReviewService();
     }
 
     @Override
@@ -47,6 +52,7 @@ public class ProductDetailController extends HttpServlet {
                 List<String> imageList = productService.getImagesByProductId(productId);
                 List<Variants> variantList = productService.getVariantsByProductId(productId);
                 List<String> colorList = productService.getColorsByProductId(productId);
+                List<String> sizeList = productService.getSizesByProductId(productId);
 
                 // Lấy sản phẩm liên quan (nếu có sub-category)
                 List<Product> relatedProducts = null;
@@ -60,12 +66,17 @@ public class ProductDetailController extends HttpServlet {
                 Integer defaultVariantId = variantService.getDefaultVariantId(productId);
                 product.setDefaultVariantId(defaultVariantId);
 
+                List<Review> reviewList = reviewService.getReviewsByProductId(productId);
+
                 // 3. Đẩy dữ liệu ra JSP
                 request.setAttribute("product", product);
                 request.setAttribute("imageList", imageList);
                 request.setAttribute("variantList", variantList);
                 request.setAttribute("colorList", colorList);
                 request.setAttribute("relatedProducts", relatedProducts);
+                request.setAttribute("product", product);
+                request.setAttribute("reviewList", reviewList);
+                request.setAttribute("sizeList", sizeList);
 
                 request.getRequestDispatcher("/views/pages/product_detail.jsp").forward(request, response);
             } else {

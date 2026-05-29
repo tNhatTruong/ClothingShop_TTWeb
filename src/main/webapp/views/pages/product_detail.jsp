@@ -2,6 +2,10 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <c:set var="root" value="${pageContext.request.contextPath}" scope="request"/>
+<%@ page import="java.util.List" %>
+<%@ page import="com.clothingshop.styleera.model.Review" %>
+<%@ page import="com.clothingshop.styleera.model.Product" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -15,6 +19,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="${root}/css/header-footer.css">
     <link rel="stylesheet" href="${root}/css/product_detail.css">
+    <link rel="stylesheet" href="${root}/css/style.css">
 </head>
 
 <body>
@@ -77,13 +82,13 @@
                     <form action="${root}/checkout" method="POST" id="checkoutForm">
                         <!-- SIZE -->
                         <div class="product_detail_size">
-                            <label class="size-label">S</label>
-                            <label class="size-label">M</label>
-                            <label class="size-label">L</label>
-                            <label class="size-label active">XL</label>
-                            <label class="size-label">XXL</label>
+                            <span>Size:</span>
+                            <c:forEach items="${sizeList}" var="s" varStatus="status">
+                                <label class="size-label ${status.first ? 'active' : ''}"
+                                       onclick="pickSize(this, '${s}')">${s}</label>
+                            </c:forEach>
                         </div>
-
+                        <input type="hidden" name="selectedSize" id="finalSize" value="${sizeList[0]}">
                         <!-- COLOR -->
                         <div class="product_detail_color">
                             <span>Color:</span>
@@ -229,131 +234,117 @@
     </div>
     </div>
     <div class="reviews">
-        <h2>ĐÁNH GIÁ SẢN PHẨM</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>ĐÁNH GIÁ SẢN PHẨM</h2>
+            <c:choose>
+                <c:when test="${not empty sessionScope.currentUser}">
+                    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                        <i class="fas fa-pen"></i> Viết đánh giá
+                    </button>
+                </c:when>
+                <c:otherwise>
+                    <a href="${root}/login" class="btn btn-outline-dark">
+                        <i class="fas fa-sign-in-alt"></i> Đăng nhập để đánh giá
+                    </a>
+                </c:otherwise>
+            </c:choose>
+        </div>
         <div class="review-container">
-            <!-- Khối bên trái: Đánh giá của người dùng -->
-            <div class="left-block">
-                <div class="item">
-                    <!-- Phần đánh giá bên trái -->
-                    <div class="review-content">
-                        <div class="item_top">
-                            <div class="user">
-                                <img src="<c:url value='/images/image_product/user.png'/>"
-                                     alt="${rp.product_name}">
+            <%
+                // Lấy danh sách đánh giá từ request attribute do Controller gửi sang
+                List<Review> reviewList = (List<Review>) request.getAttribute("reviewList");
 
-                                <div class="infos">
-                                    <p><span class="reviews">T***h</span></p>
-                                    <p><span class="time">2025-20-11</span></p>
-                                </div>
-                            </div>
-                        </div>
+                if (reviewList != null && !reviewList.isEmpty()) {
+                    // Định dạng ngày tháng hiển thị theo kiểu năm-tháng-ngày giống form mẫu
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-                        <!-- Bao quanh item_mid và item_content để xếp ngang -->
-                        <div class="review-details">
-                            <div class="item_mid">
-                                <div class="rating">
-                                    <img src="../../images/image_product/start.png">
-                                    <img src="../../images/image_product/start.png">
-                                    <img src="../../images/image_product/start.png">
-                                    <img src="../../images/image_product/start.png">
-                                    <img src="../../images/image_product/start.png">
-                                </div>
-                            </div>
-                            <div class="item_content">
-                                <div class="item-content-main-content  ">
-                                    <div class="item-content-main-content-skuInfo">
-                                        <div class="skuInfo-item"><span class="skuInfo-label">Màu:&nbsp;</span><span
-                                                class="skuInfo-value">Xanh</span></div>
-                                        <div class="skuInfo-item"><span
-                                                class="skuInfo-label">Size:&nbsp;</span><span
-                                                class="skuInfo-value">L </span></div>
-                                    </div>
-                                    <div class="item-content-main-content-reviews">
-                                        <div class="item-content-main-content-reviews-item"><span>Áo đẹp, mặc mát,
-                                                    tôn dáng nha mn, cũng ít chỉ thừa, với giá này thì ok lắm</span>
-                                        </div>
-                                        <div class="item-content-main-content-reviews-item"><span
-                                                class="review-attribute">Chất liệu: </span><span>chất dày vải
-                                                    đẹp.</span>
-                                        </div>
-                                        <div class="item-content-main-content-reviews-item"><span
-                                                class="review-attribute">🎨Design:</span><span>rất sang trọng</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Phần ảnh bên phải -->
-                    <div class="right-block">
-
-                        <img src="<c:url value='/images/image_product/anh_polo1.png'/>"
-                             alt="${rp.product_name}">
-                        <img src="<c:url value='/images/image_product/anh_polo2.png'/>"
-                             alt="${rp.product_name}">
-                    </div>
-                </div>
-            </div>
-
+                    for (Review r : reviewList) {
+                        String formattedDate = sdf.format(r.getCreatedAt());
+            %>
             <div class="item">
-                <!-- Phần đánh giá bên trái -->
                 <div class="review-content">
                     <div class="item_top">
                         <div class="user">
-                            <img src="<c:url value='/images/image_product/user.png'/>"
-                                 alt="${rp.product_name}">
+                            <img src="<%= request.getContextPath() %>/images/image_product/user.png" alt="User Avatar">
+
                             <div class="infos">
-                                <p><span class="reviews">H***h</span></p>
-                                <p><span class="time">2025-21-11</span></p>
+                                <p><span class="reviews"><%= r.getFullName() %></span></p>
+                                <p><span class="time"><%= formattedDate %></span></p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Bao quanh item_mid và item_content để xếp ngang -->
                     <div class="review-details">
                         <div class="item_mid">
                             <div class="rating">
-                                <img src="../../images/image_product/start.png">
-                                <img src="../../images/image_product/start.png">
-                                <img src="../../images/image_product/start.png">
-                                <img src="../../images/image_product/start.png">
-
+                                <%
+                                    // Vòng lặp hiển thị chuẩn số ngôi sao dựa trên dữ liệu rating (1-5) trong DB
+                                    for (int i = 0; i < r.getRating(); i++) {
+                                %>
+                                <img src="<%= request.getContextPath() %>/images/image_product/start.png" alt="star">
+                                <% } %>
                             </div>
                         </div>
+
                         <div class="item_content">
-                            <div class="item-content-main-content  ">
-                                <div class="item-content-main-content-skuInfo">
-                                    <div class="skuInfo-item"><span class="skuInfo-label">Màu:&nbsp;</span><span
-                                            class="skuInfo-value">Đỏ</span></div>
-                                    <div class="skuInfo-item"><span class="skuInfo-label">Size:&nbsp;</span><span
-                                            class="skuInfo-value">XL</span></div>
-                                </div>
+                            <div class="item-content-main-content">
                                 <div class="item-content-main-content-reviews">
-                                    <div class="item-content-main-content-reviews-item"><span>Shop giao hàng nhanh,
-                                                đón gói cẩn thận, chất liệu áo mềm mịn sờ mát tay, màu áo rất đẹp</span>
-                                    </div>
-                                    <div class="item-content-main-content-reviews-item"><span
-                                            class="review-attribute">Chất liệu: </span><span>chất dày vải
-                                                đẹp.</span>
-                                    </div>
-                                    <div class="item-content-main-content-reviews-item"><span
-                                            class="review-attribute">🎨Design:</span><span>rất sang trọng</span>
+                                    <div class="item-content-main-content-reviews-item">
+                                        <span><%= r.getComment() %></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Phần ảnh bên phải -->
-                <div class="right-block">
-
-                    <img src="<c:url value='/images/image_product/anh1.1.png'/>"
-                         alt="${rp.product_name}">
-                    <img src="<c:url value='/images/image_product/anh1.1.2.png'/>"
-                         alt="${rp.product_name}">
+            </div>
+            <%
+                }
+            } else {
+            %>
+            <div class="col-12 text-center py-5">
+                <p class="text-muted" style="font-style: italic;">Sản phẩm này chưa có lượt đánh giá nào từ khách hàng.</p>
+            </div>
+            <% } %>
+        </div>
+    </div>
+    <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="reviewModalLabel">Viết đánh giá sản phẩm</h5>
+                    <button type="button" class="btn btn-dark mb-4" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                        <i class="fas fa-pen"></i> Viết đánh giá
+                    </button>
                 </div>
+
+                <form action="${root}/submit_review" method="POST">
+                    <div class="modal-body">
+                        <input type="hidden" name="productId" value="${product.product_id}">
+                        <input type="hidden" name="rating" id="ratingInput" value="5">
+
+                        <div class="mb-4 text-center">
+                            <label class="form-label d-block mb-2">Chất lượng sản phẩm:</label>
+                            <div class="star-rating-form" style="font-size: 2rem; cursor: pointer;">
+                                <i class="fas fa-star text-warning" onclick="setFormRating(1)"></i>
+                                <i class="fas fa-star text-warning" onclick="setFormRating(2)"></i>
+                                <i class="fas fa-star text-warning" onclick="setFormRating(3)"></i>
+                                <i class="fas fa-star text-warning" onclick="setFormRating(4)"></i>
+                                <i class="fas fa-star text-warning" onclick="setFormRating(5)"></i>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="reviewComment" class="form-label">Nội dung đánh giá:</label>
+                            <textarea class="form-control" name="comment" id="reviewComment" rows="4"
+                                      placeholder="Hãy chia sẻ cảm nhận của bạn về sản phẩm này nhé..." required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Trở lại</button>
+                        <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -364,77 +355,65 @@
     <div class="re">
         <div class="related">
             <div class="container">
-                <div class="row">
-                    <div class="col_top">
-                        <h3 class="related-title">SẢN PHẨM LIÊN QUAN</h3>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <h3 class="related-title" style="font-weight: bold; text-transform: uppercase;">Sản phẩm liên quan</h3>
                     </div>
                 </div>
-                <div class="row">
-                    <%-- Vòng lặp tự động lấy từng sản phẩm từ danh sách relatedProducts --%>
-                    <div class="col_1">
-                        <div class="product_item">
-                            <div class="product_item_pic2">
-                                <a href="<c:url value='/Product_DetailController?id=${rp.product_id}'/>">
-                                    <img src="<c:url value='/images/product_item_nam/1/1.3/trangphuc_nam.png'/>"
-                                         alt="${rp.product_name}">
-                                </a>
-                            </div>
-                            <div class="product_item_text">
-                                <h6>Quần jeans nam natural form tapered dáng suông </h6>
-                                <h5>810.000đ</h5>
 
-                                <button class="add-to-cart-btn">Thêm vào giỏ hàng</button>
+                <div class="products-grid">
+                    <%
+                        // Lấy danh sách sản phẩm liên quan từ request attribute
+                        List<Product> relatedProducts = (List<Product>) request.getAttribute("relatedProducts");
+
+                        if (relatedProducts != null && !relatedProducts.isEmpty()) {
+                            for (Product p : relatedProducts) {
+                                String imgPath = (p.getThumbnail() != null)
+                                        ? request.getContextPath() + p.getThumbnail()
+                                        : request.getContextPath() + "/images/no-image.png";
+                    %>
+                    <div class="product-card">
+                        <a href="${root}/product_detail?id=<%=p.getProduct_id()%>" class="product-card-link">
+                            <div class="product-image">
+                                <span class="product-badge badge-new">NEW</span>
+                                <img src="<%=imgPath%>" alt="<%=p.getProduct_name()%>" loading="lazy">
+                            </div>
+                        </a>
+
+                        <div class="product-details">
+                            <div class="product-info">
+                                <a href="${root}/product_detail?id=<%=p.getProduct_id()%>" style="text-decoration: none;">
+                                    <h4><%=p.getProduct_name()%></h4>
+                                </a>
+
+                                <div class="product-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+
+                            <div class="product-bottom">
+                                <div class="product-price">
+                                    <span class="price"><%=String.format("%,.0f", p.getPrice())%>₫</span>
+                                </div>
+
+                                <button class="btn-cart" type="button" title="Thêm vào giỏ"
+                                        <%= p.getDefaultVariantId() == null ? "disabled" : "" %>
+                                        onclick="addToCart(<%= p.getDefaultVariantId() %>)">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
-                    <div class="col_2">
-                        <div class="product_item">
-                            <div class="product_item_pic2">
-                                <a href="<c:url value='/Product_DetailController?id=${rp.product_id}'/>">
-                                    <img src="<c:url value='/images/product_item_nam/7/7.3/trangphuc_nam.png'/>"
-                                         alt="${rp.product_name}">
-                                </a>
-                            </div>
-                            <div class="product_item_text">
-                                <h6>Quần jeans nam natural form tapered dáng suông </h6>
-                                <h5>1.510.000đ</h5>
-
-                                <button class="add-to-cart-btn">Thêm vào giỏ hàng</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col_3">
-                        <div class="product_item sale">
-                            <div class="product_item_pic2">
-                                <a href="<c:url value='/Product_DetailController?id=${rp.product_id}'/>">
-                                    <img src="<c:url value='/images/product_item_nam/4/4.10/trangphuc_nam.png'/>"
-                                         alt="${rp.product_name}">
-                                </a>
-                            </div>
-                            <div class="product_item_text">
-                                <h6>Áo Sơ Mi Nam Tay Dài Chất Liệu BAMBOO Cao Cấp</h6>
-                                <h5>890.000đ</h5>
-
-                                <button class="add-to-cart-btn">Thêm vào giỏ hàng</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col_4">
-                        <div class="product_item">
-                            <div class="product_item_pic2">
-                                <a href="<c:url value='/Product_DetailController?id=${rp.product_id}'/>">
-                                    <img src="<c:url value='/images/product_item_nam/5/5.10/trangphuc_nam.png'/>"
-                                         alt="${rp.product_name}">
-                                </a>
-                            </div>
-                            <div class="product_item_text">
-                                <h6>Quần Short Kaki Nam Cotton Spandex Form Straight</h6>
-                                <h5>879.000đ</h5>
-
-                                <button class="add-to-cart-btn">Thêm vào giỏ hàng</button>
-                            </div>
-                        </div>
-                    </div>
+                    <%
+                        }
+                    } else {
+                    %>
+                    <p class="text-center" style="grid-column: 1 / -1; color: #6c757d;">Không tìm thấy sản phẩm liên quan nào...</p>
+                    <% } %>
                 </div>
             </div>
         </div>
@@ -457,6 +436,27 @@
 </script>
 <%--Xử lý sự kiện trong product - thêm giỏ hàng--%>
 <script src="${root}/js/add-cart.js?v=<%= System.currentTimeMillis() %>"></script>
+<script>
+    // Hàm xử lý hiệu ứng click chọn số sao trong Form đánh giá
+    function setFormRating(rating) {
+        // Cập nhật giá trị số sao vào ô input ẩn để gửi về Server
+        document.getElementById('ratingInput').value = rating;
+
+        // Đổi màu hiển thị của các ngôi sao
+        const stars = document.querySelectorAll('.star-rating-form .fa-star');
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                // Sáng lên (Thêm màu vàng, bỏ màu xám)
+                star.classList.add('text-warning');
+                star.classList.remove('text-muted');
+            } else {
+                // Tối đi (Thêm màu xám, bỏ màu vàng)
+                star.classList.remove('text-warning');
+                star.classList.add('text-muted');
+            }
+        });
+    }
+</script>
 </body>
 
 </html>
