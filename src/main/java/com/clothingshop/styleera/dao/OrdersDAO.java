@@ -61,4 +61,19 @@ public class OrdersDAO {
         });
     }
 
+    // Lấy thông tin đơn hàng theo ID
+    public Orders findById(int orderId) {
+        return JDBIConnector.getJdbi().withHandle(handle ->
+                handle.createQuery(
+                                "SELECT id, user_id, address_id, status, note, price, " +
+                                        "fee_delivery, total_price, created_at " +
+                                        "FROM orders " +
+                                        "WHERE id = :id"
+                        )
+                        .bind("id", orderId)
+                        .mapToBean(Orders.class)
+                        .findOne()
+                        .orElse(null)
+        );
+    }
 }

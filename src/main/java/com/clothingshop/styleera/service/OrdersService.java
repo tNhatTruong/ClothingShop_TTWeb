@@ -42,4 +42,8 @@ public class OrdersService {
         }
         return data;
     }
+
+    public Orders findById(int orderId) {
+        return ordersDAO.findById(orderId);
+    }
 }
