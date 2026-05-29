@@ -82,13 +82,13 @@
                     <form action="${root}/checkout" method="POST" id="checkoutForm">
                         <!-- SIZE -->
                         <div class="product_detail_size">
-                            <label class="size-label">S</label>
-                            <label class="size-label">M</label>
-                            <label class="size-label">L</label>
-                            <label class="size-label active">XL</label>
-                            <label class="size-label">XXL</label>
+                            <span>Size:</span>
+                            <c:forEach items="${sizeList}" var="s" varStatus="status">
+                                <label class="size-label ${status.first ? 'active' : ''}"
+                                       onclick="pickSize(this, '${s}')">${s}</label>
+                            </c:forEach>
                         </div>
-
+                        <input type="hidden" name="selectedSize" id="finalSize" value="${sizeList[0]}">
                         <!-- COLOR -->
                         <div class="product_detail_color">
                             <span>Color:</span>

@@ -104,5 +104,13 @@ public class VariantDAO {
         );
     }
 
-
+    public List<String> getSizesByProductId(int productId) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        return jdbi.withHandle(handle ->
+                handle.createQuery("SELECT DISTINCT size FROM variants WHERE product_id = :productId")
+                        .bind("productId", productId)
+                        .mapTo(String.class)
+                        .list()
+        );
+    }
 }

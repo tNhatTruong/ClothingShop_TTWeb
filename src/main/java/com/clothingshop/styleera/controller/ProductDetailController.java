@@ -52,6 +52,7 @@ public class ProductDetailController extends HttpServlet {
                 List<String> imageList = productService.getImagesByProductId(productId);
                 List<Variants> variantList = productService.getVariantsByProductId(productId);
                 List<String> colorList = productService.getColorsByProductId(productId);
+                List<String> sizeList = productService.getSizesByProductId(productId);
 
                 // Lấy sản phẩm liên quan (nếu có sub-category)
                 List<Product> relatedProducts = null;
@@ -75,6 +76,7 @@ public class ProductDetailController extends HttpServlet {
                 request.setAttribute("relatedProducts", relatedProducts);
                 request.setAttribute("product", product);
                 request.setAttribute("reviewList", reviewList);
+                request.setAttribute("sizeList", sizeList);
 
                 request.getRequestDispatcher("/views/pages/product_detail.jsp").forward(request, response);
             } else {

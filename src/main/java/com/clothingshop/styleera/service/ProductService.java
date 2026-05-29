@@ -54,6 +54,10 @@ public class ProductService {
         return variantDAO.getColorsByProductId(id);
     }
 
+    public List<String> getSizesByProductId(int id) {
+        return variantDAO.getSizesByProductId(id);
+    }
+
     public Product getProductEditById(int id) {
         return productDAO.findProductEditById(id);
     }
