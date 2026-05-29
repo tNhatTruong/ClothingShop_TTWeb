@@ -234,7 +234,21 @@
     </div>
     </div>
     <div class="reviews">
-        <h2>ĐÁNH GIÁ SẢN PHẨM</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>ĐÁNH GIÁ SẢN PHẨM</h2>
+            <c:choose>
+                <c:when test="${not empty sessionScope.currentUser}">
+                    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                        <i class="fas fa-pen"></i> Viết đánh giá
+                    </button>
+                </c:when>
+                <c:otherwise>
+                    <a href="${root}/login" class="btn btn-outline-dark">
+                        <i class="fas fa-sign-in-alt"></i> Đăng nhập để đánh giá
+                    </a>
+                </c:otherwise>
+            </c:choose>
+        </div>
         <div class="review-container">
             <%
                 // Lấy danh sách đánh giá từ request attribute do Controller gửi sang
@@ -292,6 +306,46 @@
                 <p class="text-muted" style="font-style: italic;">Sản phẩm này chưa có lượt đánh giá nào từ khách hàng.</p>
             </div>
             <% } %>
+        </div>
+    </div>
+    <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="reviewModalLabel">Viết đánh giá sản phẩm</h5>
+                    <button type="button" class="btn btn-dark mb-4" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                        <i class="fas fa-pen"></i> Viết đánh giá
+                    </button>
+                </div>
+
+                <form action="${root}/submit_review" method="POST">
+                    <div class="modal-body">
+                        <input type="hidden" name="productId" value="${product.product_id}">
+                        <input type="hidden" name="rating" id="ratingInput" value="5">
+
+                        <div class="mb-4 text-center">
+                            <label class="form-label d-block mb-2">Chất lượng sản phẩm:</label>
+                            <div class="star-rating-form" style="font-size: 2rem; cursor: pointer;">
+                                <i class="fas fa-star text-warning" onclick="setFormRating(1)"></i>
+                                <i class="fas fa-star text-warning" onclick="setFormRating(2)"></i>
+                                <i class="fas fa-star text-warning" onclick="setFormRating(3)"></i>
+                                <i class="fas fa-star text-warning" onclick="setFormRating(4)"></i>
+                                <i class="fas fa-star text-warning" onclick="setFormRating(5)"></i>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="reviewComment" class="form-label">Nội dung đánh giá:</label>
+                            <textarea class="form-control" name="comment" id="reviewComment" rows="4"
+                                      placeholder="Hãy chia sẻ cảm nhận của bạn về sản phẩm này nhé..." required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Trở lại</button>
+                        <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
     </div>
@@ -382,6 +436,27 @@
 </script>
 <%--Xử lý sự kiện trong product - thêm giỏ hàng--%>
 <script src="${root}/js/add-cart.js?v=<%= System.currentTimeMillis() %>"></script>
+<script>
+    // Hàm xử lý hiệu ứng click chọn số sao trong Form đánh giá
+    function setFormRating(rating) {
+        // Cập nhật giá trị số sao vào ô input ẩn để gửi về Server
+        document.getElementById('ratingInput').value = rating;
+
+        // Đổi màu hiển thị của các ngôi sao
+        const stars = document.querySelectorAll('.star-rating-form .fa-star');
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                // Sáng lên (Thêm màu vàng, bỏ màu xám)
+                star.classList.add('text-warning');
+                star.classList.remove('text-muted');
+            } else {
+                // Tối đi (Thêm màu xám, bỏ màu vàng)
+                star.classList.remove('text-warning');
+                star.classList.add('text-muted');
+            }
+        });
+    }
+</script>
 </body>
 
 </html>

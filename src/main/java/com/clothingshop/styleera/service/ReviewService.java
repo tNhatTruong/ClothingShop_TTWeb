@@ -14,7 +14,10 @@ public class ReviewService {
 
     // Hàm lấy danh sách đánh giá
     public List<Review> getReviewsByProductId(int productId) {
-
         return reviewDao.findByProductId(productId);
+    }
+
+    public void insertReview(int productId, int userId, int rating, String comment) {
+        reviewDao.insertReview(productId, userId, rating, comment);
     }
 }

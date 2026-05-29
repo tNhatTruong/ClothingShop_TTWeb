@@ -27,4 +27,17 @@ public class ReviewDAO {
                     .list();
         });
     }
+    public void insertReview(int productId, int userId, int rating, String comment) {
+        JDBIConnector.getJdbi().useHandle(handle -> {
+            String sql = "INSERT INTO review (product_id, user_id, rating, comment, created_at) " +
+                    "VALUES (:productId, :userId, :rating, :comment, NOW())";
+
+            handle.createUpdate(sql)
+                    .bind("productId", productId)
+                    .bind("userId", userId)
+                    .bind("rating", rating)
+                    .bind("comment", comment)
+                    .execute();
+        });
+    }
 }
