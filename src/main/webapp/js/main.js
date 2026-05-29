@@ -27,6 +27,11 @@ document.addEventListener('click', function (event) {
 document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', function (e) {
         if (window.innerWidth <= 991) {
+
+            if (e.target.closest('.submenu-container')) {
+                return;
+            }
+
             const submenu = this.querySelector('.submenu-container');
             if (submenu) {
                 e.preventDefault();
