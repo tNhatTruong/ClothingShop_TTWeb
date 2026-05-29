@@ -54,40 +54,7 @@ public class AuthFilter implements Filter {
             }
         }
 
-        // 3.6 Phân quyền cho toàn bộ hệ thống Admin (Bảo vệ tất cả trang admin)
-        boolean isAdminPage = path.contains("/admin/") ||
-                path.contains("/AdminDashboard") ||
-                path.contains("/admin-products") ||
-                path.contains("/AdminAddProduct") ||
-                path.contains("/AdminEditProduct") ||
-                path.contains("/AdminDeleteProduct") ||
-                path.contains("/admin-category") ||
-                path.contains("/AdminDeleteCategory") ||
-                path.contains("/admin-user") ||
-                path.contains("/admin-contact") ||
-                path.contains("/AdminEditUser");
 
-        // Loại trừ trang login của admin
-        if (path.contains("/admin/admin-login.jsp") || path.contains("/AdminLogin")) {
-            isAdminPage = false;
-        }
-
-        if (isAdminPage) {
-            if (!isLoggedIn) {
-                // Nếu chưa đăng nhập -> Chuyển về trang login admin
-                res.sendRedirect(req.getContextPath() + "/admin/admin-login.jsp");
-                return;
-            } else {
-                User sessionUser = (User) session.getAttribute("auth");
-                if (!"Admin".equalsIgnoreCase(sessionUser.getRole())) {
-                    // Nếu đã đăng nhập nhưng không phải Admin -> Báo lỗi 403
-                    res.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền truy cập vào khu vực Quản trị viên.");
-                    return;
-                }
-                // Nếu là Admin hợp lệ -> Tắt cache để bảo mật
-                disableCache(res);
-            }
-        }
 
         if (isProtectedPage) {
             if (!isLoggedIn) {
