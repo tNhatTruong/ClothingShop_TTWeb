@@ -17,8 +17,8 @@ public class AdminAddProduct extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        String name = request.getParameter("product_name");
-        int subId = Integer.parseInt(request.getParameter("subcategory_id"));
+        String name = request.getParameter("productName");
+        int subId = Integer.parseInt(request.getParameter("subCategoryId"));
         double price = Double.parseDouble(request.getParameter("price"));
         String shortDesc = request.getParameter("short_desc");
         String detailDesc = request.getParameter("detail_desc");

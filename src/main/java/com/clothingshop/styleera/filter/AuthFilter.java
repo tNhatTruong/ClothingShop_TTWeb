@@ -7,7 +7,9 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Cookie;
 import java.io.IOException;
+import java.util.List;
 
 // Áp dụng cho TẤT CẢ các request
 @WebFilter(filterName = "AuthFilter", urlPatterns = { "/*" })
@@ -35,9 +37,55 @@ public class AuthFilter implements Filter {
                 path.contains("/order_status.jsp") ||
                 path.contains("/order_success.jsp");
 
-        // 3. Logic kiểm tra Session
-        HttpSession session = req.getSession(false); // false: Chỉ lấy session cũ, không tạo mới
+        // 3. Logic kiểm tra Session và tự động đăng nhập bằng Remember Me Token
+        HttpSession session = req.getSession(false);
         boolean isLoggedIn = (session != null && session.getAttribute("auth") != null);
+
+        if (!isLoggedIn) {
+            Cookie[] cookies = req.getCookies();
+            String rememberToken = null;
+            if (cookies != null) {
+                for (Cookie c : cookies) {
+                    if ("remember_token".equals(c.getName())) {
+                        rememberToken = c.getValue();
+                        break;
+                    }
+                }
+            }
+
+            if (rememberToken != null && !rememberToken.isEmpty()) {
+                try {
+                    com.clothingshop.styleera.service.UserTokenService tokenService = new com.clothingshop.styleera.service.UserTokenService();
+                    com.clothingshop.styleera.model.UserToken ut = tokenService.findByToken(rememberToken);
+                    if (ut != null) {
+                        com.clothingshop.styleera.dao.UserDAO userDAO = new com.clothingshop.styleera.dao.UserDAO();
+                        User user = userDAO.findById(ut.getUserId());
+                        if (user != null && user.getEnabled() == 1 && !"BANNED".equalsIgnoreCase(user.getStatus())) {
+                            user.setPassword_hash(null); // tẩy rửa mật khẩu bảo mật
+                            
+                            // Tạo session mới và set thuộc tính đăng nhập
+                            session = req.getSession(true);
+                            session.setAttribute("auth", user);
+                            session.setAttribute("currentUser", user);
+                            session.setMaxInactiveInterval(30 * 60);
+
+                            // Load giỏ hàng từ DB
+                            com.clothingshop.styleera.dao.CartDao cartDao = new com.clothingshop.styleera.dao.CartDao();
+                            List<com.clothingshop.styleera.model.CartItem> dbCartItems = cartDao.getCartItems(user.getId());
+                            com.clothingshop.styleera.model.Cart cart = new com.clothingshop.styleera.model.Cart();
+                            if (dbCartItems != null && !dbCartItems.isEmpty()) {
+                                cart.loadFromList(dbCartItems);
+                            }
+                            session.setAttribute("cart", cart);
+
+                            isLoggedIn = true;
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
         // 3.5 Kiểm tra nếu đã đăng nhập và bị khóa thì hủy session lập tức
         if (isLoggedIn) {
@@ -53,6 +101,8 @@ public class AuthFilter implements Filter {
                 }
             }
         }
+
+
 
         if (isProtectedPage) {
             if (!isLoggedIn) {

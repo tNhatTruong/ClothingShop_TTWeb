@@ -35,4 +35,8 @@ public class UserService {
     public User findById(int userId) {
         return userDAO.findById(userId);
     }
+
+    public void adminUpdateUser(int userId, String fullName, String phone, String email, String role, String status) {
+        userDAO.adminUpdateUser(userId, fullName, phone, email, role, status);
+    }
 }

@@ -37,7 +37,7 @@
                 <div class="col-lg-8">
                     <c:set var="isEdit" value="${not empty product}" />
                     <form id="productForm"
-                          action="${isEdit ? root.concat('/AdminUpdateProduct') : root.concat('/AdminAddProduct')}"
+                          action="${isEdit ? root.concat('/AdminEditProduct') : root.concat('/AdminAddProduct')}"
                           method="post"
                           class="needs-validation"
                           novalidate>
@@ -48,47 +48,35 @@
                             </div>
                             <div class="card-body">
                                 <c:if test="${isEdit}">
-                                    <input type="hidden" name="product_id" value="${product.product_id}" />
+                                    <!-- Cần gửi cả productId và variantId khi cập nhật sản phẩm -->
+                                    <input type="hidden" name="productId" value="${product.product_id}" />
+                                    <input type="hidden" name="variantId" value="${variant.variantId}" />
                                 </c:if>
 
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Tên Sản Phẩm</label>
                                     <input type="text"
                                            class="form-control"
-                                           name="product_name"
+                                           name="productName"
                                            placeholder="Nhập tên sản phẩm"
                                            value="${isEdit ? product.product_name : ''}"
                                            required/>
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-bold">Phân Loại</label>
-                                        <select class="form-select" name="category">
-                                            <option value="">-- Chọn Thể Loại --</option>
-                                            <option value="nam" ${isEdit && product.subcategories.category.id == 1 ? 'selected' : ''}>Nam</option>
-                                            <option value="nu" ${isEdit && product.subcategories.category.id == 2 ? 'selected' : ''}>Nữ</option>
-                                            <option value="doi" ${isEdit && product.subcategories.category.id == 3 ? 'selected' : ''}>Đồ Đôi</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-12 mb-3">
                                         <label class="form-label fw-bold">Danh Mục</label>
-                                        <select class="form-select" name="subcategory_id" required>
+                                        <select class="form-select" name="subCategoryId" required>
                                             <option value="">-- Chọn Danh Mục --</option>
-
-                                            <option value="1">Áo Thun</option>
-                                            <option value="2">Áo Polo</option>
-                                            <option value="3">Áo Khoác Nam</option>
-                                            <option value="4">Quần Jean</option>
-                                            <option value="5">Áo Khoác</option>
-                                            <option value="6">Váy</option>
-                                            <option value="7">Đầm</option>
-                                            <option value="8">Quần dài</option>
-                                            <option value="9">Quần ngắn</option>
-                                            <option value="10">Áo khoác đôi</option>
-                                            <option value="11">Áo thun đôi</option>
-                                            <option value="12">Đồ bộ Đôi</option>
+                                            <c:forEach items="${parents}" var="p">
+                                                <optgroup label="${p.name}">
+                                                    <c:forEach items="${p.subCategories}" var="sub">
+                                                        <option value="${sub.id}" ${isEdit && product.subcategory.id == sub.id ? 'selected' : ''}>
+                                                            ${sub.name} (ID: ${sub.id})
+                                                        </option>
+                                                    </c:forEach>
+                                                </optgroup>
+                                            </c:forEach>
                                         </select>
                                     </div>
                                 </div>

@@ -470,9 +470,22 @@ public class ProductDAO {
     public void deleleteProduct(int productId) {
         Jdbi jdbi = JDBIConnector.getJdbi();
         jdbi.useTransaction(handle -> {
+            // 1. Gỡ liên kết ảnh trong products để tránh lỗi vòng lặp khóa ngoại
+            handle.createUpdate("UPDATE products SET image_id = NULL WHERE id = ?").bind(0, productId).execute();
+            
+            // 2. Xóa chi tiết đơn hàng liên quan qua variants
             handle.createUpdate("DELETE od FROM orderdetails od JOIN variants v ON od.variant_id = v.id WHERE v.product_id = ?").bind(0, productId).execute();
+            
+            // 3. Xóa review sản phẩm
             handle.createUpdate("DELETE FROM review WHERE product_id = ?").bind(0, productId).execute();
+            
+            // 4. Xóa images liên quan
+            handle.createUpdate("DELETE FROM images WHERE product_id = ?").bind(0, productId).execute();
+            
+            // 5. Xóa variants liên quan
             handle.createUpdate("DELETE FROM variants WHERE product_id = ?").bind(0, productId).execute();
+            
+            // 6. Xóa sản phẩm
             handle.createUpdate("DELETE FROM products WHERE id = ?").bind(0, productId).execute();
         });
     }
@@ -517,11 +530,19 @@ public class ProductDAO {
                     .bind(3, quantity)
                     .execute();
 
-            // thêm dl ảnh
-            handle.createUpdate(" INSERT INTO images (product_id, image_name, path, updated_at)VALUES (?, ?, ?, NOW())")
+            // thêm dl ảnh và lấy ID ảnh vừa tạo
+            int imageId = handle.createUpdate(" INSERT INTO images (product_id, image_name, path, updated_at) VALUES (?, ?, ?, NOW())")
                     .bind(0, productId)
                     .bind(1, imageName)
                     .bind(2, imagePath)
+                    .executeAndReturnGeneratedKeys("id")
+                    .mapTo(Integer.class)
+                    .one();
+
+            // Cập nhật ngược lại image_id cho product vừa thêm để hiển thị được ảnh thumbnail
+            handle.createUpdate("UPDATE products SET image_id = ? WHERE id = ?")
+                    .bind(0, imageId)
+                    .bind(1, productId)
                     .execute();
         });
     }

@@ -56,6 +56,48 @@
                 </div>
             </div>
         <c:choose>
+            <c:when test="${order != null}">
+                <div class="box-header">
+                    <div class="header">        
+                        <h4>Chi tiết đơn hàng</h4>
+                    </div>
+                    <div class="mt-3 d-flex justify-content-between">
+                        <span class="text-gray">Mã đơn hàng:</span>
+                        <span>#${order.id}</span>
+                    </div>
+                    <div class="mt-3 d-flex justify-content-between">
+                        <span class="text-gray">Ngày đặt hàng:</span>
+                        <span>${order.createdAt}</span>
+                    </div>
+                    <div class="mt-3 d-flex justify-content-between">
+                        <span class="text-gray">Trạng thái đơn hàng:</span>
+                        <span class="badge bg-warning text-dark">${order.status}</span>
+                    </div>
+                    <c:if test="${order.note != null && !order.note.trim().isEmpty()}">
+                        <div class="mt-3 d-flex justify-content-between">
+                            <span class="text-gray">Ghi chú:</span>
+                            <span>${order.note}</span>
+                        </div>
+                    </c:if>
+                </div>
+                <div class="box-footer">
+                    <div class="header">
+                         <h4>Tổng quan đơn hàng</h4>
+                    </div>
+                    <div class="d-flex justify-content-between mt-3">
+                        <span class="text-gray">Phí tạm tính: </span>
+                        <span>${order.price} đ</span>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <span class="text-gray">Phí Vận chuyển: </span>
+                        <span>${order.feeDelivery} đ</span>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <strong>Tổng: </strong>
+                        <strong>${order.totalPrice} đ</strong>
+                    </div>
+                </div>
+            </c:when>
             <c:when test="${sessionScope.cart == null || sessionScope.cart.item.size() == 0}">
 <%--                Thông báo nếu chưa thanh toán--%>
                 <div class="text-center text-muted py-5">

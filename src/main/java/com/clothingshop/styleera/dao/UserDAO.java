@@ -173,4 +173,20 @@ public class UserDAO {
                         .findOne().orElse(null)
         );
     }
+
+    // 15. Admin cập nhật thông tin User
+    public void adminUpdateUser(int userId, String fullName, String phone, String email, String role, String status) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        jdbi.useHandle(handle -> {
+            String sql = "UPDATE users SET user_name = ?, phone = ?, email = ?, role = ?, status = ? WHERE id = ?";
+            handle.createUpdate(sql)
+                    .bind(0, fullName)
+                    .bind(1, phone)
+                    .bind(2, email)
+                    .bind(3, role)
+                    .bind(4, status)
+                    .bind(5, userId)
+                    .execute();
+        });
+    }
 }
