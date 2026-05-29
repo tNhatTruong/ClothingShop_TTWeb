@@ -2,6 +2,8 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <c:set var="root" value="${pageContext.request.contextPath}" scope="request"/>
+<%@ page import="java.util.List" %>
+<%@ page import="com.clothingshop.styleera.model.Product" %>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -15,6 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="${root}/css/header-footer.css">
     <link rel="stylesheet" href="${root}/css/product_detail.css">
+    <link rel="stylesheet" href="${root}/css/style.css">
 </head>
 
 <body>
@@ -364,77 +367,65 @@
     <div class="re">
         <div class="related">
             <div class="container">
-                <div class="row">
-                    <div class="col_top">
-                        <h3 class="related-title">SẢN PHẨM LIÊN QUAN</h3>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <h3 class="related-title" style="font-weight: bold; text-transform: uppercase;">Sản phẩm liên quan</h3>
                     </div>
                 </div>
-                <div class="row">
-                    <%-- Vòng lặp tự động lấy từng sản phẩm từ danh sách relatedProducts --%>
-                    <div class="col_1">
-                        <div class="product_item">
-                            <div class="product_item_pic2">
-                                <a href="<c:url value='/Product_DetailController?id=${rp.product_id}'/>">
-                                    <img src="<c:url value='/images/product_item_nam/1/1.3/trangphuc_nam.png'/>"
-                                         alt="${rp.product_name}">
-                                </a>
-                            </div>
-                            <div class="product_item_text">
-                                <h6>Quần jeans nam natural form tapered dáng suông </h6>
-                                <h5>810.000đ</h5>
 
-                                <button class="add-to-cart-btn">Thêm vào giỏ hàng</button>
+                <div class="products-grid">
+                    <%
+                        // Lấy danh sách sản phẩm liên quan từ request attribute
+                        List<Product> relatedProducts = (List<Product>) request.getAttribute("relatedProducts");
+
+                        if (relatedProducts != null && !relatedProducts.isEmpty()) {
+                            for (Product p : relatedProducts) {
+                                String imgPath = (p.getThumbnail() != null)
+                                        ? request.getContextPath() + p.getThumbnail()
+                                        : request.getContextPath() + "/images/no-image.png";
+                    %>
+                    <div class="product-card">
+                        <a href="${root}/product_detail?id=<%=p.getProduct_id()%>" class="product-card-link">
+                            <div class="product-image">
+                                <span class="product-badge badge-new">NEW</span>
+                                <img src="<%=imgPath%>" alt="<%=p.getProduct_name()%>" loading="lazy">
+                            </div>
+                        </a>
+
+                        <div class="product-details">
+                            <div class="product-info">
+                                <a href="${root}/product_detail?id=<%=p.getProduct_id()%>" style="text-decoration: none;">
+                                    <h4><%=p.getProduct_name()%></h4>
+                                </a>
+
+                                <div class="product-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+
+                            <div class="product-bottom">
+                                <div class="product-price">
+                                    <span class="price"><%=String.format("%,.0f", p.getPrice())%>₫</span>
+                                </div>
+
+                                <button class="btn-cart" type="button" title="Thêm vào giỏ"
+                                        <%= p.getDefaultVariantId() == null ? "disabled" : "" %>
+                                        onclick="addToCart(<%= p.getDefaultVariantId() %>)">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
-                    <div class="col_2">
-                        <div class="product_item">
-                            <div class="product_item_pic2">
-                                <a href="<c:url value='/Product_DetailController?id=${rp.product_id}'/>">
-                                    <img src="<c:url value='/images/product_item_nam/7/7.3/trangphuc_nam.png'/>"
-                                         alt="${rp.product_name}">
-                                </a>
-                            </div>
-                            <div class="product_item_text">
-                                <h6>Quần jeans nam natural form tapered dáng suông </h6>
-                                <h5>1.510.000đ</h5>
-
-                                <button class="add-to-cart-btn">Thêm vào giỏ hàng</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col_3">
-                        <div class="product_item sale">
-                            <div class="product_item_pic2">
-                                <a href="<c:url value='/Product_DetailController?id=${rp.product_id}'/>">
-                                    <img src="<c:url value='/images/product_item_nam/4/4.10/trangphuc_nam.png'/>"
-                                         alt="${rp.product_name}">
-                                </a>
-                            </div>
-                            <div class="product_item_text">
-                                <h6>Áo Sơ Mi Nam Tay Dài Chất Liệu BAMBOO Cao Cấp</h6>
-                                <h5>890.000đ</h5>
-
-                                <button class="add-to-cart-btn">Thêm vào giỏ hàng</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col_4">
-                        <div class="product_item">
-                            <div class="product_item_pic2">
-                                <a href="<c:url value='/Product_DetailController?id=${rp.product_id}'/>">
-                                    <img src="<c:url value='/images/product_item_nam/5/5.10/trangphuc_nam.png'/>"
-                                         alt="${rp.product_name}">
-                                </a>
-                            </div>
-                            <div class="product_item_text">
-                                <h6>Quần Short Kaki Nam Cotton Spandex Form Straight</h6>
-                                <h5>879.000đ</h5>
-
-                                <button class="add-to-cart-btn">Thêm vào giỏ hàng</button>
-                            </div>
-                        </div>
-                    </div>
+                    <%
+                        }
+                    } else {
+                    %>
+                    <p class="text-center" style="grid-column: 1 / -1; color: #6c757d;">Không tìm thấy sản phẩm liên quan nào...</p>
+                    <% } %>
                 </div>
             </div>
         </div>
