@@ -19,7 +19,8 @@ import java.io.IOException;
         "/AdminDeleteCategory",
         "/admin-user",
         "/admin-contact",
-        "/AdminEditUser"
+        "/AdminEditUser",
+        "/AdminDeleteUser"
 })
 public class AdminFilter implements Filter {
 
@@ -31,9 +32,8 @@ public class AdminFilter implements Filter {
 
         String path = req.getRequestURI();
 
-        // 1. Cho phép truy cập tự do trang Login Admin và các tài nguyên tĩnh (css, js, ảnh)
-        if (path.contains("/admin/admin-login.jsp") || path.contains("/AdminLogin") ||
-                path.endsWith(".css") || path.endsWith(".js") ||
+        // 1. Cho phép truy cập tự do các tài nguyên tĩnh (css, js, ảnh)
+        if (path.endsWith(".css") || path.endsWith(".js") ||
                 path.endsWith(".png") || path.endsWith(".jpg") || path.endsWith(".jpeg") ||
                 path.endsWith(".gif") || path.endsWith(".avif") || path.endsWith(".svg") ||
                 path.endsWith(".ico") || path.endsWith(".woff2") || path.endsWith(".woff")) {

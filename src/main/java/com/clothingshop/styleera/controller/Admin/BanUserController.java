@@ -65,13 +65,27 @@ public class BanUserController extends HttpServlet {
                 return;
             }
 
-            // 4. Bảo vệ hệ thống: Không cho phép Admin khóa tài khoản Admin khác qua đây
+            // 4. Bảo vệ hệ thống: Không cho phép Admin thường khóa tài khoản Admin khác
             if ("Admin".equalsIgnoreCase(targetUser.getRole())) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                respJson.addProperty("status", "error");
-                respJson.addProperty("message", "Không được phép thay đổi trạng thái của tài khoản Admin khác.");
-                response.getWriter().write(respJson.toString());
-                return;
+                boolean isRoot = "Admin@styleera.com".equalsIgnoreCase(currentAdmin.getEmail());
+                
+                // Admin gốc không bao giờ có thể bị khóa
+                if ("Admin@styleera.com".equalsIgnoreCase(targetUser.getEmail())) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    respJson.addProperty("status", "error");
+                    respJson.addProperty("message", "Không thể khóa tài khoản Admin gốc!");
+                    response.getWriter().write(respJson.toString());
+                    return;
+                }
+                
+                // Nếu người thực hiện không phải là Admin gốc, chặn!
+                if (!isRoot) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    respJson.addProperty("status", "error");
+                    respJson.addProperty("message", "Chỉ Admin gốc mới có quyền khóa/mở khóa Admin khác.");
+                    response.getWriter().write(respJson.toString());
+                    return;
+                }
             }
 
             // 5. Thực thi nghiệp vụ
