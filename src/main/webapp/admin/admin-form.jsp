@@ -39,6 +39,7 @@
                     <form id="productForm"
                           action="${isEdit ? root.concat('/AdminEditProduct') : root.concat('/AdminAddProduct')}"
                           method="post"
+                          enctype="multipart/form-data"
                           class="needs-validation"
                           novalidate>
 
