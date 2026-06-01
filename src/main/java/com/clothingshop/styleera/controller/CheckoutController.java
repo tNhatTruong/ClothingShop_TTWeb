@@ -64,10 +64,15 @@ public class CheckoutController extends HttpServlet {
                         subTotal += item.getVariant().getProduct().getPrice() * item.getQuantity();
                     }
                 }
+                // Nếu sau khi lọc mà không có sản phẩm nào hợp lệ, quay về giỏ hàng
+                if (checkoutItems.isEmpty()) {
+                    response.sendRedirect(request.getContextPath() + "/cart");
+                    return;
+                }
             } else {
-                // Nếu không có tham số variants, mặc định là toàn bộ giỏ hàng
-                checkoutItems.addAll(cart.getItem());
-                subTotal = cart.total();
+                // Bảo mật (Issue 31, 34): Không cho phép thanh toán nếu không có sản phẩm nào được chọn (tham số variants rỗng)
+                response.sendRedirect(request.getContextPath() + "/cart");
+                return;
             }
 
             double shipping = 30000.0;
@@ -85,7 +90,11 @@ public class CheckoutController extends HttpServlet {
                 String color = request.getParameter("selectedColor");
                 String variantId = request.getParameter("variantId");
 
-                double price = Double.parseDouble(request.getParameter("productPrice"));
+                // Lấy giá thực tế từ Database (Bảo mật)
+                com.clothingshop.styleera.dao.VariantDAO variantDAO = new com.clothingshop.styleera.dao.VariantDAO();
+                com.clothingshop.styleera.model.Variants variant = variantDAO.getById(Integer.parseInt(variantId));
+                double price = (variant != null) ? variant.getProduct().getPrice() : 0.0;
+
                 int quantity = Integer.parseInt(request.getParameter("quantity"));
                 double subTotal = price * quantity;
                 double shipping = 30000.0;

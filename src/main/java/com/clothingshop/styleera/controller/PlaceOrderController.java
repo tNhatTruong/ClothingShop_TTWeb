@@ -93,9 +93,11 @@ public class PlaceOrderController extends HttpServlet {
                             subTotal += item.getVariant().getProduct().getPrice() * item.getQuantity();
                         }
                     }
-                } else {
-                    checkoutItems.addAll(cart.getItem());
-                    subTotal = cart.total();
+                }
+                
+                if (checkoutItems.isEmpty()) {
+                    response.sendRedirect(request.getContextPath() + "/cart");
+                    return;
                 }
 
                 double shipping = 30000.0;
@@ -177,9 +179,11 @@ public class PlaceOrderController extends HttpServlet {
                             subTotal += item.getVariant().getProduct().getPrice() * item.getQuantity();
                         }
                     }
-                } else {
-                    checkoutItems.addAll(cart.getItem());
-                    subTotal = cart.total();
+                }
+                
+                if (checkoutItems.isEmpty()) {
+                    response.sendRedirect(request.getContextPath() + "/cart");
+                    return;
                 }
                 
                 order.setPrice(subTotal);
