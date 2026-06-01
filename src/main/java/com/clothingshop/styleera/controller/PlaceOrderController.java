@@ -139,7 +139,95 @@ public class PlaceOrderController extends HttpServlet {
             return;
         }
 
-        // Nếu validation thành công, chuyển hướng đến trang hoàn tất đặt hàng
-        response.sendRedirect(request.getContextPath() + "/order-success");
+        // Nếu validation thành công, tạo đơn hàng và lưu vào DB
+        try {
+            com.clothingshop.styleera.dao.OrdersDAO ordersDAO = new com.clothingshop.styleera.dao.OrdersDAO();
+            com.clothingshop.styleera.dao.OrderDetailsDAO orderDetailsDAO = new com.clothingshop.styleera.dao.OrderDetailsDAO();
+            com.clothingshop.styleera.dao.VariantDAO variantDAO = new com.clothingshop.styleera.dao.VariantDAO();
+            com.clothingshop.styleera.dao.CartDao cartDao = new com.clothingshop.styleera.dao.CartDao();
+
+            boolean isBuyNow = "true".equals(request.getParameter("isBuyNow"));
+            
+            // Xử lý tạo Order
+            com.clothingshop.styleera.model.Orders order = new com.clothingshop.styleera.model.Orders();
+            order.setUserId(user.getId());
+            // Tạm thời lấy default address ID, có thể sửa nếu form cho chọn Address
+            AddressDAO addressDAO = new AddressDAO();
+            Address userAddress = addressDAO.findAddressByUserId(user.getId());
+            order.setAddressId(userAddress != null ? userAddress.getId() : 0);
+            order.setStatus("PENDING");
+            order.setNote("");
+            
+            double shipping = 30000.0;
+            order.setFeeDelivery(shipping);
+            
+            if (!isBuyNow) {
+                // Xử lý Cart
+                Cart cart = (Cart) session.getAttribute("cart");
+                String variantIdsStr = request.getParameter("variants");
+                java.util.List<com.clothingshop.styleera.model.CartItem> checkoutItems = new java.util.ArrayList<>();
+                double subTotal = 0;
+                
+                if (variantIdsStr != null && !variantIdsStr.trim().isEmpty()) {
+                    String[] selectedIds = variantIdsStr.split(",");
+                    java.util.Set<String> selectedIdSet = new java.util.HashSet<>(java.util.Arrays.asList(selectedIds));
+                    for (com.clothingshop.styleera.model.CartItem item : cart.getItem()) {
+                        if (selectedIdSet.contains(String.valueOf(item.getVariant().getVariantId()))) {
+                            checkoutItems.add(item);
+                            subTotal += item.getVariant().getProduct().getPrice() * item.getQuantity();
+                        }
+                    }
+                } else {
+                    checkoutItems.addAll(cart.getItem());
+                    subTotal = cart.total();
+                }
+                
+                order.setPrice(subTotal);
+                order.setTotalPrice(subTotal + shipping);
+                
+                int orderId = ordersDAO.insertOrder(order);
+                
+                // Lưu OrderDetails và trừ Tồn kho, Xóa giỏ hàng
+                for (com.clothingshop.styleera.model.CartItem item : checkoutItems) {
+                    int variantId = item.getVariant().getVariantId();
+                    int qty = item.getQuantity();
+                    double price = item.getVariant().getProduct().getPrice();
+                    
+                    com.clothingshop.styleera.model.OrderDetail detail = new com.clothingshop.styleera.model.OrderDetail(0, orderId, variantId, qty, price);
+                    orderDetailsDAO.insertOrderDetail(detail);
+                    variantDAO.updateStock(variantId, qty);
+                    
+                    // Xóa item trong DB giỏ hàng và trong đối tượng Cart session
+                    cartDao.removeCartItem(user.getId(), variantId);
+                    cart.removeItem(variantId);
+                }
+            } else {
+                // Xử lý Buy Now
+                int variantId = Integer.parseInt(request.getParameter("variantId"));
+                int quantity = Integer.parseInt(request.getParameter("quantity"));
+                
+                // Tránh lộ hổng F12 đổi giá: Lấy giá gốc từ DB
+                com.clothingshop.styleera.model.Variants variantInfo = variantDAO.getById(variantId);
+                double realPrice = variantInfo.getProduct().getPrice();
+                double subTotal = realPrice * quantity;
+                
+                order.setPrice(subTotal);
+                order.setTotalPrice(subTotal + shipping);
+                
+                int orderId = ordersDAO.insertOrder(order);
+                
+                com.clothingshop.styleera.model.OrderDetail detail = new com.clothingshop.styleera.model.OrderDetail(0, orderId, variantId, quantity, realPrice);
+                orderDetailsDAO.insertOrderDetail(detail);
+                variantDAO.updateStock(variantId, quantity);
+            }
+            
+            // Chuyển hướng đến trang hoàn tất đặt hàng
+            response.sendRedirect(request.getContextPath() + "/order-success");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("errorMessage", "Có lỗi xảy ra trong quá trình đặt hàng: " + e.getMessage());
+            request.getRequestDispatcher("/views/pages/checkout.jsp").forward(request, response);
+        }
     }
 }
