@@ -18,22 +18,19 @@ public class AdminCategoryController extends HttpServlet {
 
         String parentCategory = request.getParameter("parentCategory");
         String subCategory = request.getParameter("subCategory");
+        String search = request.getParameter("search");
 
         // Lấy tất cả danh mục để hiển thị
         List<ParentCategory> allCategories = categoryService.getAllCategories();
         request.setAttribute("parentCategoryList", allCategories);
 
-        // Nếu có filter, lọc dữ liệu
-        List<ParentCategory> filteredList;
-        if ((parentCategory != null && !parentCategory.isEmpty()) || (subCategory != null && !subCategory.isEmpty())) {
-            filteredList = categoryService.filterCategories(parentCategory, subCategory);
-        } else {
-            filteredList = allCategories;
-        }
+        // Lọc dữ liệu theo bộ lọc và từ khóa tìm kiếm
+        List<ParentCategory> filteredList = categoryService.filterCategories(parentCategory, subCategory, search);
 
         request.setAttribute("filteredCategoryList", filteredList);
         request.setAttribute("parentCategoryValue", parentCategory != null ? parentCategory : "");
         request.setAttribute("subCategoryValue", subCategory != null ? subCategory : "");
+        request.setAttribute("searchValue", search != null ? search : "");
 
         request.getRequestDispatcher("admin/admin-category.jsp").forward(request, response);
     }
