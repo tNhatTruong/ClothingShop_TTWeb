@@ -113,4 +113,16 @@ public class VariantDAO {
                         .list()
         );
     }
+
+    public boolean updateStock(int variantId, int quantityToSubtract) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        return jdbi.withHandle(handle -> {
+            int updatedRows = handle.createUpdate("UPDATE variants SET quantity = quantity - :quantity " +
+                    "WHERE id = :variantId AND quantity >= :quantity")
+                    .bind("quantity", quantityToSubtract)
+                    .bind("variantId", variantId)
+                    .execute();
+            return updatedRows > 0;
+        });
+    }
 }

@@ -76,4 +76,16 @@ public class OrdersDAO {
                         .orElse(null)
         );
     }
+
+    public int insertOrder(Orders order) {
+        return JDBIConnector.getJdbi().withHandle(handle -> {
+            String sql = "INSERT INTO orders (user_id, address_id, status, note, price, fee_delivery, total_price) " +
+                         "VALUES (:userId, :addressId, :status, :note, :price, :feeDelivery, :totalPrice)";
+            return handle.createUpdate(sql)
+                    .bindBean(order)
+                    .executeAndReturnGeneratedKeys("id")
+                    .mapTo(Integer.class)
+                    .one();
+        });
+    }
 }
