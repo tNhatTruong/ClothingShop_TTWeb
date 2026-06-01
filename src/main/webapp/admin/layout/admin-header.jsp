@@ -6,12 +6,6 @@
         <button class="icon-btn d-lg-none" id="sidebarToggle">
             <i class="fas fa-bars"></i>
         </button>
-        <div class="header-search">
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder=" Tìm kiếm..."/>
-            </div>
-        </div>
     </div>
 
     <div class="header-right">
