@@ -53,15 +53,15 @@
                 <div class="card-body">
                     <div class="row g-3 align-items-end">
                         <div class="col-md-6">
-                            <label class="form-label">Tìm Kiếm</label>
-                            <input type="text" class="form-control" id="searchInput" placeholder="Tên tài khoản"/>
+                            <label class="form-label fw-bold">Tìm Kiếm</label>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Tìm theo Tên, Email hoặc Số điện thoại..."/>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Vai Trò</label>
+                            <label class="form-label fw-bold">Vai Trò</label>
                             <select class="form-select" id="categoryFilter">
                                 <option value="">Tất Cả Vai Trò</option>
                                 <option value="admin">Admin</option>
-                                <option value="usr">User</option>
+                                <option value="user">User</option>
                             </select>
                         </div>
                     </div>
@@ -71,22 +71,22 @@
                 <div class="tab-pane">
                     <div class="card shadow-sm">
                         <div class="card-header bg-light border-bottom d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0">Danh Sách Khách Hàng</h6>
+                            <h6 class="mb-0 fw-bold">Danh Sách Khách Hàng</h6>
                             <span class="text-muted small">Tổng cộng: <strong>${users.size()}</strong> Người dùng</span>
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-hover mb-0">
-                                    <thead class="table-light">
-                                    <tr class="text-center align-middle">
-                                        <th>ID</th>
-                                        <th>Họ Tên</th>
-                                        <th>Điện thoại</th>
+                                <table class="table table-hover table-sm mb-0" style="font-size: 0.88rem;">
+                                    <thead class="table-light text-secondary">
+                                    <tr class="text-center align-middle" style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        <th style="width: 60px;">ID</th>
+                                        <th style="width: 140px;">Họ Tên</th>
+                                        <th style="width: 110px;">Điện thoại</th>
                                         <th>Địa Chỉ</th>
-                                        <th>Email</th>
-                                        <th>Vai trò</th>
-                                        <th>Trạng Thái</th>
-                                        <th>Hành Động</th>
+                                        <th style="width: 180px;">Email</th>
+                                        <th style="width: 120px;">Vai trò</th>
+                                        <th style="width: 115px;">Trạng Thái</th>
+                                        <th style="width: 125px;">Hành Động</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -100,14 +100,14 @@
                                             </tr>
                                         </c:when>
                                         <c:otherwise>
-                                            <c:forEach items="${users}" var="u">
+                                             <c:forEach items="${users}" var="u">
                                                  <c:set var="uIsRoot" value="${u.role eq 'Admin' && 'Admin@styleera.com'.equalsIgnoreCase(u.email)}" />
                                                  <c:set var="uIsAdmin" value="${u.role eq 'Admin'}" />
                                                  <tr class="text-center align-middle">
                                                      <td>#${u.id}</td>
-                                                     <td style="min-width: 180px;"> <strong>${u.user_name}</strong> </td>
-                                                     <td>${u.phone}</td>
-                                                     <td style="max-width: 300px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+                                                     <td style="max-width: 140px; word-break: break-word;"> <strong>${u.user_name}</strong> </td>
+                                                     <td style="font-size: 0.85rem;">${u.phone}</td>
+                                                     <td style="max-width: 200px; font-size: 0.8rem; word-break: break-word; line-height: 1.25; text-align: left;">
                                                          <c:choose>
                                                              <c:when test="${not empty u.addresses}">
                                                                  ${u.addresses[0].street}, ${u.addresses[0].district}, ${u.addresses[0].province}
@@ -115,7 +115,7 @@
                                                              <c:otherwise>—</c:otherwise>
                                                          </c:choose>
                                                      </td>
-                                                     <td>${u.email}</td>
+                                                     <td style="max-width: 170px; font-size: 0.8rem; word-break: break-all;">${u.email}</td>
                                                      <td>
                                                          <c:choose>
                                                              <c:when test="${uIsRoot}">
@@ -193,12 +193,12 @@
                                                                          <c:choose>
                                                                              <c:when test="${u.status eq 'BANNED'}">
                                                                                  <button class="btn btn-sm btn-success ms-1 btn-toggle-ban" data-user-id="${u.id}" data-action="unban" title="Mở khóa tài khoản">
-                                                                                     <i class="fas fa-unlock"></i> Mở khóa
+                                                                                     <i class="fas fa-unlock"></i>
                                                                                  </button>
                                                                              </c:when>
                                                                              <c:otherwise>
                                                                                  <button class="btn btn-sm btn-danger ms-1 btn-toggle-ban" data-user-id="${u.id}" data-action="ban" title="Khóa tài khoản">
-                                                                                     <i class="fas fa-ban"></i> Khóa
+                                                                                     <i class="fas fa-ban"></i>
                                                                                  </button>
                                                                              </c:otherwise>
                                                                          </c:choose>
@@ -214,12 +214,12 @@
                                                                  <c:choose>
                                                                      <c:when test="${u.status eq 'BANNED'}">
                                                                          <button class="btn btn-sm btn-success ms-1 btn-toggle-ban" data-user-id="${u.id}" data-action="unban" title="Mở khóa tài khoản">
-                                                                             <i class="fas fa-unlock"></i> Mở khóa
+                                                                             <i class="fas fa-unlock"></i>
                                                                          </button>
                                                                      </c:when>
                                                                      <c:otherwise>
                                                                          <button class="btn btn-sm btn-danger ms-1 btn-toggle-ban" data-user-id="${u.id}" data-action="ban" title="Khóa tài khoản">
-                                                                             <i class="fas fa-ban"></i> Khóa
+                                                                             <i class="fas fa-ban"></i>
                                                                          </button>
                                                                      </c:otherwise>
                                                                  </c:choose>
@@ -364,6 +364,48 @@
 document.addEventListener("DOMContentLoaded", function() {
     const contextPath = '${root}';
 
+    // Bộ lọc Tìm kiếm và Vai trò (Client-side instant filtering)
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+    
+    function filterTable() {
+        const searchText = searchInput.value.toLowerCase().trim();
+        const filterRole = categoryFilter.value.toLowerCase().trim();
+        const tableRows = document.querySelectorAll("tbody tr.align-middle"); // Đọc lại danh sách tr
+
+        tableRows.forEach(row => {
+            const cells = row.getElementsByTagName("td");
+            if (cells.length < 6) return;
+
+            const name = cells[1].textContent.toLowerCase();
+            const phone = cells[2].textContent.toLowerCase();
+            const email = cells[4].textContent.toLowerCase();
+            
+            // Vai trò: có thể là Admin Gốc, Admin, hoặc User
+            const roleText = cells[5].textContent.toLowerCase();
+
+            // Kiểm tra khớp từ khóa tìm kiếm (theo Tên, Email hoặc SĐT)
+            const matchesSearch = name.includes(searchText) || email.includes(searchText) || phone.includes(searchText);
+
+            // Kiểm tra khớp bộ lọc vai trò
+            let matchesRole = true;
+            if (filterRole === "admin") {
+                matchesRole = roleText.includes("admin");
+            } else if (filterRole === "user") {
+                matchesRole = roleText.includes("user");
+            }
+
+            if (matchesSearch && matchesRole) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+
+    if (searchInput) searchInput.addEventListener("input", filterTable);
+    if (categoryFilter) categoryFilter.addEventListener("change", filterTable);
+
     // Thao tác Khóa / Mở khóa động bằng AJAX Fetch
     // Dùng Event Delegation để bắt các sự kiện click động (phòng trường hợp render động sau này)
     document.addEventListener("click", function(e) {
@@ -414,12 +456,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     btn.className = "btn btn-sm btn-success ms-1 btn-toggle-ban";
                     btn.setAttribute("data-action", "unban");
                     btn.setAttribute("title", "Mở khóa tài khoản");
-                    btn.innerHTML = '<i class="fas fa-unlock"></i> Mở khóa';
+                    btn.innerHTML = '<i class="fas fa-unlock"></i>';
                 } else {
                     btn.className = "btn btn-sm btn-danger ms-1 btn-toggle-ban";
                     btn.setAttribute("data-action", "ban");
                     btn.setAttribute("title", "Khóa tài khoản");
-                    btn.innerHTML = '<i class="fas fa-ban"></i> Khóa';
+                    btn.innerHTML = '<i class="fas fa-ban"></i>';
                 }
             } else {
                 alert(data.message || "Có lỗi xảy ra, vui lòng thử lại!");

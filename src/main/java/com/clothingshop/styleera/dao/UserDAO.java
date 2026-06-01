@@ -206,9 +206,6 @@ public class UserDAO {
             // Xóa các sản phẩm trong giỏ hàng tạm thời
             handle.createUpdate("DELETE FROM cartitem WHERE user_id = ?").bind(0, userId).execute();
 
-            // Xóa địa chỉ của người dùng
-            handle.createUpdate("DELETE FROM addresses WHERE user_id = ?").bind(0, userId).execute();
-
             // Lấy danh sách các đơn hàng của user này để xóa các bảng phụ thuộc đơn hàng trước
             List<Integer> orderIds = handle.createQuery("SELECT id FROM orders WHERE user_id = ?")
                     .bind(0, userId)
@@ -224,6 +221,9 @@ public class UserDAO {
                 // Xóa đơn hàng
                 handle.createUpdate("DELETE FROM orders WHERE id = ?").bind(0, orderId).execute();
             }
+
+            // Xóa địa chỉ của người dùng (Chỉ được xóa sau khi đã xóa sạch các đơn hàng liên kết!)
+            handle.createUpdate("DELETE FROM addresses WHERE user_id = ?").bind(0, userId).execute();
 
             // Cuối cùng xóa tài khoản người dùng
             handle.createUpdate("DELETE FROM users WHERE id = ?").bind(0, userId).execute();
