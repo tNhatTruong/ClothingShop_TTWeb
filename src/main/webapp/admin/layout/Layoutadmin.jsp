@@ -78,7 +78,7 @@
         </nav>
         <!-- ===== FOOTER ===== -->
         <div class="sidebar-footer">
-            <button class="btn-logout" onclick="logout()">
+            <button class="btn-logout" onclick="logout('${root}')">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Đăng Xuất</span>
             </button>
@@ -115,8 +115,25 @@
                 <div class="admin-profile">
                     <img src="${root}/admin/images/logoadm.png" alt="Admin" class="profile-img"/>
                     <div class="profile-info">
-                        <div class="profile-name">Quản Trị Viên</div>
-                        <div class="profile-role">Admin</div>
+                        <div class="profile-name">
+                            <c:choose>
+                                <c:when test="${not empty sessionScope.auth}">
+                                    ${sessionScope.auth.user_name}
+                                </c:when>
+                                <c:otherwise>Quản Trị Viên</c:otherwise>
+                            </c:choose>
+                        </div>
+                        <div class="profile-role">
+                            <c:choose>
+                                <c:when test="${sessionScope.auth != null && 'Admin@styleera.com'.equalsIgnoreCase(sessionScope.auth.email)}">
+                                    Admin Gốc
+                                </c:when>
+                                <c:when test="${not empty sessionScope.auth}">
+                                    Admin
+                                </c:when>
+                                <c:otherwise>Admin</c:otherwise>
+                            </c:choose>
+                        </div>
                     </div>
                     <button class="icon-btn profile-dropdown" type="button" data-bs-toggle="dropdown">
                         <i class="fas fa-chevron-down"></i>

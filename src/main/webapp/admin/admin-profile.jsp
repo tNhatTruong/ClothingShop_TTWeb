@@ -55,8 +55,15 @@
                             <div class="card shadow-sm text-center">
                                 <div class="card-body pt-5">
                                     <img src="images/logoadm.png" alt="Admin" class="rounded-circle mb-3" width="100" height="100"/>
-                                    <h4 class="mb-1">Quản Trị Viên</h4>
-                                    <p class="text-muted mb-3">Admin</p>
+                                    <h4 class="mb-1">${not empty sessionScope.auth ? sessionScope.auth.user_name : "Quản Trị Viên"}</h4>
+                                    <p class="text-muted mb-3">
+                                        <c:choose>
+                                            <c:when test="${sessionScope.auth != null && 'Admin@styleera.com'.equalsIgnoreCase(sessionScope.auth.email)}">
+                                                Admin Gốc
+                                            </c:when>
+                                            <c:otherwise>Admin</c:otherwise>
+                                        </c:choose>
+                                    </p>
                                     <p class="small text-muted">Tham gia: 05/01/2025</p>
                                     <button class="btn btn-primary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#editAdminModal">
                                         <i class="fas fa-edit"></i> Chỉnh Sửa
@@ -75,24 +82,29 @@
                                     <div class="row mb-3">
                                         <div class="col-md-6">
                                             <label class="form-label text-muted">Họ Tên</label>
-                                            <p class="fw-bold">Quản Trị Viên</p>
+                                            <p class="fw-bold">${not empty sessionScope.auth ? sessionScope.auth.user_name : "Quản Trị Viên"}</p>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label text-muted">Email</label>
-                                            <p class="fw-bold">admin@styleera.com</p>
+                                            <p class="fw-bold">${not empty sessionScope.auth ? sessionScope.auth.email : "admin@styleera.com"}</p>
                                         </div>
                                     </div>
                                     <div class="row mb-3">
                                         <div class="col-md-6">
-                                            <label class="form-label text-muted"
-                                            >Số Điện Thoại</label
-                                            >
-                                            <p class="fw-bold">0904899626</p>
+                                            <label class="form-label text-muted">Số Điện Thoại</label>
+                                            <p class="fw-bold">${not empty sessionScope.auth ? sessionScope.auth.phone : "Chưa cập nhật"}</p>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label text-muted">Vai Trò</label>
                                             <p class="fw-bold">
-                                                <span class="badge bg-primary">Admin</span>
+                                                <span class="badge bg-primary">
+                                                    <c:choose>
+                                                        <c:when test="${sessionScope.auth != null && 'Admin@styleera.com'.equalsIgnoreCase(sessionScope.auth.email)}">
+                                                            Admin Gốc
+                                                        </c:when>
+                                                        <c:otherwise>Admin</c:otherwise>
+                                                    </c:choose>
+                                                </span>
                                             </p>
                                         </div>
                                     </div>
@@ -100,8 +112,12 @@
                                         <div class="col-12">
                                             <label class="form-label text-muted">Địa Chỉ</label>
                                             <p class="fw-bold">
-                                                376, khu phố 6, Thủ Đức, Thành phố Hồ Chí Minh, Việt
-                                                Nam
+                                                <c:choose>
+                                                    <c:when test="${not empty sessionScope.auth.addresses}">
+                                                        ${sessionScope.auth.addresses[0].street}, ${sessionScope.auth.addresses[0].district}, ${sessionScope.auth.addresses[0].province}
+                                                    </c:when>
+                                                    <c:otherwise>Chưa cập nhật địa chỉ</c:otherwise>
+                                                </c:choose>
                                             </p>
                                         </div>
                                     </div>
@@ -181,11 +197,11 @@
                 <form id="editAdminForm">
                     <div class="mb-3">
                         <label class="form-label">Họ Tên</label>
-                        <input type="text" class="form-control" value="Quản Trị Viên"/>
+                        <input type="text" class="form-control" value="${not empty sessionScope.auth ? sessionScope.auth.user_name : 'Quản Trị Viên'}"/>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Email</label>
-                        <input type="email" class="form-control" value="admin@styleera.com"/>
+                        <input type="email" class="form-control" value="${not empty sessionScope.auth ? sessionScope.auth.email : 'admin@styleera.com'}"/>
                     </div>
                 </form>
             </div>
