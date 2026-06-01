@@ -16,9 +16,26 @@
 <!-- ===== HEADER ===== -->
 <c:set var="currentPage" value="profile" scope="request"/>
 <%@ include file="/admin/layout/Layoutadmin.jsp" %>
+<script>
+    window.contextPath = '${root}';
+</script>
 
         <!-- ===== CONTENT ===== -->
         <main class="admin-content">
+            <!-- Alert Notifications -->
+            <c:if test="${not empty sessionScope.successMsg}">
+                <div class="alert alert-success alert-dismissible fade show" role="alert" id="successAlert">
+                    <i class="fas fa-check-circle me-2"></i>${sessionScope.successMsg}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <c:remove var="successMsg" scope="session"/>
+            </c:if>
+            <c:if test="${not empty error}">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>${error}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </c:if>
             <!-- Page Header -->
             <div class="page-header mb-5">
                 <div>
@@ -31,13 +48,13 @@
                 <div class="col-12">
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" href="#adminProfile" data-bs-toggle="tab">
+                            <a class="nav-link ${param.tab != 'settings' ? 'active' : ''}" href="#adminProfile" data-bs-toggle="tab">
                                 <i class="fas fa-user-circle"></i> Hồ Sơ Admin
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="#settings" data-bs-toggle="tab">
+                            <a class="nav-link ${param.tab == 'settings' ? 'active' : ''}" href="#settings" data-bs-toggle="tab">
                                 <i class="fas fa-cog"></i> Cài Đặt
                             </a>
                         </li>
@@ -48,7 +65,7 @@
             <!-- Tab Content -->
             <div class="tab-content">
                 <!-- Admin Profile Tab -->
-                <div class="tab-pane fade show active" id="adminProfile">
+                <div class="tab-pane fade ${param.tab != 'settings' ? 'show active' : ''}" id="adminProfile">
                     <div class="row">
                         <!-- Profile Info -->
                         <div class="col-lg-4 mb-4">
@@ -152,28 +169,52 @@
                 </div>
 
                 <!-- Settings Tab -->
-                <div class="tab-pane fade" id="settings">
+                <div class="tab-pane fade ${param.tab == 'settings' ? 'show active' : ''}" id="settings">
                     <div class="row">
                         <div class="col-lg-8">
                             <div class="card shadow-sm">
                                 <div class="card-header bg-light border-bottom">
-                                    <h6 class="mb-0">Cài Đặt Chung</h6>
+                                    <h6 class="mb-0">Cập Nhật Thông Tin Cá Nhân</h6>
                                 </div>
                                 <div class="card-body">
-                                    <form id="settingsForm">
+                                    <form action="${root}/admin-profile" method="post" id="adminInfoForm">
                                         <div class="mb-3">
-                                            <label class="form-label">Tên Cửa Hàng</label>
-                                            <input type="text" class="form-control" value="StyleEra Fashion Store"/>
+                                            <label class="form-label">Email Đăng Nhập</label>
+                                            <input type="email" class="form-control" value="${sessionScope.auth.email}" disabled style="background-color: #e9ecef;"/>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label">Email Liên Hệ</label>
-                                            <input type="email" class="form-control" value="contact@styleera.com"/>
+                                            <label class="form-label">Họ và Tên</label>
+                                            <input type="text" class="form-control" name="fullname" value="${sessionScope.auth.user_name}" required/>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Số Điện Thoại</label>
-                                            <input type="tel" class="form-control" value="0904899626"/>
+                                            <input type="text" class="form-control" name="phone" value="${sessionScope.auth.phone}" placeholder="Nhập số điện thoại"/>
                                         </div>
-                                        <button type="submit" class="btn btn-primary">Lưu Cài Đặt</button>
+                                        <div class="mb-3">
+                                            <label class="form-label">Địa Chỉ Cụ Thể</label>
+                                            <input type="text" class="form-control" name="address" value="${userAddress.street}" placeholder="Số nhà, tên đường..."/>
+                                        </div>
+                                        
+                                        <div class="row mb-4">
+                                            <div class="col-md-6 mb-3 mb-md-0">
+                                                <label class="form-label">Tỉnh / Thành phố</label>
+                                                <select id="adminProvince" class="form-select" data-selected="${userAddress.province}">
+                                                    <option value="">-- Chọn Tỉnh / Thành phố --</option>
+                                                </select>
+                                                <input type="hidden" name="city" id="adminCityName" value="${userAddress.province}"/>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Quận / Huyện</label>
+                                                <select id="adminDistrict" class="form-select" data-selected="${userAddress.district}" disabled>
+                                                    <option value="">-- Chọn Quận / Huyện --</option>
+                                                </select>
+                                                <input type="hidden" name="district" id="adminDistrictName" value="${userAddress.district}"/>
+                                            </div>
+                                        </div>
+                                        
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save me-2"></i> Lưu Cài Đặt
+                                        </button>
                                     </form>
                                 </div>
                             </div>

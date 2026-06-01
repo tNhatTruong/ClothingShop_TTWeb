@@ -47,7 +47,7 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="${root}/admin/admin-profile.jsp"
+                    <a href="${root}/admin-profile"
                        class="menu-link ${currentPage == 'profile' ? 'active' : ''}">
                         <i class="fa-solid fa-user"></i>
                         <span>Quản Trị Viên</span>
@@ -140,10 +140,10 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
-                            <a class="dropdown-item" href="${root}/admin/admin-profile.jsp">Hồ Sơ</a>
+                            <a class="dropdown-item" href="${root}/admin-profile">Hồ Sơ</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="${root}/admin/admin-profile.jsp">Cài Đặt</a>
+                            <a class="dropdown-item" href="${root}/admin-profile?tab=settings">Cài Đặt</a>
                         </li>
                         <li>
                             <hr class="dropdown-divider"/>
