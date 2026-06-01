@@ -229,6 +229,33 @@
         // Cho phép form submit tới server
         // Servlet sẽ xử lý và redirect tự động về admin-products.jsp
     });
+
+    // Xử lý sự kiện change ảnh và live preview
+    document.getElementById('productImages').addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            document.querySelector('input[name="image_name"]').value = file.name;
+            document.querySelector('input[name="image_path"]').value = "/images/" + file.name;
+            
+            const previewContainer = document.getElementById('imgPreview');
+            previewContainer.innerHTML = '';
+            
+            const previewTitle = document.createElement('p');
+            previewTitle.className = 'fw-bold mb-2 text-primary';
+            previewTitle.innerHTML = '<i class="fas fa-eye me-1"></i> Ảnh xem trước:';
+            
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.style.maxWidth = '100%';
+            img.style.maxHeight = '250px';
+            img.style.borderRadius = '8px';
+            img.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            img.className = 'border border-light';
+            
+            previewContainer.appendChild(previewTitle);
+            previewContainer.appendChild(img);
+        }
+    });
 </script>
 </body>
 </html>

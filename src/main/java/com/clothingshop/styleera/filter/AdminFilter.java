@@ -21,7 +21,8 @@ import java.io.IOException;
         "/admin-contact",
         "/AdminEditUser",
         "/AdminDeleteUser",
-        "/admin-profile"
+        "/admin-profile",
+        "/admin-orders"
 })
 public class AdminFilter implements Filter {
 

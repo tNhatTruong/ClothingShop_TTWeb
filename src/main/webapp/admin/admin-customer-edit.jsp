@@ -17,7 +17,7 @@
 <body>
 <!-- ===== HEADER ===== -->
 <c:set var="currentPage" value="customer" scope="request"/>
-<c:set var="isRoot" value="${sessionScope.auth != null && 'Admin'.equalsIgnoreCase(sessionScope.auth.role) && 'Admin@styleera.com'.equalsIgnoreCase(sessionScope.auth.email)}" />
+<c:set var="isRoot" value="${sessionScope.auth != null && 'Admin'.equalsIgnoreCase(sessionScope.auth.role) && 'qutoan23@gmail.com'.equalsIgnoreCase(sessionScope.auth.email)}" />
 <%@ include file="/admin/layout/Layoutadmin.jsp" %>
 
         <!-- ===== CONTENT ===== -->
@@ -101,7 +101,7 @@
                                         </c:when>
                                         <c:otherwise>
                                              <c:forEach items="${users}" var="u">
-                                                 <c:set var="uIsRoot" value="${u.role eq 'Admin' && 'Admin@styleera.com'.equalsIgnoreCase(u.email)}" />
+                                                 <c:set var="uIsRoot" value="${u.role eq 'Admin' && 'qutoan23@gmail.com'.equalsIgnoreCase(u.email)}" />
                                                  <c:set var="uIsAdmin" value="${u.role eq 'Admin'}" />
                                                  <tr class="text-center align-middle">
                                                      <td>#${u.id}</td>

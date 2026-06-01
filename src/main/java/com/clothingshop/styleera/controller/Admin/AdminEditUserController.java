@@ -32,7 +32,7 @@ public class AdminEditUserController extends HttpServlet {
 
             // Phân quyền bảo mật: Admin thường không thể sửa Admin khác
             User currentAdmin = SessionManage.getCurrentUser(request);
-            boolean isRoot = currentAdmin != null && "Admin@styleera.com".equalsIgnoreCase(currentAdmin.getEmail());
+            boolean isRoot = currentAdmin != null && "qutoan23@gmail.com".equalsIgnoreCase(currentAdmin.getEmail());
             if ("Admin".equalsIgnoreCase(user.getRole())) {
                 if (!isRoot && user.getId() != currentAdmin.getId()) {
                     request.getSession().setAttribute("errorMsg", "Chỉ Admin gốc mới có quyền chỉnh sửa Admin khác!");
@@ -71,7 +71,7 @@ public class AdminEditUserController extends HttpServlet {
             return;
         }
 
-        boolean isRoot = "Admin@styleera.com".equalsIgnoreCase(currentAdmin.getEmail());
+        boolean isRoot = "qutoan23@gmail.com".equalsIgnoreCase(currentAdmin.getEmail());
 
         try {
             int userId = Integer.parseInt(idParam);
@@ -84,14 +84,14 @@ public class AdminEditUserController extends HttpServlet {
             }
 
             // 1.1. Chặn sửa Admin gốc
-            if ("Admin@styleera.com".equalsIgnoreCase(targetUser.getEmail())) {
+            if ("qutoan23@gmail.com".equalsIgnoreCase(targetUser.getEmail())) {
                 if (!isRoot) {
                     request.getSession().setAttribute("errorMsg", "Không có quyền sửa Admin gốc!");
                     response.sendRedirect(request.getContextPath() + "/admin-user");
                     return;
                 }
                 // Admin gốc không thể tự đổi email hoặc hạ cấp của chính mình
-                email = "Admin@styleera.com";
+                email = "qutoan23@gmail.com";
                 role = "Admin";
                 status = "Hoạt Động";
             }

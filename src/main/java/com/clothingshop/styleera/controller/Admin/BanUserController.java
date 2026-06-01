@@ -67,10 +67,10 @@ public class BanUserController extends HttpServlet {
 
             // 4. Bảo vệ hệ thống: Không cho phép Admin thường khóa tài khoản Admin khác
             if ("Admin".equalsIgnoreCase(targetUser.getRole())) {
-                boolean isRoot = "Admin@styleera.com".equalsIgnoreCase(currentAdmin.getEmail());
+                boolean isRoot = "qutoan23@gmail.com".equalsIgnoreCase(currentAdmin.getEmail());
                 
                 // Admin gốc không bao giờ có thể bị khóa
-                if ("Admin@styleera.com".equalsIgnoreCase(targetUser.getEmail())) {
+                if ("qutoan23@gmail.com".equalsIgnoreCase(targetUser.getEmail())) {
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     respJson.addProperty("status", "error");
                     respJson.addProperty("message", "Không thể khóa tài khoản Admin gốc!");

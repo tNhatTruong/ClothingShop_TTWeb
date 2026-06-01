@@ -46,4 +46,8 @@ public class OrdersService {
     public Orders findById(int orderId) {
         return ordersDAO.findById(orderId);
     }
+
+    public List<Orders> findAllOrders() {
+        return ordersDAO.findAllOrders();
+    }
 }

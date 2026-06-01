@@ -45,7 +45,7 @@ public class AdminDeleteUserController extends HttpServlet {
             }
 
             // 2. Bảo vệ Admin gốc: Không ai có quyền xóa Admin gốc
-            if ("Admin@styleera.com".equalsIgnoreCase(targetUser.getEmail())) {
+            if ("qutoan23@gmail.com".equalsIgnoreCase(targetUser.getEmail())) {
                 request.getSession().setAttribute("errorMsg", "Không được phép xóa tài khoản Admin gốc!");
                 response.sendRedirect(request.getContextPath() + "/admin-user");
                 return;
@@ -53,7 +53,7 @@ public class AdminDeleteUserController extends HttpServlet {
 
             // 3. Phân quyền xóa Admin thường: Chỉ Admin gốc mới được phép
             if ("Admin".equalsIgnoreCase(targetUser.getRole())) {
-                boolean isRoot = "Admin@styleera.com".equalsIgnoreCase(currentAdmin.getEmail());
+                boolean isRoot = "qutoan23@gmail.com".equalsIgnoreCase(currentAdmin.getEmail());
                 if (!isRoot) {
                     request.getSession().setAttribute("errorMsg", "Chỉ Admin gốc mới có quyền xóa tài khoản Admin khác!");
                     response.sendRedirect(request.getContextPath() + "/admin-user");

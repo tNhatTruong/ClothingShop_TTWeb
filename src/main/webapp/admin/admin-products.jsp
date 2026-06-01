@@ -146,18 +146,18 @@
                                     <td><strong>${p.product_name}</strong></td>
                                     <td>
                                         <c:choose>
-                                            <c:when test="${p.subcategories.category.name eq 'Nam'}">
-                                                <span class="badge bg-primary">${p.subcategories.category.name}</span>
+                                            <c:when test="${p.subcategory.category.name eq 'Nam'}">
+                                                <span class="badge bg-primary">${p.subcategory.category.name}</span>
                                             </c:when>
-                                            <c:when test="${p.subcategories.category.name eq 'Nữ'}">
-                                                <span class="badge bg-danger">${p.subcategories.category.name}</span>
+                                            <c:when test="${p.subcategory.category.name eq 'Nữ'}">
+                                                <span class="badge bg-danger">${p.subcategory.category.name}</span>
                                             </c:when>
-                                            <c:when test="${p.subcategories.category.name eq 'Đồ Đôi'}">
-                                                <span class="badge bg-dark">${p.subcategories.category.name}</span>
+                                            <c:when test="${p.subcategory.category.name eq 'Đồ Đôi'}">
+                                                <span class="badge bg-dark">${p.subcategory.category.name}</span>
                                             </c:when>
                                         </c:choose>
                                     </td>
-                                    <td><span>${p.subcategories.name}</span></td>
+                                    <td><span>${p.subcategory.name}</span></td>
                                     <td>
                                         <c:if test="${not empty p.variants}">
                                             <c:forEach items="${p.variants}" var="v">

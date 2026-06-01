@@ -40,7 +40,7 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="${root}/admin/admin-orders.jsp"
+                    <a href="${root}/admin-orders"
                        class="menu-link ${currentPage == 'orders' ? 'active' : ''}">
                         <i class="fas fa-shopping-cart"></i>
                         <span>Quản lý Đơn Hàng</span>
@@ -125,7 +125,7 @@
                         </div>
                         <div class="profile-role">
                             <c:choose>
-                                <c:when test="${sessionScope.auth != null && 'Admin@styleera.com'.equalsIgnoreCase(sessionScope.auth.email)}">
+                                <c:when test="${sessionScope.auth != null && 'qutoan23@gmail.com'.equalsIgnoreCase(sessionScope.auth.email)}">
                                     Admin Gốc
                                 </c:when>
                                 <c:when test="${not empty sessionScope.auth}">

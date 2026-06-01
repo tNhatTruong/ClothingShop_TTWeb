@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<c:set var="root" value="${pageContext.request.contextPath}" scope="request"/>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -9,7 +10,7 @@
     <title>StyleEra - Quản Lý Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-    <link rel="stylesheet" href="css/admin.css"/>
+    <link rel="stylesheet" href="${root}/admin/css/admin.css"/>
 </head>
 
 <body>
@@ -71,11 +72,11 @@
                         <div class="col-lg-4 mb-4">
                             <div class="card shadow-sm text-center">
                                 <div class="card-body pt-5">
-                                    <img src="images/logoadm.png" alt="Admin" class="rounded-circle mb-3" width="100" height="100"/>
+                                    <img src="${root}/admin/images/logoadm.png" alt="Admin" class="rounded-circle mb-3" width="100" height="100"/>
                                     <h4 class="mb-1">${not empty sessionScope.auth ? sessionScope.auth.user_name : "Quản Trị Viên"}</h4>
                                     <p class="text-muted mb-3">
                                         <c:choose>
-                                            <c:when test="${sessionScope.auth != null && 'Admin@styleera.com'.equalsIgnoreCase(sessionScope.auth.email)}">
+                                            <c:when test="${sessionScope.auth != null && 'qutoan23@gmail.com'.equalsIgnoreCase(sessionScope.auth.email)}">
                                                 Admin Gốc
                                             </c:when>
                                             <c:otherwise>Admin</c:otherwise>
@@ -116,7 +117,7 @@
                                             <p class="fw-bold">
                                                 <span class="badge bg-primary">
                                                     <c:choose>
-                                                        <c:when test="${sessionScope.auth != null && 'Admin@styleera.com'.equalsIgnoreCase(sessionScope.auth.email)}">
+                                                        <c:when test="${sessionScope.auth != null && 'qutoan23@gmail.com'.equalsIgnoreCase(sessionScope.auth.email)}">
                                                             Admin Gốc
                                                         </c:when>
                                                         <c:otherwise>Admin</c:otherwise>
@@ -256,8 +257,8 @@
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/admin-common.js"></script>
-<script src="js/admin-dashboard.js"></script>
-<script src="js/admin_Profile.js"></script>
+<script src="${root}/admin/js/admin-common.js"></script>
+<script src="${root}/admin/js/admin-dashboard.js"></script>
+<script src="${root}/admin/js/admin_Profile.js"></script>
 </body>
 </html>

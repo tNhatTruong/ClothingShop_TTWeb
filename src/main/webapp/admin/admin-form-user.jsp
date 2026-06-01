@@ -15,7 +15,7 @@
 <body>
 <!-- ===== HEADER ===== -->
 <c:set var="currentPage" value="customer" scope="request"/>
-<c:set var="isRoot" value="${sessionScope.auth != null && 'Admin'.equalsIgnoreCase(sessionScope.auth.role) && 'Admin@styleera.com'.equalsIgnoreCase(sessionScope.auth.email)}" />
+<c:set var="isRoot" value="${sessionScope.auth != null && 'Admin'.equalsIgnoreCase(sessionScope.auth.role) && 'qutoan23@gmail.com'.equalsIgnoreCase(sessionScope.auth.email)}" />
 <%@ include file="/admin/layout/Layoutadmin.jsp" %>
 <div class="admin-container">
         <!-- ===== CONTENT ===== -->
