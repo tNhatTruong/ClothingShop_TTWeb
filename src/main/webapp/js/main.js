@@ -175,10 +175,15 @@ function openQuickView(productId, name, price, imgUrl) {
 
     // Gọi AJAX lấy danh sách biến thể của sản phẩm
     // Hãy chắc chắn rằng bạn có 1 Servlet map đường dẫn này trả về JSON biến thể
-    fetch(`${contextPath}/api/product-variants?productId=${productId}`)
-        .then(response => response.json())
+    fetch(`${contextPath}/addcart?productId=${productId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Không thể lấy dữ liệu biến thể');
+            }
+            return response.json();
+        })
         .then(data => {
-            qvVariantsData = data; // Dữ liệu mảng các biến thể [{variantId, color, size, stock}, ...]
+            qvVariantsData = data;
             renderQuickViewColors();
         })
         .catch(err => {
@@ -219,7 +224,7 @@ function selectQuickViewColor(element, color) {
 
     // Lọc ra các size có sẵn (stock > 0) thuộc về màu đã chọn
     const availableSizes = qvVariantsData
-        .filter(v => v.color === color && v.stock > 0)
+        .filter(v => v.color === color && v.quantity > 0)
         .map(v => v.size);
 
     // Lấy toàn bộ danh sách size tổng quát của sản phẩm để hiển thị mờ/rõ

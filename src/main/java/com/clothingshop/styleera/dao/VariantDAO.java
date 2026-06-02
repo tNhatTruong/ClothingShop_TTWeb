@@ -113,4 +113,28 @@ public class VariantDAO {
                         .list()
         );
     }
+
+    public List<Variants> getVariantsByProductId(int productId) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        String sql = "SELECT id AS variant_id, " +
+                "       size, " +
+                "       color, " +
+                "       quantity AS variant_quantity " +
+                "FROM variants " +
+                "WHERE product_id = :productId";
+
+        return jdbi.withHandle(handle ->
+                handle.createQuery(sql)
+                        .bind("productId", productId)
+                        .map((rs, ctx) -> {
+                            Variants variant = new Variants();
+                            variant.setVariantId(rs.getInt("variant_id"));
+                            variant.setSize(rs.getString("size"));
+                            variant.setColor(rs.getString("color"));
+                            variant.setQuantity(rs.getInt("variant_quantity"));
+                            return variant;
+                        })
+                        .list()
+        );
+    }
 }
