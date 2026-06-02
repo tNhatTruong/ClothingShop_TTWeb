@@ -39,7 +39,7 @@ public class ShippingService {
     public long calculateShippingFee(int toDistrictId, String toWardCode, int weightInGrams) throws Exception {
 
         // Khởi tạo URL và Connection sử dụng biến đã đọc từ file
-        URL url = new URL(this.apiUrl);
+        URL url = java.net.URI.create(this.apiUrl).toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");

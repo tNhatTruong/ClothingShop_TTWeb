@@ -19,7 +19,6 @@ public class ProductController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // 1. Khởi tạo Service/DAO
         ProductService productService = new ProductService();
-        com.clothingshop.styleera.dao.ProductDAO productDAO = new com.clothingshop.styleera.dao.ProductDAO();
         com.clothingshop.styleera.dao.CategoryDAO categoryDAO = new com.clothingshop.styleera.dao.CategoryDAO();
         com.clothingshop.styleera.dao.VariantDAO variantDAO = new com.clothingshop.styleera.dao.VariantDAO();
         VariantService variantService = new VariantService();
@@ -105,9 +104,6 @@ public class ProductController extends HttpServlet {
         }
 
         // 4. XỬ LÝ PHÂN TRANG (PAGINATION LOGIC)
-        // Nếu danh sách null, khởi tạo rỗng để tránh lỗi
-        if (fullList == null) fullList = new ArrayList<>();
-
         int totalProducts = fullList.size();
         int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
 

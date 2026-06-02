@@ -55,7 +55,7 @@ public class AddressApiController extends HttpServlet {
                 targetUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=" + districtId;
             }
 
-            URL url = new URL(targetUrl);
+            URL url = java.net.URI.create(targetUrl).toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Content-Type", "application/json");
