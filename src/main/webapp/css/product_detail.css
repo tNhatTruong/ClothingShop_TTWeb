@@ -1,4 +1,4 @@
-﻿@import url('variables.css');
+@import url('variables.css');
 .product_detail_container {
     width: 100%;
     padding: 30px 0;
@@ -343,8 +343,7 @@ p {
     width: 70%;
 }
 /*mo ta chi tiet*/
-.product_detail_tab {
-    width: 1100px;
+.product_detail_tab { max-width: 1100px; width: 100%; padding: 0 15px;
     margin: 40px auto 0;
     text-align: center;
 }
@@ -428,8 +427,7 @@ p {
 
 /*đánh giá*/
 /* ===== SMALL + COMPACT STYLE ===== */
-.reviews {
-    width: 1100px;
+.reviews { max-width: 1100px; width: 100%; padding: 0 15px;
     margin: 40px auto 0;
 }
 .reviews h2 {
@@ -769,4 +767,35 @@ p {
     padding: 10px 20px;
     font-weight: 600;
     transition: all 0.3s;
+}
+
+/* Fix markdown lists */
+#productDescriptionRendered ul { list-style-type: disc !important; padding-left: 20px !important; margin-bottom: 15px !important; }
+#productDescriptionRendered li { display: list-item !important; margin-bottom: 5px; }
+
+
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 991px) {
+    .product_detail_container { width: 100% !important; padding: 15px 0 !important; overflow-x: hidden !important; }
+    .product_detail_wrapper { flex-direction: column !important; align-items: center !important; width: 100% !important; padding: 0 15px !important; }
+    .product_images, .product_info { width: 100% !important; padding: 0 !important; }
+    .product_images { flex-direction: column !important; }
+    .product_thumbs { flex-direction: row !important; justify-content: center !important; margin-top: 15px !important; }
+    .product_main_image { width: 100% !important; max-width: 500px !important; }
+    .row_2 { width: 100% !important; max-width: 100vw !important; overflow-x: hidden !important; }
+    .product_detail_tab { width: 100% !important; padding: 0 15px !important; }
+    .product_detail_tab .nav { gap: 15px !important; flex-wrap: wrap !important; }
+    .product_details_tab_content { padding: 0 15px !important; overflow-x: hidden !important; word-wrap: break-word !important; }
+    .reviews { width: 100% !important; padding: 0 15px !important; margin-top: 20px !important; }
+    .product_detail_actions { display: flex !important; flex-direction: column !important; gap: 10px !important; }
+    .product_detail_actions button { width: 100% !important; }
+}
+
+@media (max-width: 768px) {
+    .product_detail_tab .nav { flex-direction: column !important; gap: 10px !important; }
+    .product_main_image { max-width: 100% !important; }
+    .product_main_image img { width: 100% !important; }
+    h3 { font-size: 22px !important; }
+    .product_title { font-size: 20px !important; }
 }
