@@ -1,5 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<c:set var="root" value="${pageContext.request.contextPath}" scope="request" />
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -9,8 +11,8 @@
     <title>StyleEra - Quản Lý Đơn Hàng</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-    <link rel="stylesheet" href="css/admin.css"/>
-    <link rel="stylesheet" href="css/admin_order.css"/>
+    <link rel="stylesheet" href="${root}/admin/css/admin.css"/>
+    <link rel="stylesheet" href="${root}/admin/css/admin_order.css"/>
 </head>
 
 <body>
@@ -27,12 +29,34 @@
                 </div>
             </div>
 
+            <!-- Tính toán các trạng thái đơn hàng -->
+            <c:set var="pendingCount" value="0" />
+            <c:set var="shippingCount" value="0" />
+            <c:set var="deliveredCount" value="0" />
+            <c:set var="cancelledCount" value="0" />
+            <c:forEach items="${orders}" var="o">
+                <c:choose>
+                    <c:when test="${o.status eq 'Chờ vận chuyển'}">
+                        <c:set var="pendingCount" value="${pendingCount + 1}" />
+                    </c:when>
+                    <c:when test="${o.status eq 'Đang vận chuyển'}">
+                        <c:set var="shippingCount" value="${shippingCount + 1}" />
+                    </c:when>
+                    <c:when test="${o.status eq 'Đã Giao'}">
+                        <c:set var="deliveredCount" value="${deliveredCount + 1}" />
+                    </c:when>
+                    <c:when test="${o.status eq 'Đã hủy'}">
+                        <c:set var="cancelledCount" value="${cancelledCount + 1}" />
+                    </c:when>
+                </c:choose>
+            </c:forEach>
+
             <!-- Stats -->
             <div class="row mb-4 g-3">
                 <div class="col-md-3">
                     <div class="card text-center shadow-sm">
                         <div class="card-body">
-                            <h3 class="mb-1">156</h3>
+                            <h3 class="mb-1 text-info">${pendingCount}</h3>
                             <p class="text-muted small mb-0">Chờ Vận chuyển</p>
                         </div>
                     </div>
@@ -40,7 +64,7 @@
                 <div class="col-md-3">
                     <div class="card text-center shadow-sm">
                         <div class="card-body">
-                            <h3 class="mb-1 text-warning">84</h3>
+                            <h3 class="mb-1 text-warning">${shippingCount}</h3>
                             <p class="text-muted small mb-0">Đang Vận chuyển</p>
                         </div>
                     </div>
@@ -48,7 +72,7 @@
                 <div class="col-md-3">
                     <div class="card text-center shadow-sm">
                         <div class="card-body">
-                            <h3 class="mb-1 text-success">942</h3>
+                            <h3 class="mb-1 text-success">${deliveredCount}</h3>
                             <p class="text-muted small mb-0">Đã Giao</p>
                         </div>
                     </div>
@@ -56,7 +80,7 @@
                 <div class="col-md-3">
                     <div class="card text-center shadow-sm">
                         <div class="card-body">
-                            <h3 class="mb-1 text-danger">52</h3>
+                            <h3 class="mb-1 text-danger">${cancelledCount}</h3>
                             <p class="text-muted small mb-0">Đã Hủy</p>
                         </div>
                     </div>
@@ -68,17 +92,17 @@
                 <div class="card-body">
                     <div class="row g-3 align-items-end">
                         <div class="col-md-6">
-                            <label class="form-label">Tìm Kiếm Mã ĐH</label>
-                            <input type="text" class="form-control" placeholder="#985106"/>
+                            <label class="form-label">Tìm Kiếm Đơn Hàng</label>
+                            <input type="text" class="form-control" id="searchOrderInput" placeholder="Mã đơn hàng, tên hoặc email khách hàng..."/>
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Trạng Thái</label>
-                            <select class="form-select">
+                            <select class="form-select" id="statusOrderFilter">
                                 <option value="">Tất Cả Trạng Thái</option>
-                                <option value="pending">Chờ Vận chuyển</option>
-                                <option value="shipping">Đang Vận chuyển</option>
-                                <option value="delivered">Đã Giao</option>
-                                <option value="cancelled">Đã Hủy</option>
+                                <option value="Chờ vận chuyển">Chờ vận chuyển</option>
+                                <option value="Đang vận chuyển">Đang vận chuyển</option>
+                                <option value="Đã Giao">Đã Giao</option>
+                                <option value="Đã hủy">Đã hủy</option>
                             </select>
                         </div>
                     </div>
@@ -89,90 +113,70 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-light border-bottom d-flex justify-content-between align-items-center">
                     <h6 class="mb-0">Danh Sách Đơn Hàng</h6>
-                    <span class="text-muted small">Tổng cộng: <strong>5</strong> đơn hàng</span>
+                    <span class="text-muted small">Tổng cộng: <strong>${orders.size()}</strong> đơn hàng</span>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
-                            <tr>
+                            <tr class="text-center align-middle">
                                 <th>Mã ĐH</th>
                                 <th>Khách Hàng</th>
                                 <th>Email</th>
                                 <th>Ngày Đặt</th>
                                 <th>Tổng Tiền</th>
                                 <th>Trạng Thái</th>
-                                <th style="width: 120px">Theo dõi</th>
+                                <th style="width: 120px">Hành Động</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr>
-                                <td><strong>#985110</strong></td>
-                                <td>Phạm Văn D</td>
-                                <td>phamvand@email.com</td>
-                                <td>15/11/2025</td>
-                                <td><strong>890,000đ</strong></td>
-                                <td><span class="badge bg-info">Chờ Vận chuyển</span></td>
-                                <td>
-                                    <button class="btn btn-sm btn-info" title="Chi tiết" onclick="viewOrder('#985110')">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#985109</strong></td>
-                                <td>Hoàng Thị E</td>
-                                <td>hoangthie@email.com</td>
-                                <td>14/11/2025</td>
-                                <td><strong>620,000đ</strong></td>
-                                <td>
-                        <span class="badge bg-warning text-dark">Đang Vận chuyển</span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-info" title="Chi tiết" onclick="viewOrder('#985109')">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#985108</strong></td>
-                                <td>Đặng Văn F</td>
-                                <td>dangvanf@email.com</td>
-                                <td>13/11/2025</td>
-                                <td><strong>1,100,000đ</strong></td>
-                                <td><span class="badge bg-success">Đã Giao</span></td>
-                                <td>
-                                    <button class="btn btn-sm btn-info" title="Chi tiết" onclick="viewOrder('#985108')">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#985107</strong></td>
-                                <td>Bùi Thị G</td>
-                                <td>buithig@email.com</td>
-                                <td>12/11/2025</td>
-                                <td><strong>350,000đ</strong></td>
-                                <td><span class="badge bg-success">Đã Giao</span></td>
-                                <td>
-                                    <button class="btn btn-sm btn-info" title="Chi tiết" onclick="viewOrder('#985107')">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#985106</strong></td>
-                                <td>Nguyễn Văn A</td>
-                                <td>nguyenvana@email.com</td>
-                                <td>11/11/2025</td>
-                                <td><strong>500,000đ</strong></td>
-                                <td><span class="badge bg-danger">Đã Hủy</span></td>
-                                <td>
-                                    <button class="btn btn-sm btn-info" title="Chi tiết" onclick="viewOrder('#985106')">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
+                            <tbody id="ordersTableBody">
+                            <c:choose>
+                                <c:when test="${empty orders}">
+                                    <tr class="no-orders-row">
+                                        <td colspan="7" class="text-center py-4">
+                                            <i class="fas fa-inbox" style="font-size: 48px; color: #ccc;"></i>
+                                            <p class="mt-2 text-muted">Không tìm thấy đơn hàng nào trong hệ thống</p>
+                                        </td>
+                                    </tr>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:forEach items="${orders}" var="o">
+                                        <tr class="text-center align-middle">
+                                            <td><strong>#${o.id}</strong></td>
+                                            <td>${o.userName}</td>
+                                            <td>${o.email}</td>
+                                            <td><strong>${o.createdAt.toString().replace('T', ' ')}</strong></td>
+                                            <td>
+                                                <strong><fmt:formatNumber value="${o.totalPrice}" type="currency" currencySymbol="₫" maxFractionDigits="0"/></strong>
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${o.status eq 'Chờ vận chuyển'}">
+                                                        <span class="badge bg-info">${o.status}</span>
+                                                    </c:when>
+                                                    <c:when test="${o.status eq 'Đang vận chuyển'}">
+                                                        <span class="badge bg-warning text-dark">${o.status}</span>
+                                                    </c:when>
+                                                    <c:when test="${o.status eq 'Đã Giao'}">
+                                                        <span class="badge bg-success">${o.status}</span>
+                                                    </c:when>
+                                                    <c:when test="${o.status eq 'Đã hủy'}">
+                                                        <span class="badge bg-danger">${o.status}</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="badge bg-secondary">${o.status}</span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-info" title="Chi tiết" onclick="viewOrder('${o.id}')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </c:otherwise>
+                            </c:choose>
                             </tbody>
                         </table>
                     </div>
@@ -271,8 +275,40 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Custom JS -->
-<script src="js/admin-common.js"></script>
-<script src="js/admin-dashboard.js"></script>
-<script src="js/admin_Orders.js"></script>
+<script src="${root}/admin/js/admin-common.js"></script>
+<script src="${root}/admin/js/admin_Orders.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById("searchOrderInput");
+    const statusFilter = document.getElementById("statusOrderFilter");
+    const tableRows = document.querySelectorAll("#ordersTableBody tr");
+
+    function filterOrders() {
+        const searchVal = searchInput.value.toLowerCase().trim();
+        const statusVal = statusFilter.value;
+
+        tableRows.forEach(row => {
+            if (row.classList.contains("no-orders-row")) return;
+            
+            const orderIdText = row.cells[0].textContent.toLowerCase();
+            const customerText = row.cells[1].textContent.toLowerCase();
+            const emailText = row.cells[2].textContent.toLowerCase();
+            const statusText = row.cells[5].textContent.trim();
+
+            const matchesSearch = orderIdText.includes(searchVal) || customerText.includes(searchVal) || emailText.includes(searchVal);
+            const matchesStatus = !statusVal || statusText === statusVal;
+
+            if (matchesSearch && matchesStatus) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+
+    if (searchInput) searchInput.addEventListener("input", filterOrders);
+    if (statusFilter) statusFilter.addEventListener("change", filterOrders);
+});
+</script>
 </body>
 </html>

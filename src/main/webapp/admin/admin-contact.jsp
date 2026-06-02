@@ -80,5 +80,31 @@
     </div>
 </div>
 </main>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById("searchInput");
+    if (searchInput) {
+        searchInput.addEventListener("input", function() {
+            const searchText = this.value.toLowerCase().trim();
+            const tableRows = document.querySelectorAll("tbody tr");
+            
+            tableRows.forEach(row => {
+                // Bỏ qua dòng trống nếu không có liên hệ
+                if (row.cells.length < 5) return;
+                
+                const nameText = row.cells[1].textContent.toLowerCase();
+                const emailText = row.cells[2].textContent.toLowerCase();
+                const contentText = row.cells[3].textContent.toLowerCase();
+                
+                if (nameText.includes(searchText) || emailText.includes(searchText) || contentText.includes(searchText)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+    }
+});
+</script>
 </body>
 </html>

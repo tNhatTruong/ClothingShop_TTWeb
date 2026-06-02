@@ -409,6 +409,42 @@ public class ProductDAO {
         });
     }
 
+    // Cập nhật ảnh sản phẩm (edit)
+    public void updateProductImage(int productId, String imageName, String imagePath) {
+        JDBIConnector.getJdbi().useTransaction(handle -> {
+            // 1. Kiểm tra xem sản phẩm đã có image_id chưa
+            Integer imageId = handle.createQuery("SELECT image_id FROM products WHERE id = ?")
+                    .bind(0, productId)
+                    .mapTo(Integer.class)
+                    .findOne()
+                    .orElse(null);
+
+            if (imageId != null) {
+                // 2. Đã có ảnh -> update dòng ảnh cũ trong table images
+                handle.createUpdate("UPDATE images SET image_name = ?, path = ?, updated_at = NOW() WHERE id = ?")
+                        .bind(0, imageName)
+                        .bind(1, imagePath)
+                        .bind(2, imageId)
+                        .execute();
+            } else {
+                // 3. Chưa có ảnh -> insert ảnh mới vào table images
+                int newImageId = handle.createUpdate("INSERT INTO images (product_id, image_name, path, updated_at) VALUES (?, ?, ?, NOW())")
+                        .bind(0, productId)
+                        .bind(1, imageName)
+                        .bind(2, imagePath)
+                        .executeAndReturnGeneratedKeys("id")
+                        .mapTo(Integer.class)
+                        .one();
+
+                // Cập nhật ngược lại image_id cho product
+                handle.createUpdate("UPDATE products SET image_id = ? WHERE id = ?")
+                        .bind(0, newImageId)
+                        .bind(1, productId)
+                        .execute();
+            }
+        });
+    }
+
     // 18. tìm id theo product để edit
     public Product findProductEditById(int id) {
         Jdbi jdbi = JDBIConnector.getJdbi();

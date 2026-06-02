@@ -189,4 +189,44 @@ public class UserDAO {
                     .execute();
         });
     }
+
+    // 16. Xóa cứng User và các bản ghi liên quan để tránh vi phạm ràng buộc khóa ngoại
+    public void deleteUser(int userId) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        jdbi.useTransaction(handle -> {
+            // Xóa user tokens Remember Me
+            handle.createUpdate("DELETE FROM user_tokens WHERE user_id = ?").bind(0, userId).execute();
+            
+            // Xóa reviews (và các bản ghi hình ảnh review sẽ tự động bị xóa theo CASCADE)
+            handle.createUpdate("DELETE FROM review WHERE user_id = ?").bind(0, userId).execute();
+
+            // Xóa liên hệ contacts
+            handle.createUpdate("DELETE FROM contacts WHERE user_id = ?").bind(0, userId).execute();
+
+            // Xóa các sản phẩm trong giỏ hàng tạm thời
+            handle.createUpdate("DELETE FROM cartitem WHERE user_id = ?").bind(0, userId).execute();
+
+            // Lấy danh sách các đơn hàng của user này để xóa các bảng phụ thuộc đơn hàng trước
+            List<Integer> orderIds = handle.createQuery("SELECT id FROM orders WHERE user_id = ?")
+                    .bind(0, userId)
+                    .mapTo(Integer.class)
+                    .list();
+            for (int orderId : orderIds) {
+                // Xóa giao hàng của đơn hàng
+                handle.createUpdate("DELETE FROM delivery WHERE order_id = ?").bind(0, orderId).execute();
+                // Xóa thanh toán của đơn hàng
+                handle.createUpdate("DELETE FROM payments WHERE order_id = ?").bind(0, orderId).execute();
+                // Xóa chi tiết đơn hàng (thường được CASCADE, nhưng làm tường minh cho an toàn)
+                handle.createUpdate("DELETE FROM orderdetails WHERE order_id = ?").bind(0, orderId).execute();
+                // Xóa đơn hàng
+                handle.createUpdate("DELETE FROM orders WHERE id = ?").bind(0, orderId).execute();
+            }
+
+            // Xóa địa chỉ của người dùng (Chỉ được xóa sau khi đã xóa sạch các đơn hàng liên kết!)
+            handle.createUpdate("DELETE FROM addresses WHERE user_id = ?").bind(0, userId).execute();
+
+            // Cuối cùng xóa tài khoản người dùng
+            handle.createUpdate("DELETE FROM users WHERE id = ?").bind(0, userId).execute();
+        });
+    }
 }

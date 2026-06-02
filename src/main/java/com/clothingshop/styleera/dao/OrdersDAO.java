@@ -76,6 +76,20 @@ public class OrdersDAO {
                         .orElse(null)
         );
     }
+    // Lấy tất cả đơn hàng, thực hiện JOIN bảng users để map thông tin userName và email
+    public List<Orders> findAllOrders() {
+        return JDBIConnector.getJdbi().withHandle(handle ->
+                handle.createQuery(
+                                "SELECT o.id, o.user_id AS userId, o.address_id AS addressId, o.status, o.note, o.price, " +
+                                        "o.fee_delivery AS feeDelivery, o.total_price AS totalPrice, o.created_at AS createdAt, " +
+                                        "u.user_name AS userName, u.email " +
+                                        "FROM orders o JOIN users u ON o.user_id = u.id " +
+                                        "ORDER BY o.created_at DESC"
+                        )
+                        .mapToBean(Orders.class)
+                        .list()
+        );
+    }
 
     public int insertOrder(Orders order) {
         return JDBIConnector.getJdbi().withHandle(handle -> {
@@ -108,4 +122,5 @@ public class OrdersDAO {
                         .list()
         );
     }
+
 }

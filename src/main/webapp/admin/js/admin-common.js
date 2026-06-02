@@ -74,9 +74,10 @@ function formatDate(date) {
 }
 
 // Logout function
-function logout() {
+function logout(rootPath) {
     if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-        window.location.href = 'admin-login.jsp';
+        const path = rootPath ? rootPath + '/logout' : '/logout';
+        window.location.href = path;
     }
 }
 

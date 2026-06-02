@@ -148,7 +148,7 @@
                     <div class="card shadow-sm">
                         <div class="card-header bg-light border-bottom d-flex justify-content-between align-items-center">
                             <h6 class="mb-0">Đơn Hàng Gần Đây</h6>
-                            <a href="${root}/admin/admin-orders.jsp" class="btn btn-sm btn-primary">Xem tất cả</a>
+                            <a href="${root}/admin-orders" class="btn btn-sm btn-primary">Xem tất cả</a>
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">

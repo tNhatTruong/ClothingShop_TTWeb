@@ -15,6 +15,11 @@ import java.io.IOException;
 import java.util.List;
 
 @WebServlet(name = "AdminEditProductController", value = "/AdminEditProduct")
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+    maxFileSize = 1024 * 1024 * 10,      // 10MB
+    maxRequestSize = 1024 * 1024 * 50   // 50MB
+)
 public class AdminEditProductController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -66,6 +71,22 @@ public class AdminEditProductController extends HttpServlet {
             product.setSubcategory(sub);
 
             productDAO.editProduct(product, quantity, variantId);
+
+            Part filePart = request.getPart("image");
+            if (filePart != null && filePart.getSize() > 0) {
+                String imageName = filePart.getSubmittedFileName();
+                if (imageName != null && !imageName.isEmpty()) {
+                    String uploadPath = request.getServletContext().getRealPath("/images");
+                    java.io.File uploadDir = new java.io.File(uploadPath);
+                    if (!uploadDir.exists()) {
+                        uploadDir.mkdirs();
+                    }
+                    String filePath = uploadPath + java.io.File.separator + imageName;
+                    filePart.write(filePath);
+                    String imagePath = "/images/" + imageName;
+                    productDAO.updateProductImage(productId, imageName, imagePath);
+                }
+            }
 
             response.sendRedirect(request.getContextPath() + "/admin-products");
 

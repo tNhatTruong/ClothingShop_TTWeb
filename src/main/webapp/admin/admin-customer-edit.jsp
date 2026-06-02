@@ -17,10 +17,27 @@
 <body>
 <!-- ===== HEADER ===== -->
 <c:set var="currentPage" value="customer" scope="request"/>
+<c:set var="isRoot" value="${sessionScope.auth != null && 'Admin'.equalsIgnoreCase(sessionScope.auth.role) && 'qutoan23@gmail.com'.equalsIgnoreCase(sessionScope.auth.email)}" />
 <%@ include file="/admin/layout/Layoutadmin.jsp" %>
 
         <!-- ===== CONTENT ===== -->
         <main class="admin-content">
+            <!-- Alert Notifications -->
+            <c:if test="${not empty sessionScope.successMsg}">
+                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                    <i class="fas fa-check-circle me-2"></i> ${sessionScope.successMsg}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <c:remove var="successMsg" scope="session" />
+            </c:if>
+            <c:if test="${not empty sessionScope.errorMsg}">
+                <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i> ${sessionScope.errorMsg}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <c:remove var="errorMsg" scope="session" />
+            </c:if>
+
             <!-- Page Header -->
             <div class="page-header mb-5">
                 <div>
@@ -36,15 +53,15 @@
                 <div class="card-body">
                     <div class="row g-3 align-items-end">
                         <div class="col-md-6">
-                            <label class="form-label">Tìm Kiếm</label>
-                            <input type="text" class="form-control" id="searchInput" placeholder="Tên tài khoản"/>
+                            <label class="form-label fw-bold">Tìm Kiếm</label>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Tìm theo Tên, Email hoặc Số điện thoại..."/>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Vai Trò</label>
+                            <label class="form-label fw-bold">Vai Trò</label>
                             <select class="form-select" id="categoryFilter">
                                 <option value="">Tất Cả Vai Trò</option>
                                 <option value="admin">Admin</option>
-                                <option value="usr">User</option>
+                                <option value="user">User</option>
                             </select>
                         </div>
                     </div>
@@ -54,22 +71,22 @@
                 <div class="tab-pane">
                     <div class="card shadow-sm">
                         <div class="card-header bg-light border-bottom d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0">Danh Sách Khách Hàng</h6>
+                            <h6 class="mb-0 fw-bold">Danh Sách Khách Hàng</h6>
                             <span class="text-muted small">Tổng cộng: <strong>${users.size()}</strong> Người dùng</span>
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-hover mb-0">
-                                    <thead class="table-light">
-                                    <tr class="text-center align-middle">
-                                        <th>ID</th>
-                                        <th>Họ Tên</th>
-                                        <th>Điện thoại</th>
+                                <table class="table table-hover table-sm mb-0" style="font-size: 0.88rem;">
+                                    <thead class="table-light text-secondary">
+                                    <tr class="text-center align-middle" style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        <th style="width: 60px;">ID</th>
+                                        <th style="width: 140px;">Họ Tên</th>
+                                        <th style="width: 110px;">Điện thoại</th>
                                         <th>Địa Chỉ</th>
-                                        <th>Email</th>
-                                        <th>Vai trò</th>
-                                        <th>Trạng Thái</th>
-                                        <th>Hành Động</th>
+                                        <th style="width: 180px;">Email</th>
+                                        <th style="width: 120px;">Vai trò</th>
+                                        <th style="width: 115px;">Trạng Thái</th>
+                                        <th style="width: 125px;">Hành Động</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -83,71 +100,162 @@
                                             </tr>
                                         </c:when>
                                         <c:otherwise>
-                                            <c:forEach items="${users}" var="u">
-                                                <tr class="text-center align-middle">
-                                                    <td>#${u.id}</td>
-                                                    <td style="min-width: 180px;"> <strong>${u.user_name}</strong> </td>
-                                                    <td>${u.phone}</td>
-                                                    <td style="max-width: 300px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-                                                        <c:choose>
-                                                            <c:when test="${not empty u.addresses}">
-                                                                ${u.addresses[0].street}, ${u.addresses[0].district}, ${u.addresses[0].province}
-                                                            </c:when>
-                                                            <c:otherwise>—</c:otherwise>
-                                                        </c:choose>
-                                                    </td>
-                                                    <td>${u.email}</td>
-                                                    <td>
-                                                        <c:choose>
-                                                            <c:when test="${u.role eq 'User'}">
-                                                                <span class="badge bg-info fw-bold">${u.role}</span>
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <span class="badge bg-warning fw-bold">${u.role}</span>
-                                                            </c:otherwise>
-                                                        </c:choose>
-                                                    </td>
-                                                    <td>
-                                                        <c:choose>
-                                                            <c:when test="${u.status eq 'Hoạt Động'}">
-                                                                <span class="badge bg-success fw-bold status-badge" data-user-id="${u.id}">${u.status}</span>
-                                                            </c:when>
-                                                            <c:when test="${u.status eq 'BANNED'}">
-                                                                <span class="badge bg-dark fw-bold status-badge" data-user-id="${u.id}">Bị Khóa</span>
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <span class="badge bg-danger fw-bold status-badge" data-user-id="${u.id}">${u.status}</span>
-                                                            </c:otherwise>
-                                                        </c:choose>
-                                                    </td>
-                                                    <td>
-                                                        <a href="${root}/AdminEditUser?id=${u.id}" class="btn btn-sm btn-warning" title="Chỉnh sửa">
-                                                            <i class="fas fa-edit"></i>
-                                                        </a>
-                                                        <c:choose>
-                                                            <c:when test="${u.role eq 'Admin'}">
-                                                                <button class="btn btn-sm btn-secondary ms-1" disabled title="Tài khoản Admin không thể tác động">
-                                                                    <i class="fas fa-user-shield"></i>
-                                                                </button>
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <c:choose>
-                                                                    <c:when test="${u.status eq 'BANNED'}">
-                                                                        <button class="btn btn-sm btn-success ms-1 btn-toggle-ban" data-user-id="${u.id}" data-action="unban" title="Mở khóa tài khoản">
-                                                                            <i class="fas fa-unlock"></i> Mở khóa
-                                                                        </button>
-                                                                    </c:when>
-                                                                    <c:otherwise>
-                                                                        <button class="btn btn-sm btn-danger ms-1 btn-toggle-ban" data-user-id="${u.id}" data-action="ban" title="Khóa tài khoản">
-                                                                            <i class="fas fa-ban"></i> Khóa
-                                                                        </button>
-                                                                    </c:otherwise>
-                                                                </c:choose>
-                                                            </c:otherwise>
-                                                        </c:choose>
-                                                    </td>
-                                                </tr>
-                                            </c:forEach>
+                                             <c:forEach items="${users}" var="u">
+                                                 <c:set var="uIsRoot" value="${u.role eq 'Admin' && 'qutoan23@gmail.com'.equalsIgnoreCase(u.email)}" />
+                                                 <c:set var="uIsAdmin" value="${u.role eq 'Admin'}" />
+                                                 <tr class="text-center align-middle">
+                                                     <td>#${u.id}</td>
+                                                     <td style="max-width: 140px; word-break: break-word;"> <strong>${u.user_name}</strong> </td>
+                                                     <td style="font-size: 0.85rem;">${u.phone}</td>
+                                                     <td style="max-width: 200px; font-size: 0.8rem; word-break: break-word; line-height: 1.25; text-align: left;">
+                                                         <c:choose>
+                                                             <c:when test="${not empty u.addresses}">
+                                                                 ${u.addresses[0].street}, ${u.addresses[0].district}, ${u.addresses[0].province}
+                                                             </c:when>
+                                                             <c:otherwise>—</c:otherwise>
+                                                         </c:choose>
+                                                     </td>
+                                                     <td style="max-width: 170px; font-size: 0.8rem; word-break: break-all;">${u.email}</td>
+                                                     <td>
+                                                         <c:choose>
+                                                             <c:when test="${uIsRoot}">
+                                                                 <span class="badge bg-danger fw-bold"><i class="fas fa-crown text-warning me-1"></i>Admin Gốc</span>
+                                                             </c:when>
+                                                             <c:when test="${uIsAdmin}">
+                                                                 <span class="badge bg-warning fw-bold"><i class="fas fa-user-shield me-1"></i>Admin</span>
+                                                             </c:when>
+                                                             <c:otherwise>
+                                                                 <span class="badge bg-info fw-bold">${u.role}</span>
+                                                             </c:otherwise>
+                                                         </c:choose>
+                                                     </td>
+                                                     <td>
+                                                         <c:choose>
+                                                             <c:when test="${u.status eq 'Hoạt Động'}">
+                                                                 <span class="badge bg-success fw-bold status-badge" data-user-id="${u.id}">${u.status}</span>
+                                                             </c:when>
+                                                             <c:when test="${u.status eq 'BANNED'}">
+                                                                 <span class="badge bg-dark fw-bold status-badge" data-user-id="${u.id}">Bị Khóa</span>
+                                                             </c:when>
+                                                             <c:otherwise>
+                                                                 <span class="badge bg-danger fw-bold status-badge" data-user-id="${u.id}">${u.status}</span>
+                                                             </c:otherwise>
+                                                         </c:choose>
+                                                     </td>
+                                                     <td>
+                                                         <!-- 1. Nút Chỉnh Sửa -->
+                                                         <c:choose>
+                                                             <c:when test="${uIsRoot}">
+                                                                 <c:choose>
+                                                                     <c:when test="${isRoot}">
+                                                                         <a href="${root}/AdminEditUser?id=${u.id}" class="btn btn-sm btn-warning" title="Chỉnh sửa">
+                                                                             <i class="fas fa-edit"></i>
+                                                                         </a>
+                                                                     </c:when>
+                                                                     <c:otherwise>
+                                                                         <button class="btn btn-sm btn-secondary" disabled title="Không có quyền chỉnh sửa Admin Gốc">
+                                                                             <i class="fas fa-edit"></i>
+                                                                         </button>
+                                                                     </c:otherwise>
+                                                                 </c:choose>
+                                                             </c:when>
+                                                             <c:when test="${uIsAdmin}">
+                                                                 <c:choose>
+                                                                     <c:when test="${isRoot}">
+                                                                         <a href="${root}/AdminEditUser?id=${u.id}" class="btn btn-sm btn-warning" title="Chỉnh sửa">
+                                                                             <i class="fas fa-edit"></i>
+                                                                         </a>
+                                                                     </c:when>
+                                                                     <c:otherwise>
+                                                                         <button class="btn btn-sm btn-secondary" disabled title="Chỉ Admin gốc mới có quyền sửa Admin khác">
+                                                                             <i class="fas fa-edit"></i>
+                                                                         </button>
+                                                                     </c:otherwise>
+                                                                 </c:choose>
+                                                             </c:when>
+                                                             <c:otherwise>
+                                                                 <a href="${root}/AdminEditUser?id=${u.id}" class="btn btn-sm btn-warning" title="Chỉnh sửa">
+                                                                     <i class="fas fa-edit"></i>
+                                                                 </a>
+                                                             </c:otherwise>
+                                                         </c:choose>
+
+                                                         <!-- 2. Nút Khóa / Mở Khóa (Ban/Unban) -->
+                                                         <c:choose>
+                                                             <c:when test="${uIsRoot}">
+                                                                 <button class="btn btn-sm btn-secondary ms-1" disabled title="Không thể khóa Admin gốc">
+                                                                     <i class="fas fa-user-shield"></i>
+                                                                 </button>
+                                                             </c:when>
+                                                             <c:when test="${uIsAdmin}">
+                                                                 <c:choose>
+                                                                     <c:when test="${isRoot}">
+                                                                         <c:choose>
+                                                                             <c:when test="${u.status eq 'BANNED'}">
+                                                                                 <button class="btn btn-sm btn-success ms-1 btn-toggle-ban" data-user-id="${u.id}" data-action="unban" title="Mở khóa tài khoản">
+                                                                                     <i class="fas fa-unlock"></i>
+                                                                                 </button>
+                                                                             </c:when>
+                                                                             <c:otherwise>
+                                                                                 <button class="btn btn-sm btn-danger ms-1 btn-toggle-ban" data-user-id="${u.id}" data-action="ban" title="Khóa tài khoản">
+                                                                                     <i class="fas fa-ban"></i>
+                                                                                 </button>
+                                                                             </c:otherwise>
+                                                                         </c:choose>
+                                                                     </c:when>
+                                                                     <c:otherwise>
+                                                                         <button class="btn btn-sm btn-secondary ms-1" disabled title="Chỉ Admin gốc mới có quyền khóa Admin khác">
+                                                                             <i class="fas fa-user-shield"></i>
+                                                                         </button>
+                                                                     </c:otherwise>
+                                                                 </c:choose>
+                                                             </c:when>
+                                                             <c:otherwise>
+                                                                 <c:choose>
+                                                                     <c:when test="${u.status eq 'BANNED'}">
+                                                                         <button class="btn btn-sm btn-success ms-1 btn-toggle-ban" data-user-id="${u.id}" data-action="unban" title="Mở khóa tài khoản">
+                                                                             <i class="fas fa-unlock"></i>
+                                                                         </button>
+                                                                     </c:when>
+                                                                     <c:otherwise>
+                                                                         <button class="btn btn-sm btn-danger ms-1 btn-toggle-ban" data-user-id="${u.id}" data-action="ban" title="Khóa tài khoản">
+                                                                             <i class="fas fa-ban"></i>
+                                                                         </button>
+                                                                     </c:otherwise>
+                                                                 </c:choose>
+                                                             </c:otherwise>
+                                                         </c:choose>
+
+                                                         <!-- 3. Nút Xóa Cứng (Delete) -->
+                                                         <c:choose>
+                                                             <c:when test="${uIsRoot}">
+                                                                 <button class="btn btn-sm btn-secondary ms-1" disabled title="Không thể xóa Admin gốc">
+                                                                     <i class="fas fa-trash"></i>
+                                                                 </button>
+                                                             </c:when>
+                                                             <c:when test="${uIsAdmin}">
+                                                                 <c:choose>
+                                                                     <c:when test="${isRoot}">
+                                                                         <a href="javascript:void(0);" onclick="confirmDelete(${u.id}, '${u.user_name}')" class="btn btn-sm btn-danger ms-1" title="Xóa vĩnh viễn tài khoản">
+                                                                             <i class="fas fa-trash"></i>
+                                                                         </a>
+                                                                     </c:when>
+                                                                     <c:otherwise>
+                                                                         <button class="btn btn-sm btn-secondary ms-1" disabled title="Chỉ Admin gốc mới có quyền xóa Admin khác">
+                                                                             <i class="fas fa-trash"></i>
+                                                                         </button>
+                                                                     </c:otherwise>
+                                                                 </c:choose>
+                                                             </c:when>
+                                                             <c:otherwise>
+                                                                 <a href="javascript:void(0);" onclick="confirmDelete(${u.id}, '${u.user_name}')" class="btn btn-sm btn-danger ms-1" title="Xóa vĩnh viễn tài khoản">
+                                                                     <i class="fas fa-trash"></i>
+                                                                 </a>
+                                                             </c:otherwise>
+                                                         </c:choose>
+                                                     </td>
+                                                 </tr>
+                                             </c:forEach>
                                         </c:otherwise>
                                     </c:choose>
                                     </tbody>
@@ -256,6 +364,48 @@
 document.addEventListener("DOMContentLoaded", function() {
     const contextPath = '${root}';
 
+    // Bộ lọc Tìm kiếm và Vai trò (Client-side instant filtering)
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+    
+    function filterTable() {
+        const searchText = searchInput.value.toLowerCase().trim();
+        const filterRole = categoryFilter.value.toLowerCase().trim();
+        const tableRows = document.querySelectorAll("tbody tr.align-middle"); // Đọc lại danh sách tr
+
+        tableRows.forEach(row => {
+            const cells = row.getElementsByTagName("td");
+            if (cells.length < 6) return;
+
+            const name = cells[1].textContent.toLowerCase();
+            const phone = cells[2].textContent.toLowerCase();
+            const email = cells[4].textContent.toLowerCase();
+            
+            // Vai trò: có thể là Admin Gốc, Admin, hoặc User
+            const roleText = cells[5].textContent.toLowerCase();
+
+            // Kiểm tra khớp từ khóa tìm kiếm (theo Tên, Email hoặc SĐT)
+            const matchesSearch = name.includes(searchText) || email.includes(searchText) || phone.includes(searchText);
+
+            // Kiểm tra khớp bộ lọc vai trò
+            let matchesRole = true;
+            if (filterRole === "admin") {
+                matchesRole = roleText.includes("admin");
+            } else if (filterRole === "user") {
+                matchesRole = roleText.includes("user");
+            }
+
+            if (matchesSearch && matchesRole) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+
+    if (searchInput) searchInput.addEventListener("input", filterTable);
+    if (categoryFilter) categoryFilter.addEventListener("change", filterTable);
+
     // Thao tác Khóa / Mở khóa động bằng AJAX Fetch
     // Dùng Event Delegation để bắt các sự kiện click động (phòng trường hợp render động sau này)
     document.addEventListener("click", function(e) {
@@ -306,12 +456,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     btn.className = "btn btn-sm btn-success ms-1 btn-toggle-ban";
                     btn.setAttribute("data-action", "unban");
                     btn.setAttribute("title", "Mở khóa tài khoản");
-                    btn.innerHTML = '<i class="fas fa-unlock"></i> Mở khóa';
+                    btn.innerHTML = '<i class="fas fa-unlock"></i>';
                 } else {
                     btn.className = "btn btn-sm btn-danger ms-1 btn-toggle-ban";
                     btn.setAttribute("data-action", "ban");
                     btn.setAttribute("title", "Khóa tài khoản");
-                    btn.innerHTML = '<i class="fas fa-ban"></i> Khóa';
+                    btn.innerHTML = '<i class="fas fa-ban"></i>';
                 }
             } else {
                 alert(data.message || "Có lỗi xảy ra, vui lòng thử lại!");
@@ -322,6 +472,12 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 });
+
+function confirmDelete(userId, userName) {
+    if (confirm("Bạn có chắc chắn muốn XÓA VĨNH VIỄN tài khoản '" + userName + "' ra khỏi hệ thống?\nLưu ý: Mọi dữ liệu liên quan đến tài khoản này (đơn hàng, giỏ hàng, liên hệ, địa chỉ) sẽ bị XÓA SẠCH VÀ KHÔNG THỂ KHÔI PHỤC!")) {
+        window.location.href = "${root}/AdminDeleteUser?id=" + userId;
+    }
+}
 </script>
 </body>
 </html>
