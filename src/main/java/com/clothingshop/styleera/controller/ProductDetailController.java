@@ -73,7 +73,6 @@ public class ProductDetailController extends HttpServlet {
                 request.setAttribute("variantList", variantList);
                 request.setAttribute("colorList", colorList);
                 request.setAttribute("relatedProducts", relatedProducts);
-                request.setAttribute("product", product);
                 request.setAttribute("reviewList", reviewList);
                 request.setAttribute("sizeList", sizeList);
 

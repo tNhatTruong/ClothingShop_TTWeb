@@ -81,68 +81,57 @@
                                                     ${product.short_description}
                                                 </p>
 
-                                                <div class="product_detail_option">
-                                                    <form action="${root}/checkout" method="POST" id="checkoutForm">
-                                                        <!-- SIZE -->
-                                                        <div class="product_detail_size">
-                                                            <span>Size:</span>
-                                                            <c:forEach items="${sizeList}" var="s" varStatus="status">
-                                                                <label
-                                                                    class="size-label ${status.first ? 'active' : ''}"
-                                                                    onclick="pickSize(this, '${s}')">${s}</label>
-                                                            </c:forEach>
-                                                        </div>
-                                                        <input type="hidden" name="selectedSize" id="finalSize"
-                                                            value="${sizeList[0]}">
-                                                        <!-- COLOR -->
-                                                        <div class="product_detail_color">
-                                                            <span>Color:</span>
-                                                            <div class="mt-2">
-                                                                <c:forEach items="${colorList}" var="c">
-                                                                    <button type="button"
-                                                                        class="btn btn-outline-secondary btn-sm me-2 color-choice"
-                                                                        onclick="pickColor(this, '${c}')">${c}</button>
-                                                                </c:forEach>
-                                                            </div>
-                                                        </div>
-                                                        <input type="hidden" name="selectedColor" id="finalColor"
-                                                            value="">
+                <div class="product_detail_option">
+                    <form action="${root}/checkout" method="POST" id="checkoutForm">
+                        <!-- SIZE -->
+                        <div class="product_detail_size">
+                            <span>Size:</span>
+                            <c:forEach items="${sizeList}" var="s" varStatus="status">
+                                <label class="size-label ${status.first ? 'active' : ''}"
+                                       onclick="pickSize(this, '${s}')">${s}</label>
+                            </c:forEach>
+                        </div>
+                        <input type="hidden" name="selectedSize" id="finalSize" value="${sizeList[0]}">
+                        <!-- COLOR -->
+                        <div class="product_detail_color">
+                            <span>Color:</span>
+                            <div class="mt-2">
+                                <c:forEach items="${colorList}" var="c">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm me-2 color-choice"
+                                            onclick="pickColor(this, '${c}')">${c}</button>
+                                </c:forEach>
+                            </div>
+                        </div>
+                        <input type="hidden" name="selectedColor" id="finalColor" value="">
 
-                                                        <div class="product_detail_quantity">
-                                                            <label for="quantity">Số lượng:</label>
-                                                            <button type="button" id="btn-decrease">−</button>
-                                                            <input type="number" id="quantity" name="quantity" value="1"
-                                                                min="1" readonly>
-                                                            <button type="button" id="btn-increase">+</button>
-                                                        </div>
-                                                        <input type="hidden" name="productName"
-                                                            value="${product.product_name}">
-                                                        <input type="hidden" name="productImage" id="hiddenProductImage"
-                                                            value="${imageList[0]}">
-                                                        <input type="hidden" name="productPrice"
-                                                            value="${product.price}">
-                                                        <input type="hidden" name="selectedSize" id="finalSize"
-                                                            value="XL">
+                        <div class="product_detail_quantity">
+                            <label for="quantity">Số lượng:</label>
+                            <button type="button" id="btn-decrease">−</button>
+                            <input type="number" id="quantity" name="quantity" value="1" min="1" readonly>
+                            <button type="button" id="btn-increase">+</button>
+                        </div>
+                        <input type="hidden" name="productName" value="${product.product_name}">
+                        <input type="hidden" name="productImage" id="hiddenProductImage" value="${imageList[0]}">
+                        <input type="hidden" name="productPrice" value="${product.price}">
+                        <input type="hidden" name="selectedSize" id="finalSize" value="XL">
 
-                                                        <div class="product_detail_actions" style="margin-top: 25px;">
-                                                            <%-- Gom nút vào div riêng để dễ căn chỉnh --%>
-                                                                <button type="submit"
-                                                                    class="btn btn-primary validate_order">
-                                                                    Mua hàng
-                                                                </button>
-                                                                <%-- Nút thêm vào giỏ hàng--%>
-                                                                    <button class="btn btn-primary validate_order"
-                                                                        type="button"
-                                                                        data-variant-id="${product.defaultVariantId}"
-                                                                        onclick="addToCart(this.getAttribute('data-variant-id'))">
-                                                                        Thêm vào giỏ hàng
-                                                                    </button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                        <div class="product_detail_actions"
+                             style="margin-top: 25px;"> <%-- Gom nút vào div riêng để dễ căn chỉnh --%>
+                            <button type="submit" class="btn btn-primary validate_order">
+                                Mua hàng
+                            </button>
+                            <%-- Nút thêm vào giỏ hàng--%>
+                            <button class="btn btn-primary validate_order" type="button"
+                                    data-variant-id="${product.defaultVariantId}"
+                                    onclick="addToCart(this.getAttribute('data-variant-id'))">
+                                Thêm vào giỏ hàng
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
                                     <div class="row_2">
                                         <div class="colum">
@@ -447,36 +436,21 @@
                                                     // Cập nhật giá trị số sao vào ô input ẩn để gửi về Server
                                                     document.getElementById('ratingInput').value = rating;
 
-                                                    // Đổi màu hiển thị của các ngôi sao
-                                                    const stars = document.querySelectorAll('.star-rating-form .fa-star');
-                                                    stars.forEach((star, index) => {
-                                                        if (index < rating) {
-                                                            // Sáng lên (Thêm màu vàng, bỏ màu xám)
-                                                            star.classList.add('text-warning');
-                                                            star.classList.remove('text-muted');
-                                                        } else {
-                                                            // Tối đi (Thêm màu xám, bỏ màu vàng)
-                                                            star.classList.remove('text-warning');
-                                                            star.classList.add('text-muted');
-                                                        }
-                                                    });
-                                                }
-
-                                                // Render Markdown for product description
-                                                document.addEventListener("DOMContentLoaded", function() {
-                                                    var rawContentDiv = document.getElementById("productDescriptionContent");
-                                                    var renderedDiv = document.getElementById("productDescriptionRendered");
-                                                    if (rawContentDiv && renderedDiv && typeof marked !== 'undefined') {
-                                                        var rawText = rawContentDiv.textContent || rawContentDiv.innerText;
-                                                        // Configure marked to use breaks
-                                                        marked.setOptions({
-                                                            breaks: true,
-                                                            gfm: true
-                                                        });
-                                                        renderedDiv.innerHTML = marked.parse(rawText);
-                                                    }
-                                                });
-                                            </script>
-                            </body>
+        // Đổi màu hiển thị của các ngôi sao
+        const stars = document.querySelectorAll('.star-rating-form .fa-star');
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                // Sáng lên (Thêm màu vàng, bỏ màu xám)
+                star.classList.add('text-warning');
+                star.classList.remove('text-muted');
+            } else {
+                // Tối đi (Thêm màu xám, bỏ màu vàng)
+                star.classList.remove('text-warning');
+                star.classList.add('text-muted');
+            }
+        });
+    }
+</script>
+</body>
 
                             </html>

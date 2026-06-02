@@ -149,3 +149,140 @@ function toggleMobileMenu() {
         searchBar.classList.remove('active');
     }
 }
+
+let qvVariantsData = []; // Lưu trữ biến thể sản phẩm đang xem
+let qvSelectedColor = '';
+let qvSelectedSize = '';
+
+// Hàm mở Modal và lấy dữ liệu biến thể từ Server bằng AJAX
+function openQuickView(productId, name, price, imgUrl) {
+    // Set thông tin cơ bản lên modal trước
+    document.getElementById('qv-product-name').innerText = name;
+    document.getElementById('qv-product-price').innerText = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+    document.getElementById('qv-product-img').src = imgUrl;
+
+    // Reset form
+    qvSelectedColor = '';
+    qvSelectedSize = '';
+    document.getElementById('qv-quantity').value = 1;
+    document.getElementById('qv-btn-add-to-cart').disabled = true;
+    document.getElementById('qv-color-container').innerHTML = '<span class="text-muted small">Đang tải...</span>';
+    document.getElementById('qv-size-container').innerHTML = '<span class="text-muted small">Vui lòng chọn màu trước...</span>';
+
+    // Hiển thị modal lên màn hình
+    const qvModal = new bootstrap.Modal(document.getElementById('quickViewModal'));
+    qvModal.show();
+
+    // Gọi AJAX lấy danh sách biến thể của sản phẩm
+    // Hãy chắc chắn rằng bạn có 1 Servlet map đường dẫn này trả về JSON biến thể
+    fetch(`${contextPath}/addcart?productId=${productId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Không thể lấy dữ liệu biến thể');
+            }
+            return response.json();
+        })
+        .then(data => {
+            qvVariantsData = data;
+            renderQuickViewColors();
+        })
+        .catch(err => {
+            console.error("Lỗi tải biến thể:", err);
+            document.getElementById('qv-color-container').innerHTML = '<span class="text-danger small">Không thể tải phân loại!</span>';
+        });
+}
+
+// Hàm render danh sách MÀU SẮC độc nhất
+function renderQuickViewColors() {
+    const colorContainer = document.getElementById('qv-color-container');
+    colorContainer.innerHTML = '';
+
+    // Lọc ra danh sách các màu không trùng nhau
+    const uniqueColors = [...new Set(qvVariantsData.map(v => v.color))];
+
+    uniqueColors.forEach(color => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn btn-outline-secondary btn-sm qv-color-btn';
+        btn.innerText = color;
+        btn.onclick = function() {
+            selectQuickViewColor(this, color);
+        };
+        colorContainer.appendChild(btn);
+    });
+}
+
+// Xử lý khi click chọn MÀU
+function selectQuickViewColor(element, color) {
+    qvSelectedColor = color;
+    qvSelectedSize = ''; // Reset size khi chọn lại màu khác
+    document.getElementById('qv-btn-add-to-cart').disabled = true;
+
+    // Đổi Active class cho nút màu
+    document.querySelectorAll('.qv-color-btn').forEach(b => b.classList.remove('active'));
+    element.classList.add('active');
+
+    // Lọc ra các size có sẵn (stock > 0) thuộc về màu đã chọn
+    const availableSizes = qvVariantsData
+        .filter(v => v.color === color && v.quantity > 0)
+        .map(v => v.size);
+
+    // Lấy toàn bộ danh sách size tổng quát của sản phẩm để hiển thị mờ/rõ
+    const allSizes = [...new Set(qvVariantsData.map(v => v.size))];
+    const sizeContainer = document.getElementById('qv-size-container');
+    sizeContainer.innerHTML = '';
+
+    allSizes.forEach(size => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.innerText = size;
+
+        if (availableSizes.includes(size)) {
+            btn.className = 'btn btn-outline-secondary btn-sm qv-size-btn';
+            btn.onclick = function() {
+                selectQuickViewSize(this, size);
+            };
+        } else {
+            // Hết hàng thì làm mờ đi
+            btn.className = 'btn btn-outline-secondary btn-sm disabled text-decoration-line-through';
+            btn.style.opacity = '0.4';
+        }
+        sizeContainer.appendChild(btn);
+    });
+}
+
+// Xử lý khi click chọn SIZE
+function selectQuickViewSize(element, size) {
+    qvSelectedSize = size;
+
+    // Đổi Active class cho nút size
+    document.querySelectorAll('.qv-size-btn').forEach(b => b.classList.remove('active'));
+    element.classList.add('active');
+
+    // Tìm Variant tương ứng để lấy ID và kích hoạt nút thêm vào giỏ hàng
+    const matched = qvVariantsData.find(v => v.color === qvSelectedColor && v.size === qvSelectedSize);
+    const btnAdd = document.getElementById('qv-btn-add-to-cart');
+
+    if (matched) {
+        btnAdd.disabled = false;
+        // Gán sự kiện click thực hiện thêm vào giỏ hàng thật
+        btnAdd.onclick = function() {
+            const quantity = document.getElementById('qv-quantity').value;
+            // Gọi hàm addToCart sẵn có của bạn (truyền thêm tham số số lượng nếu hàm của bạn có hỗ trợ)
+            addToCart(matched.variantId, quantity);
+
+            // Đóng modal sau khi thêm thành công
+            bootstrap.Modal.getInstance(document.getElementById('quickViewModal')).hide();
+        };
+    }
+}
+
+// Thiết lập tăng giảm số lượng trong Modal khi DOM sẵn sàng
+document.addEventListener("DOMContentLoaded", () => {
+    const qtyInput = document.getElementById('qv-quantity');
+    document.getElementById('qv-btn-increase').onclick = () => qtyInput.value = parseInt(qtyInput.value) + 1;
+    document.getElementById('qv-btn-decrease').onclick = () => {
+        let v = parseInt(qtyInput.value);
+        if (v > 1) qtyInput.value = v - 1;
+    };
+});

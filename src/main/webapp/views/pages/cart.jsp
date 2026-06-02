@@ -85,8 +85,10 @@
                                                                             </td>
                                                                             <td>
                                                                                 <div class="product-item">
-                                                                                    <p class="fw-bold mb-0">${item.variant.product.product_name}
-                                                                                    </p>
+                                                                                    <p class="fw-bold mb-0">${item.variant.product.product_name}</p>
+                                                                                    <small class="text-muted d-block mt-1">
+                                                                                        Color: ${item.variant.color}, Size: ${item.variant.size}
+                                                                                    </small>
                                                                                 </div>
                                                                             </td>
                                                                             <td>

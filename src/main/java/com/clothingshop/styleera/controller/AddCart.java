@@ -5,17 +5,51 @@ import com.clothingshop.styleera.model.Cart;
 import com.clothingshop.styleera.model.User;
 import com.clothingshop.styleera.model.Variants;
 import com.clothingshop.styleera.service.VariantService;
+import com.google.gson.Gson;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 @WebServlet(name = "AddCart", value = "/addcart")
 public class AddCart extends HttpServlet {
+    private final VariantService variantService = new VariantService();
+    private final Gson gson = new Gson();
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        try (PrintWriter out = response.getWriter()) {
+            String productIdStr = request.getParameter("productId");
+
+            if (productIdStr == null || productIdStr.isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                out.print("{\"status\":\"error\",\"msg\":\"Thiếu productId\"}");
+                return;
+            }
+
+            int productId = Integer.parseInt(productIdStr);
+
+            // Gọi hàm từ Service để lấy danh sách biến thể
+            List<Variants> listVariants = variantService.getVariantsByProductId(productId);
+
+            // Trả về chuỗi JSON cho AJAX nhận
+            out.print(this.gson.toJson(listVariants));
+            out.flush();
+
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().print("{\"status\":\"error\",\"msg\":\"Định dạng productId không đúng\"}");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().print("{\"status\":\"error\",\"msg\":\"Lỗi hệ thống khi lấy phân loại\"}");
+        }
     }
 
     @Override

@@ -799,3 +799,36 @@ p {
     h3 { font-size: 22px !important; }
     .product_title { font-size: 20px !important; }
 }
+
+.color-choice.active {
+    background-color: #ff6f61 !important;
+    color: #ffffff !important;
+    border-color: #ff6f61 !important;
+    font-weight: bold;
+}
+
+.disabled-variant {
+    opacity: 0.4 !important;
+    pointer-events: none !important;
+    background-color: #e9ecef !important;
+    color: #6c757d !important;
+    text-decoration: line-through;
+    border-color: #ced4da !important;
+}
+
+.color-choice {
+    transition: all 0.3s ease;
+}
+.color-choice:hover:not(.disabled-variant) {
+    border-color: #ff6f61;
+    color: #ff6f61;
+}
+.validate_order:disabled,
+#btnAddToCart:disabled {
+    background-color: #cccccc !important;
+    border-color: #bbbbbb !important;
+    color: #666666 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}

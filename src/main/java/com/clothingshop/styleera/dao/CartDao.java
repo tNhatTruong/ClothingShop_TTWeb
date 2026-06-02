@@ -16,6 +16,8 @@ public class CartDao {
                     "    ci.id as cartItemId,\n" +
                     "    ci.user_id as userId,\n" +
                     "    v.id as variantId,\n" +      // <--- Sửa 1: v.variant_id thành v.id (hoặc tên đúng trong DB)
+                    "    v.color as color,\n" +
+                    "    v.size as size,\n" +
                     "    p.product_name as productName,\n" +
                     "    p.price,\n" +
                     "    ci.quantity,\n" +
@@ -42,6 +44,8 @@ public class CartDao {
                         // 2. Tạo đối tượng Variant và nhét Product vào
                         Variants variant = new Variants();
                         variant.setVariantId(rs.getInt("variantId"));
+                        variant.setColor(rs.getString("color"));
+                        variant.setSize(rs.getString("size"));
                         variant.setProduct(product);
 
                         // 3. Tạo CartItem và nhét Variant vào
