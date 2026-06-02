@@ -158,6 +158,13 @@ public class PlaceOrderController extends HttpServlet {
             AddressDAO addressDAO = new AddressDAO();
             Address userAddress = addressDAO.findAddressByUserId(user.getId());
             order.setAddressId(userAddress != null ? userAddress.getId() : 0);
+            
+            // Lưu Snapshot thông tin giao hàng từ Form UI thay vì vứt bỏ
+            // Các biến fullname, address, phone đã được khai báo và validate ở trên
+            order.setShippingName(fullname);
+            order.setShippingAddress(address);
+            order.setShippingPhone(phone);
+            
             order.setStatus("PENDING");
             order.setNote("");
             
@@ -290,7 +297,7 @@ public class PlaceOrderController extends HttpServlet {
                 response.sendRedirect(paymentUrl);
             } else {
                 // Chuyển hướng đến trang hoàn tất đặt hàng (COD)
-                response.sendRedirect(request.getContextPath() + "/order-success");
+                response.sendRedirect(request.getContextPath() + "/order-success?id=" + currentOrderId);
             }
             
         } catch (Exception e) {
