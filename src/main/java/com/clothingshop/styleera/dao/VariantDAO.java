@@ -136,6 +136,7 @@ public class VariantDAO {
                         })
                         .list()
         );
+    }
     public boolean updateStock(int variantId, int quantityToSubtract) {
         Jdbi jdbi = JDBIConnector.getJdbi();
         return jdbi.withHandle(handle -> {

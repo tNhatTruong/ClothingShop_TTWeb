@@ -83,26 +83,30 @@
 
                 <div class="product_detail_option">
                     <form action="${root}/checkout" method="POST" id="checkoutForm">
-                        <!-- SIZE -->
-                        <div class="product_detail_size">
-                            <span>Size:</span>
-                            <c:forEach items="${sizeList}" var="s" varStatus="status">
-                                <label class="size-label ${status.first ? 'active' : ''}"
-                                       onclick="pickSize(this, '${s}')">${s}</label>
-                            </c:forEach>
-                        </div>
-                        <input type="hidden" name="selectedSize" id="finalSize" value="${sizeList[0]}">
                         <!-- COLOR -->
                         <div class="product_detail_color">
                             <span>Color:</span>
                             <div class="mt-2">
-                                <c:forEach items="${colorList}" var="c">
-                                    <button type="button" class="btn btn-outline-secondary btn-sm me-2 color-choice"
+                                <c:forEach items="${colorList}" var="c" varStatus="status">
+                                    <button type="button"
+                                            class="btn btn-outline-secondary btn-sm me-2 color-choice ${status.first ? 'active' : ''}"
+                                            data-color="${c}"
                                             onclick="pickColor(this, '${c}')">${c}</button>
                                 </c:forEach>
                             </div>
                         </div>
-                        <input type="hidden" name="selectedColor" id="finalColor" value="">
+                        <input type="hidden" name="selectedColor" id="finalColor" value="${colorList[0]}">
+
+                        <!-- SIZE -->
+                        <div class="product_detail_size" style="margin-top: 15px;">
+                            <span>Size:</span>
+                            <c:forEach items="${sizeList}" var="s">
+                                <label class="size-label"
+                                       data-size="${s}"
+                                       onclick="pickSize(this, '${s}')">${s}</label>
+                            </c:forEach>
+                        </div>
+                        <input type="hidden" name="selectedSize" id="finalSize" value="">
 
                         <div class="product_detail_quantity">
                             <label for="quantity">Số lượng:</label>
@@ -113,17 +117,18 @@
                         <input type="hidden" name="productName" value="${product.product_name}">
                         <input type="hidden" name="productImage" id="hiddenProductImage" value="${imageList[0]}">
                         <input type="hidden" name="productPrice" value="${product.price}">
-                        <input type="hidden" name="selectedSize" id="finalSize" value="XL">
+                        <input type="hidden" name="variantId" id="finalVariantId" value="">
 
                         <div class="product_detail_actions"
                              style="margin-top: 25px;"> <%-- Gom nút vào div riêng để dễ căn chỉnh --%>
-                            <button type="submit" class="btn btn-primary validate_order">
+                            <button type="submit" id="btnBuyNow" class="btn btn-primary validate_order" disabled>
                                 Mua hàng
                             </button>
                             <%-- Nút thêm vào giỏ hàng--%>
                             <button class="btn btn-primary validate_order" type="button"
-                                    data-variant-id="${product.defaultVariantId}"
-                                    onclick="addToCart(this.getAttribute('data-variant-id'))">
+                                    id="btnAddToCart"
+                                    data-variant-id=""
+                                    onclick="addToCart(this.getAttribute('data-variant-id'))" disabled>
                                 Thêm vào giỏ hàng
                             </button>
                         </div>
@@ -431,6 +436,17 @@
                                             <script
                                                 src="${root}/js/add-cart.js?v=<%= System.currentTimeMillis() %>"></script>
                                             <script>
+                                                document.addEventListener("DOMContentLoaded", function() {
+                                                    const rawContentEl = document.getElementById("productDescriptionContent");
+                                                    const renderContentEl = document.getElementById("productDescriptionRendered");
+                                                    if (rawContentEl && renderContentEl) {
+                                                        const rawHtml = rawContentEl.innerHTML;
+                                                        if (rawHtml && rawHtml.trim() !== "") {
+                                                            renderContentEl.innerHTML = marked.parse(rawHtml);
+                                                        }
+                                                    }
+                                                });
+
                                                 // Hàm xử lý hiệu ứng click chọn số sao trong Form đánh giá
                                                 function setFormRating(rating) {
                                                     // Cập nhật giá trị số sao vào ô input ẩn để gửi về Server
@@ -451,6 +467,24 @@
         });
     }
 </script>
-</body>
 
-                            </html>
+<!-- Chứa dữ liệu dạng văn bản thô để VS Code không báo lỗi cú pháp JS giả -->
+<script id="variantsDataTemplate" type="text/plain">
+[
+    <c:forEach items="${variantList}" var="v" varStatus="loop">
+    {
+        "variantId": ${v.variantId},
+        "size": "${v.size}",
+        "color": "${v.color}",
+        "stock": ${v.quantity}
+    }${!loop.last ? ',' : ''}
+    </c:forEach>
+]
+</script>
+<script>
+    // Phân tích cú pháp JSON từ chuỗi văn bản trên
+    const variantsDataTemplate = document.getElementById('variantsDataTemplate');
+    const variantsData = variantsDataTemplate ? JSON.parse(variantsDataTemplate.textContent) : [];
+</script>
+</body>
+</html>
