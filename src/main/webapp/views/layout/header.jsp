@@ -116,10 +116,6 @@
         </form>
         </div>
 
-        <a href="${root}/admin-login" class="admin-link" title="Quản trị viên">
-        <i class="fas fa-user-cog" style="color: black;"></i>
-        </a>
-
         <div class="account-wrapper">
         <c:choose>
             <%-- TRƯỜNG HỢP 1: CHƯA ĐĂNG NHẬP --%>

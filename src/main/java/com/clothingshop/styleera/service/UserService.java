@@ -39,4 +39,8 @@ public class UserService {
     public void adminUpdateUser(int userId, String fullName, String phone, String email, String role, String status) {
         userDAO.adminUpdateUser(userId, fullName, phone, email, role, status);
     }
+
+    public void deleteUser(int userId) {
+        userDAO.deleteUser(userId);
+    }
 }

@@ -15,6 +15,7 @@
 <body>
 <!-- ===== HEADER ===== -->
 <c:set var="currentPage" value="customer" scope="request"/>
+<c:set var="isRoot" value="${sessionScope.auth != null && 'Admin'.equalsIgnoreCase(sessionScope.auth.role) && 'qutoan23@gmail.com'.equalsIgnoreCase(sessionScope.auth.email)}" />
 <%@ include file="/admin/layout/Layoutadmin.jsp" %>
 <div class="admin-container">
         <!-- ===== CONTENT ===== -->
@@ -66,13 +67,23 @@
                                             <label class="form-label fw-bold">Email</label>
                                             <input type="email" class="form-control" name="email" placeholder="Nhập email" value="${userToEdit.email}" required/>
                                         </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label fw-bold">Vai Trò</label>
-                                            <select class="form-select" name="role" required>
-                                                <option value="User" ${userToEdit.role eq 'User' ? 'selected' : ''}>User</option>
-                                                <option value="Admin" ${userToEdit.role eq 'Admin' ? 'selected' : ''}>Admin</option>
-                                            </select>
-                                        </div>
+                                         <div class="col-md-6 mb-3">
+                                             <label class="form-label fw-bold">Vai Trò</label>
+                                             <select class="form-select" name="role" required>
+                                                 <c:choose>
+                                                     <c:when test="${isRoot}">
+                                                         <%-- Admin gốc toàn quyền --%>
+                                                         <option value="User" ${userToEdit.role eq 'User' ? 'selected' : ''}>User</option>
+                                                         <option value="Admin" ${userToEdit.role eq 'Admin' ? 'selected' : ''}>Admin</option>
+                                                     </c:when>
+                                                     <c:otherwise>
+                                                         <%-- Admin thường chỉ được thăng cấp chứ không được hạ cấp --%>
+                                                         <option value="User" ${userToEdit.role eq 'User' ? 'selected' : ''} ${userToEdit.role eq 'Admin' ? 'disabled' : ''}>User</option>
+                                                         <option value="Admin" ${userToEdit.role eq 'Admin' ? 'selected' : ''}>Admin</option>
+                                                     </c:otherwise>
+                                                 </c:choose>
+                                             </select>
+                                         </div>
                                     </div>
                                 </div>
                             </div>

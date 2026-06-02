@@ -8,6 +8,11 @@ import jakarta.servlet.annotation.*;
 import java.io.IOException;
 
 @WebServlet(name = "AdminAddProduct", value = "/AdminAddProduct")
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+    maxFileSize = 1024 * 1024 * 10,      // 10MB
+    maxRequestSize = 1024 * 1024 * 50   // 50MB
+)
 public class AdminAddProduct extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -25,8 +30,24 @@ public class AdminAddProduct extends HttpServlet {
         String size = request.getParameter("size");
         String color = request.getParameter("color");
         int quantity = Integer.parseInt(request.getParameter("quantity"));
-        String imageName = request.getParameter("image_name");
-        String imagePath = request.getParameter("image_path");
+
+        Part filePart = request.getPart("image");
+        String imageName = "";
+        String imagePath = "";
+
+        if (filePart != null && filePart.getSize() > 0) {
+            imageName = filePart.getSubmittedFileName();
+            if (imageName != null && !imageName.isEmpty()) {
+                String uploadPath = request.getServletContext().getRealPath("/images");
+                java.io.File uploadDir = new java.io.File(uploadPath);
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdirs();
+                }
+                String filePath = uploadPath + java.io.File.separator + imageName;
+                filePart.write(filePath);
+                imagePath = "/images/" + imageName;
+            }
+        }
 
         ProductService service = new ProductService();
         service.addProduct(
