@@ -88,4 +88,24 @@ public class OrdersDAO {
                     .one();
         });
     }
+    public boolean updateStatus(int orderId, String status) {
+        return JDBIConnector.getJdbi().withHandle(handle -> {
+            int rows = handle.createUpdate("UPDATE orders SET status = :status WHERE id = :id")
+                    .bind("status", status)
+                    .bind("id", orderId)
+                    .execute();
+            return rows > 0;
+        });
+    }
+
+    public List<Orders> findExpiredPendingOrders(int timeoutMinutes) {
+        return JDBIConnector.getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT id, user_id, address_id, status, note, price, fee_delivery, total_price, created_at " +
+                                "FROM orders " +
+                                "WHERE status = 'PENDING' AND TIMESTAMPDIFF(MINUTE, created_at, NOW()) >= :timeout")
+                        .bind("timeout", timeoutMinutes)
+                        .mapToBean(Orders.class)
+                        .list()
+        );
+    }
 }

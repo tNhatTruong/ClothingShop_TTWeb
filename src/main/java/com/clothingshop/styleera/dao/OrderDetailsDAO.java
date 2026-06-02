@@ -18,4 +18,13 @@ public class OrderDetailsDAO {
                   .execute();
         });
     }
+    public java.util.List<OrderDetail> findByOrderId(int orderId) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        return jdbi.withHandle(handle ->
+            handle.createQuery("SELECT id, order_id, variant_id, quantity, price FROM orderdetails WHERE order_id = :orderId")
+                  .bind("orderId", orderId)
+                  .mapToBean(OrderDetail.class)
+                  .list()
+        );
+    }
 }

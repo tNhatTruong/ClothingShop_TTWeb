@@ -125,4 +125,14 @@ public class VariantDAO {
             return updatedRows > 0;
         });
     }
+    public boolean restoreStock(int variantId, int quantityToAdd) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        return jdbi.withHandle(handle -> {
+            int updatedRows = handle.createUpdate("UPDATE variants SET quantity = quantity + :quantity WHERE id = :variantId")
+                    .bind("quantity", quantityToAdd)
+                    .bind("variantId", variantId)
+                    .execute();
+            return updatedRows > 0;
+        });
+    }
 }
