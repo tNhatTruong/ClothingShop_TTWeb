@@ -80,26 +80,29 @@
 
                 <div class="product_detail_option">
                     <form action="${root}/checkout" method="POST" id="checkoutForm">
-                        <!-- SIZE -->
-                        <div class="product_detail_size">
-                            <span>Size:</span>
-                            <c:forEach items="${sizeList}" var="s" varStatus="status">
-                                <label class="size-label ${status.first ? 'active' : ''}"
-                                       onclick="pickSize(this, '${s}')">${s}</label>
-                            </c:forEach>
-                        </div>
-                        <input type="hidden" name="selectedSize" id="finalSize" value="${sizeList[0]}">
-                        <!-- COLOR -->
+
                         <div class="product_detail_color">
                             <span>Color:</span>
                             <div class="mt-2">
-                                <c:forEach items="${colorList}" var="c">
-                                    <button type="button" class="btn btn-outline-secondary btn-sm me-2 color-choice"
+                                <c:forEach items="${colorList}" var="c" varStatus="status">
+                                    <button type="button"
+                                            class="btn btn-outline-secondary btn-sm me-2 color-choice ${status.first ? 'active' : ''}"
+                                            data-color="${c}"
                                             onclick="pickColor(this, '${c}')">${c}</button>
                                 </c:forEach>
                             </div>
                         </div>
-                        <input type="hidden" name="selectedColor" id="finalColor" value="">
+                        <input type="hidden" name="selectedColor" id="finalColor" value="${colorList[0]}">
+
+                        <div class="product_detail_size" style="margin-top: 15px;">
+                            <span>Size:</span>
+                            <c:forEach items="${sizeList}" var="s">
+                                <label class="size-label"
+                                       data-size="${s}"
+                                       onclick="pickSize(this, '${s}')">${s}</label>
+                            </c:forEach>
+                        </div>
+                        <input type="hidden" name="selectedSize" id="finalSize" value="">
 
                         <div class="product_detail_quantity">
                             <label for="quantity">Số lượng:</label>
@@ -107,18 +110,16 @@
                             <input type="number" id="quantity" name="quantity" value="1" min="1" readonly>
                             <button type="button" id="btn-increase">+</button>
                         </div>
+
                         <input type="hidden" name="productName" value="${product.product_name}">
                         <input type="hidden" name="productImage" id="hiddenProductImage" value="${imageList[0]}">
                         <input type="hidden" name="productPrice" value="${product.price}">
-                        <input type="hidden" name="selectedSize" id="finalSize" value="XL">
 
-                        <div class="product_detail_actions"
-                             style="margin-top: 25px;"> <%-- Gom nút vào div riêng để dễ căn chỉnh --%>
-                            <button type="submit" class="btn btn-primary validate_order">
+                        <div class="product_detail_actions" style="margin-top: 25px;">
+                            <button id="btnBuyNow" type="submit" class="btn btn-primary validate_order">
                                 Mua hàng
                             </button>
-                            <%-- Nút thêm vào giỏ hàng--%>
-                            <button class="btn btn-primary validate_order" type="button"
+                            <button class="btn btn-primary validate_order" type="button" id="btnAddToCart"
                                     data-variant-id="${product.defaultVariantId}"
                                     onclick="addToCart(this.getAttribute('data-variant-id'))">
                                 Thêm vào giỏ hàng
@@ -456,6 +457,17 @@
             }
         });
     }
+
+    const variantsData = [
+        <c:forEach items="${variantList}" var="v" varStatus="loop">
+        {
+            variantId: ${v.variantId},
+            size: '${v.size}',
+            color: '${v.color}',
+            stock: ${v.quantity}
+        }${!loop.last ? ',' : ''}
+        </c:forEach>
+    ];
 </script>
 </body>
 

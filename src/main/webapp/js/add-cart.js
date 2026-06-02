@@ -1,5 +1,4 @@
-//xử lý không reload trang khi thêm giỏ hàng dùng Ajax
-function addToCart(variantId) {
+function addToCart(variantId, optionalQuantity = null) {
     let ctx = "";
     if (typeof contextPath !== "undefined") {
         ctx = contextPath;
@@ -20,8 +19,13 @@ function addToCart(variantId) {
         }
     }
 
-    const quantityInput = document.getElementById("quantity");
-    const quantity = quantityInput ? parseInt(quantityInput.value) || 1 : 1;
+    let quantity = 1;
+    if (optionalQuantity !== null && optionalQuantity !== undefined) {
+        quantity = parseInt(optionalQuantity) || 1;
+    } else {
+        const quantityInput = document.getElementById("quantity");
+        quantity = quantityInput ? parseInt(quantityInput.value) || 1 : 1;
+    }
 
     fetch(`${ctx}/addcart`, {
         method: "POST",
@@ -38,26 +42,40 @@ function addToCart(variantId) {
                 alert(data.msg || "Không thể thêm vào giỏ hàng");
                 return;
             }
-            const totalItems = data.cartSize;
 
-            document.querySelectorAll(".cart-badge").forEach(el => {
-                el.textContent = totalItems;
-                el.style.display = totalItems > 0 ? "flex" : "none";
-            });
+            const totalItems = data.totalQuantity;
 
-            showToast("Đã thêm vào giỏ hàng!");
+            if (typeof window.setCartBadgeCount === "function") {
+                window.setCartBadgeCount(totalItems);
+            } else {
+                document.querySelectorAll(".cart-badge").forEach(el => {
+                    el.textContent = totalItems;
+                    el.style.display = totalItems > 0 ? "flex" : "none";
+                });
+            }
+
+            showToast("Đã thêm vào giỏ hàng thành công!");
         })
-        .catch(() => {
+        .catch((err) => {
+            console.error("Lỗi add-cart:", err);
             alert("Có lỗi xảy ra. Vui lòng thử lại!");
         });
 }
-//Hiển thị hộp thông báo thêm giỏ hàng ra 1 giây
+
 function showToast(msg) {
+    const oldToast = document.getElementById("cartQuickToast");
+    if (oldToast) oldToast.remove();
+
     const toast = document.createElement("div");
-    toast.className = "alert alert-success position-fixed top-0 end-0 m-4";
+    toast.id = "cartQuickToast";
+    toast.className = "alert alert-success position-fixed top-0 end-0 m-4 shadow-lg";
     toast.style.zIndex = "9999";
-    toast.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${msg}`;
+    toast.innerHTML = `<i class="fa-solid fa-circle-check me-2"></i> ${msg}`;
     document.body.appendChild(toast);
 
-    setTimeout(() => toast.remove(), 1000);
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.remove();
+        }
+    }, 1200);
 }
