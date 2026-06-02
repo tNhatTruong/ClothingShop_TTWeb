@@ -20,3 +20,28 @@
             window.location.href = url;
         });
     });
+
+    // Thực hiện tìm kiếm sản phẩm tức thì phía Client
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchInput = document.getElementById("searchInput");
+        if (searchInput) {
+            searchInput.addEventListener("input", function() {
+                const searchText = this.value.toLowerCase().trim();
+                const tableRows = document.querySelectorAll("#productsTable tbody tr");
+                
+                tableRows.forEach(row => {
+                    // Bỏ qua dòng trống nếu không có sản phẩm
+                    if (row.cells.length < 3) return;
+                    
+                    const idText = row.cells[0].textContent.toLowerCase();
+                    const nameText = row.cells[2].textContent.toLowerCase();
+                    
+                    if (idText.includes(searchText) || nameText.includes(searchText)) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            });
+        }
+    });

@@ -91,9 +91,27 @@ public class LoginController extends HttpServlet {
 
             session.setAttribute("cart", cart);
 
-            // 4. Cookie
+            // 4. Cookie và Remember Me Token
+            if (remember != null) {
+                String token = java.util.UUID.randomUUID().toString();
+                java.sql.Timestamp expiryDate = new java.sql.Timestamp(System.currentTimeMillis() + 30L * 24 * 60 * 60 * 1000); // 30 ngày
+                com.clothingshop.styleera.service.UserTokenService tokenService = new com.clothingshop.styleera.service.UserTokenService();
+                tokenService.saveToken(user.getId(), token, expiryDate);
+
+                Cookie cRemember = new Cookie("remember_token", token);
+                cRemember.setMaxAge(30 * 24 * 60 * 60); // 30 ngày
+                cRemember.setPath("/");
+                cRemember.setHttpOnly(true); // Tăng bảo mật chống XSS
+                response.addCookie(cRemember);
+            } else {
+                Cookie cRemember = new Cookie("remember_token", "");
+                cRemember.setMaxAge(0);
+                cRemember.setPath("/");
+                response.addCookie(cRemember);
+            }
+
             Cookie cEmail = new Cookie("c_user", remember != null ? email : "");
-            cEmail.setMaxAge(remember != null ? 7 * 24 * 60 * 60 : 0);
+            cEmail.setMaxAge(remember != null ? 30 * 24 * 60 * 60 : 0);
             cEmail.setPath("/");
             response.addCookie(cEmail);
 

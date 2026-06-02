@@ -512,6 +512,9 @@ CREATE TABLE `orders`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `address_id` int(11) NOT NULL,
+  `shipping_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `shipping_phone` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `shipping_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT 'PENDING',
   `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `price` decimal(10, 2) NOT NULL,
@@ -768,7 +771,7 @@ CREATE TABLE `users`  (
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (1, 'Nguyễn Văn Anh', 'Admin@styleera.com', 'Admin1234', '091456661', 'Hoạt Động', 'Admin', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (1, 'Nguyễn Văn Anh', 'qutoan23@gmail.com', 'Admin1234', '091456661', 'Hoạt Động', 'Admin', '2025-12-16 00:40:16', NULL, 1, NULL);
 INSERT INTO `users` VALUES (2, 'Trần Linh Xuân', 'lXu2k1@gmail.com', '12345678', '0903015502', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
 INSERT INTO `users` VALUES (3, 'Đào Cẩm Anh', 'CAnh311@gmail.com', '12345678', '0901112893', 'Không Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
 INSERT INTO `users` VALUES (4, 'Đặng Tuấn Anh', 'Admin2@styleera.com', 'Admin1234', '0780220304', 'Hoạt Động', 'Admin', '2025-12-16 00:40:16', NULL, 1, NULL);

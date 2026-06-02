@@ -54,6 +54,18 @@ public class JDBIConnector {
             // Tạo Jdbi instance
             jdbi = Jdbi.create(dataSource);
 
+            // Tự động tạo bảng user_tokens nếu chưa tồn tại để lưu token Remember Me
+            jdbi.useHandle(handle -> {
+                handle.execute("CREATE TABLE IF NOT EXISTS `user_tokens` (" +
+                        " `id` INT AUTO_INCREMENT PRIMARY KEY," +
+                        " `user_id` INT NOT NULL," +
+                        " `token` VARCHAR(255) NOT NULL UNIQUE," +
+                        " `expiry_date` TIMESTAMP NOT NULL," +
+                        " `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+                        " FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE" +
+                        ") ENGINE = InnoDB CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;");
+            });
+
         } catch (IOException e) {
             throw new RuntimeException("Lỗi đọc file db.properties: " + e.getMessage(), e);
         }

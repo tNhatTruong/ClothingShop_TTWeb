@@ -37,8 +37,9 @@
                 <div class="col-lg-8">
                     <c:set var="isEdit" value="${not empty product}" />
                     <form id="productForm"
-                          action="${isEdit ? root.concat('/AdminUpdateProduct') : root.concat('/AdminAddProduct')}"
+                          action="${isEdit ? root.concat('/AdminEditProduct') : root.concat('/AdminAddProduct')}"
                           method="post"
+                          enctype="multipart/form-data"
                           class="needs-validation"
                           novalidate>
 
@@ -48,47 +49,35 @@
                             </div>
                             <div class="card-body">
                                 <c:if test="${isEdit}">
-                                    <input type="hidden" name="product_id" value="${product.product_id}" />
+                                    <!-- Cần gửi cả productId và variantId khi cập nhật sản phẩm -->
+                                    <input type="hidden" name="productId" value="${product.product_id}" />
+                                    <input type="hidden" name="variantId" value="${variant.variantId}" />
                                 </c:if>
 
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Tên Sản Phẩm</label>
                                     <input type="text"
                                            class="form-control"
-                                           name="product_name"
+                                           name="productName"
                                            placeholder="Nhập tên sản phẩm"
                                            value="${isEdit ? product.product_name : ''}"
                                            required/>
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-bold">Phân Loại</label>
-                                        <select class="form-select" name="category">
-                                            <option value="">-- Chọn Thể Loại --</option>
-                                            <option value="nam" ${isEdit && product.subcategories.category.id == 1 ? 'selected' : ''}>Nam</option>
-                                            <option value="nu" ${isEdit && product.subcategories.category.id == 2 ? 'selected' : ''}>Nữ</option>
-                                            <option value="doi" ${isEdit && product.subcategories.category.id == 3 ? 'selected' : ''}>Đồ Đôi</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-12 mb-3">
                                         <label class="form-label fw-bold">Danh Mục</label>
-                                        <select class="form-select" name="subcategory_id" required>
+                                        <select class="form-select" name="subCategoryId" required>
                                             <option value="">-- Chọn Danh Mục --</option>
-
-                                            <option value="1">Áo Thun</option>
-                                            <option value="2">Áo Polo</option>
-                                            <option value="3">Áo Khoác Nam</option>
-                                            <option value="4">Quần Jean</option>
-                                            <option value="5">Áo Khoác</option>
-                                            <option value="6">Váy</option>
-                                            <option value="7">Đầm</option>
-                                            <option value="8">Quần dài</option>
-                                            <option value="9">Quần ngắn</option>
-                                            <option value="10">Áo khoác đôi</option>
-                                            <option value="11">Áo thun đôi</option>
-                                            <option value="12">Đồ bộ Đôi</option>
+                                            <c:forEach items="${parents}" var="p">
+                                                <optgroup label="${p.name}">
+                                                    <c:forEach items="${p.subCategories}" var="sub">
+                                                        <option value="${sub.id}" ${isEdit && product.subcategory.id == sub.id ? 'selected' : ''}>
+                                                            ${sub.name} (ID: ${sub.id})
+                                                        </option>
+                                                    </c:forEach>
+                                                </optgroup>
+                                            </c:forEach>
                                         </select>
                                     </div>
                                 </div>
@@ -240,6 +229,33 @@
     document.getElementById('productForm').addEventListener('submit', function(e) {
         // Cho phép form submit tới server
         // Servlet sẽ xử lý và redirect tự động về admin-products.jsp
+    });
+
+    // Xử lý sự kiện change ảnh và live preview
+    document.getElementById('productImages').addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            document.querySelector('input[name="image_name"]').value = file.name;
+            document.querySelector('input[name="image_path"]').value = "/images/" + file.name;
+            
+            const previewContainer = document.getElementById('imgPreview');
+            previewContainer.innerHTML = '';
+            
+            const previewTitle = document.createElement('p');
+            previewTitle.className = 'fw-bold mb-2 text-primary';
+            previewTitle.innerHTML = '<i class="fas fa-eye me-1"></i> Ảnh xem trước:';
+            
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.style.maxWidth = '100%';
+            img.style.maxHeight = '250px';
+            img.style.borderRadius = '8px';
+            img.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            img.className = 'border border-light';
+            
+            previewContainer.appendChild(previewTitle);
+            previewContainer.appendChild(img);
+        }
     });
 </script>
 </body>

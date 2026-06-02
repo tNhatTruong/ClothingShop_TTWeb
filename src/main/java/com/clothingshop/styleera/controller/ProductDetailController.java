@@ -1,6 +1,5 @@
 package com.clothingshop.styleera.controller;
 
-import com.clothingshop.styleera.dao.ReviewDAO;
 import com.clothingshop.styleera.model.Product;
 import com.clothingshop.styleera.model.Review;
 import com.clothingshop.styleera.model.Variants;

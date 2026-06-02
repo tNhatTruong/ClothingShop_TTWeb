@@ -21,13 +21,9 @@ public class CategoryService {
     }
 
     // xử lý bộ lọc Danh Mục theo phân loại và tên danh mục
-    public List<ParentCategory> filterCategories(String parentCategory, String subCategory) {
+    public List<ParentCategory> filterCategories(String parentCategory, String subCategory, String search) {
         List<ParentCategory> allCategories = getAllCategories();
 
-        // Nếu không có trả về tất cả
-        if ((parentCategory == null || parentCategory.isEmpty()) && (subCategory == null || subCategory.isEmpty())) {
-            return allCategories;
-        }
         // Lọc dữ liệu
         for (ParentCategory parent : allCategories) {
             parent.getSubCategories().removeIf(sub -> {
@@ -41,6 +37,12 @@ public class CategoryService {
                 // Lọc theo Subcategory
                 if (keepSubCategory && subCategory != null && !subCategory.isEmpty()) {
                     if (!sub.getName().equalsIgnoreCase(subCategory)) {
+                        keepSubCategory = false;
+                    }
+                }
+                // Lọc theo từ khóa tìm kiếm
+                if (keepSubCategory && search != null && !search.isEmpty()) {
+                    if (!sub.getName().toLowerCase().contains(search.toLowerCase())) {
                         keepSubCategory = false;
                     }
                 }

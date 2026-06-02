@@ -22,6 +22,13 @@ public class AdminProductsController extends HttpServlet {
         ProductDAO dao = new ProductDAO();
         //lọc theo danh mục:
         String parent = request.getParameter("parent");
+        if ("nam".equals(parent)) {
+            parent = "Nam";
+        } else if ("nu".equals(parent)) {
+            parent = "Nữ";
+        } else if ("doi".equals(parent)) {
+            parent = "Đồ Đôi";
+        }
         String sub = request.getParameter("sub");
         String size = request.getParameter("size");
         String color = request.getParameter("color");

@@ -12,9 +12,22 @@ public class Orders {
     private double feeDelivery;
     private double totalPrice;
     private LocalDateTime createdAt;
+    
+    private String shippingName;
+    private String shippingPhone;
+    private String shippingAddress;
 
     public Orders() {
     }
+
+    public String getShippingName() { return shippingName; }
+    public void setShippingName(String shippingName) { this.shippingName = shippingName; }
+    
+    public String getShippingPhone() { return shippingPhone; }
+    public void setShippingPhone(String shippingPhone) { this.shippingPhone = shippingPhone; }
+    
+    public String getShippingAddress() { return shippingAddress; }
+    public void setShippingAddress(String shippingAddress) { this.shippingAddress = shippingAddress; }
 
     public Orders(int id, int userId, int addressId, String status, String note, double price, double feeDelivery, double totalPrice) {
         this.id = id;
@@ -97,5 +110,24 @@ public class Orders {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    private String userName;
+    private String email;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

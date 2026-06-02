@@ -18,12 +18,20 @@ public class LogoutController extends HttpServlet {
         // 2. Xóa Cookie (nếu có dùng Remember Me)
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
+            com.clothingshop.styleera.service.UserTokenService tokenService = new com.clothingshop.styleera.service.UserTokenService();
             for (Cookie cookie : cookies) {
-                if ("c_user".equals(cookie.getName())) {
+                if ("c_user".equals(cookie.getName()) || "remember_token".equals(cookie.getName())) {
+                    if ("remember_token".equals(cookie.getName())) {
+                        String token = cookie.getValue();
+                        try {
+                            tokenService.deleteToken(token);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                     cookie.setMaxAge(0);
                     cookie.setPath("/");
                     response.addCookie(cookie);
-                    break;
                 }
             }
         }

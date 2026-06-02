@@ -20,7 +20,7 @@ public class OrdersDAO {
     public List<Orders> getLatestOrders(int limit) {
         return JDBIConnector.getJdbi().withHandle(handle ->
                 handle.createQuery(
-                                "SELECT id, user_id, address_id, status, note, price, " +
+                                "SELECT id, user_id, address_id, shipping_name, shipping_phone, shipping_address, status, note, price, " +
                                         "fee_delivery, total_price, created_at " +
                                         "FROM orders " +
                                         "ORDER BY created_at DESC " +
@@ -59,6 +59,68 @@ public class OrdersDAO {
                     .forEach(entry -> revenueByMonth.put(entry.getKey(), entry.getValue()));
             return revenueByMonth;
         });
+    }
+
+    // Lấy thông tin đơn hàng theo ID
+    public Orders findById(int orderId) {
+        return JDBIConnector.getJdbi().withHandle(handle ->
+                handle.createQuery(
+                                "SELECT id, user_id, address_id, shipping_name, shipping_phone, shipping_address, status, note, price, " +
+                                        "fee_delivery, total_price, created_at " +
+                                        "FROM orders " +
+                                        "WHERE id = :id"
+                        )
+                        .bind("id", orderId)
+                        .mapToBean(Orders.class)
+                        .findOne()
+                        .orElse(null)
+        );
+    }
+    // Lấy tất cả đơn hàng, thực hiện JOIN bảng users để map thông tin userName và email
+    public List<Orders> findAllOrders() {
+        return JDBIConnector.getJdbi().withHandle(handle ->
+                handle.createQuery(
+                                "SELECT o.id, o.user_id AS userId, o.address_id AS addressId, o.status, o.note, o.price, " +
+                                        "o.fee_delivery AS feeDelivery, o.total_price AS totalPrice, o.created_at AS createdAt, " +
+                                        "u.user_name AS userName, u.email " +
+                                        "FROM orders o JOIN users u ON o.user_id = u.id " +
+                                        "ORDER BY o.created_at DESC"
+                        )
+                        .mapToBean(Orders.class)
+                        .list()
+        );
+    }
+
+    public int insertOrder(Orders order) {
+        return JDBIConnector.getJdbi().withHandle(handle -> {
+            String sql = "INSERT INTO orders (user_id, address_id, shipping_name, shipping_phone, shipping_address, status, note, price, fee_delivery, total_price) " +
+                         "VALUES (:userId, :addressId, :shippingName, :shippingPhone, :shippingAddress, :status, :note, :price, :feeDelivery, :totalPrice)";
+            return handle.createUpdate(sql)
+                    .bindBean(order)
+                    .executeAndReturnGeneratedKeys("id")
+                    .mapTo(Integer.class)
+                    .one();
+        });
+    }
+    public boolean updateStatus(int orderId, String status) {
+        return JDBIConnector.getJdbi().withHandle(handle -> {
+            int rows = handle.createUpdate("UPDATE orders SET status = :status WHERE id = :id")
+                    .bind("status", status)
+                    .bind("id", orderId)
+                    .execute();
+            return rows > 0;
+        });
+    }
+
+    public List<Orders> findExpiredPendingOrders(int timeoutMinutes) {
+        return JDBIConnector.getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT id, user_id, address_id, shipping_name, shipping_phone, shipping_address, status, note, price, fee_delivery, total_price, created_at " +
+                                "FROM orders " +
+                                "WHERE status = 'PENDING' AND TIMESTAMPDIFF(MINUTE, created_at, NOW()) >= :timeout")
+                        .bind("timeout", timeoutMinutes)
+                        .mapToBean(Orders.class)
+                        .list()
+        );
     }
 
 }
