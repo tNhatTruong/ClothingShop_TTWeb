@@ -20,7 +20,7 @@ public class OrdersDAO {
     public List<Orders> getLatestOrders(int limit) {
         return JDBIConnector.getJdbi().withHandle(handle ->
                 handle.createQuery(
-                                "SELECT id, user_id, address_id, status, note, price, " +
+                                "SELECT id, user_id, address_id, shipping_name, shipping_phone, shipping_address, status, note, price, " +
                                         "fee_delivery, total_price, created_at " +
                                         "FROM orders " +
                                         "ORDER BY created_at DESC " +
@@ -65,7 +65,7 @@ public class OrdersDAO {
     public Orders findById(int orderId) {
         return JDBIConnector.getJdbi().withHandle(handle ->
                 handle.createQuery(
-                                "SELECT id, user_id, address_id, status, note, price, " +
+                                "SELECT id, user_id, address_id, shipping_name, shipping_phone, shipping_address, status, note, price, " +
                                         "fee_delivery, total_price, created_at " +
                                         "FROM orders " +
                                         "WHERE id = :id"
@@ -76,7 +76,6 @@ public class OrdersDAO {
                         .orElse(null)
         );
     }
-
     // Lấy tất cả đơn hàng, thực hiện JOIN bảng users để map thông tin userName và email
     public List<Orders> findAllOrders() {
         return JDBIConnector.getJdbi().withHandle(handle ->
@@ -91,4 +90,37 @@ public class OrdersDAO {
                         .list()
         );
     }
+
+    public int insertOrder(Orders order) {
+        return JDBIConnector.getJdbi().withHandle(handle -> {
+            String sql = "INSERT INTO orders (user_id, address_id, shipping_name, shipping_phone, shipping_address, status, note, price, fee_delivery, total_price) " +
+                         "VALUES (:userId, :addressId, :shippingName, :shippingPhone, :shippingAddress, :status, :note, :price, :feeDelivery, :totalPrice)";
+            return handle.createUpdate(sql)
+                    .bindBean(order)
+                    .executeAndReturnGeneratedKeys("id")
+                    .mapTo(Integer.class)
+                    .one();
+        });
+    }
+    public boolean updateStatus(int orderId, String status) {
+        return JDBIConnector.getJdbi().withHandle(handle -> {
+            int rows = handle.createUpdate("UPDATE orders SET status = :status WHERE id = :id")
+                    .bind("status", status)
+                    .bind("id", orderId)
+                    .execute();
+            return rows > 0;
+        });
+    }
+
+    public List<Orders> findExpiredPendingOrders(int timeoutMinutes) {
+        return JDBIConnector.getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT id, user_id, address_id, shipping_name, shipping_phone, shipping_address, status, note, price, fee_delivery, total_price, created_at " +
+                                "FROM orders " +
+                                "WHERE status = 'PENDING' AND TIMESTAMPDIFF(MINUTE, created_at, NOW()) >= :timeout")
+                        .bind("timeout", timeoutMinutes)
+                        .mapToBean(Orders.class)
+                        .list()
+        );
+    }
+
 }

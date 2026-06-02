@@ -93,9 +93,11 @@ public class PlaceOrderController extends HttpServlet {
                             subTotal += item.getVariant().getProduct().getPrice() * item.getQuantity();
                         }
                     }
-                } else {
-                    checkoutItems.addAll(cart.getItem());
-                    subTotal = cart.total();
+                }
+                
+                if (checkoutItems.isEmpty()) {
+                    response.sendRedirect(request.getContextPath() + "/cart");
+                    return;
                 }
 
                 double shipping = 30000.0;
@@ -139,7 +141,169 @@ public class PlaceOrderController extends HttpServlet {
             return;
         }
 
-        // Nếu validation thành công, chuyển hướng đến trang hoàn tất đặt hàng
-        response.sendRedirect(request.getContextPath() + "/order-success");
+        // Nếu validation thành công, tạo đơn hàng và lưu vào DB
+        try {
+            com.clothingshop.styleera.dao.OrdersDAO ordersDAO = new com.clothingshop.styleera.dao.OrdersDAO();
+            com.clothingshop.styleera.dao.OrderDetailsDAO orderDetailsDAO = new com.clothingshop.styleera.dao.OrderDetailsDAO();
+            com.clothingshop.styleera.dao.VariantDAO variantDAO = new com.clothingshop.styleera.dao.VariantDAO();
+            com.clothingshop.styleera.dao.CartDao cartDao = new com.clothingshop.styleera.dao.CartDao();
+
+            boolean isBuyNow = "true".equals(request.getParameter("isBuyNow"));
+            String paymentMethod = request.getParameter("payment_method");
+            
+            // Xử lý tạo Order
+            com.clothingshop.styleera.model.Orders order = new com.clothingshop.styleera.model.Orders();
+            order.setUserId(user.getId());
+            // Tạm thời lấy default address ID, có thể sửa nếu form cho chọn Address
+            AddressDAO addressDAO = new AddressDAO();
+            Address userAddress = addressDAO.findAddressByUserId(user.getId());
+            order.setAddressId(userAddress != null ? userAddress.getId() : 0);
+            
+            // Lưu Snapshot thông tin giao hàng từ Form UI thay vì vứt bỏ
+            // Các biến fullname, address, phone đã được khai báo và validate ở trên
+            order.setShippingName(fullname);
+            order.setShippingAddress(address);
+            order.setShippingPhone(phone);
+            
+            order.setStatus("PENDING");
+            order.setNote("");
+            
+            double shipping = 30000.0;
+            order.setFeeDelivery(shipping);
+            
+            int currentOrderId = 0;
+            
+            if (!isBuyNow) {
+                // Xử lý Cart
+                Cart cart = (Cart) session.getAttribute("cart");
+                String variantIdsStr = request.getParameter("variants");
+                java.util.List<com.clothingshop.styleera.model.CartItem> checkoutItems = new java.util.ArrayList<>();
+                double subTotal = 0;
+                
+                if (variantIdsStr != null && !variantIdsStr.trim().isEmpty()) {
+                    String[] selectedIds = variantIdsStr.split(",");
+                    java.util.Set<String> selectedIdSet = new java.util.HashSet<>(java.util.Arrays.asList(selectedIds));
+                    for (com.clothingshop.styleera.model.CartItem item : cart.getItem()) {
+                        if (selectedIdSet.contains(String.valueOf(item.getVariant().getVariantId()))) {
+                            checkoutItems.add(item);
+                            subTotal += item.getVariant().getProduct().getPrice() * item.getQuantity();
+                        }
+                    }
+                }
+                
+                if (checkoutItems.isEmpty()) {
+                    response.sendRedirect(request.getContextPath() + "/cart");
+                    return;
+                }
+                
+                order.setPrice(subTotal);
+                order.setTotalPrice(subTotal + shipping);
+                
+                currentOrderId = ordersDAO.insertOrder(order);
+                
+                // Lưu OrderDetails và trừ Tồn kho, Xóa giỏ hàng
+                for (com.clothingshop.styleera.model.CartItem item : checkoutItems) {
+                    int variantId = item.getVariant().getVariantId();
+                    int qty = item.getQuantity();
+                    double price = item.getVariant().getProduct().getPrice();
+                    
+                    com.clothingshop.styleera.model.OrderDetail detail = new com.clothingshop.styleera.model.OrderDetail(0, currentOrderId, variantId, qty, price);
+                    orderDetailsDAO.insertOrderDetail(detail);
+                    variantDAO.updateStock(variantId, qty);
+                    
+                    // Xóa item trong DB giỏ hàng và trong đối tượng Cart session
+                    cartDao.removeCartItem(user.getId(), variantId);
+                    cart.removeItem(variantId);
+                }
+            } else {
+                // Xử lý Buy Now
+                int variantId = Integer.parseInt(request.getParameter("variantId"));
+                int quantity = Integer.parseInt(request.getParameter("quantity"));
+                
+                // Tránh lộ hổng F12 đổi giá: Lấy giá gốc từ DB
+                com.clothingshop.styleera.model.Variants variantInfo = variantDAO.getById(variantId);
+                double realPrice = variantInfo.getProduct().getPrice();
+                double subTotal = realPrice * quantity;
+                
+                order.setPrice(subTotal);
+                order.setTotalPrice(subTotal + shipping);
+                
+                currentOrderId = ordersDAO.insertOrder(order);
+                
+                com.clothingshop.styleera.model.OrderDetail detail = new com.clothingshop.styleera.model.OrderDetail(0, currentOrderId, variantId, quantity, realPrice);
+                orderDetailsDAO.insertOrderDetail(detail);
+                variantDAO.updateStock(variantId, quantity);
+            }
+            
+            if ("vnpay".equals(paymentMethod)) {
+                String vnp_Version = "2.1.0";
+                String vnp_Command = "pay";
+                String orderType = "other";
+                long amount = (long) (order.getTotalPrice() * 100);
+                String vnp_TxnRef = String.valueOf(currentOrderId);
+                String vnp_IpAddr = com.clothingshop.styleera.util.VnPayUtils.getIpAddress(request);
+
+                java.util.Map<String, String> vnp_Params = new java.util.HashMap<>();
+                vnp_Params.put("vnp_Version", vnp_Version);
+                vnp_Params.put("vnp_Command", vnp_Command);
+                vnp_Params.put("vnp_TmnCode", com.clothingshop.styleera.util.VnPayConfig.vnp_TmnCode);
+                vnp_Params.put("vnp_Amount", String.valueOf(amount));
+                vnp_Params.put("vnp_CurrCode", "VND");
+                vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
+                vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang " + vnp_TxnRef);
+                vnp_Params.put("vnp_OrderType", orderType);
+                vnp_Params.put("vnp_Locale", "vn");
+                
+                String returnUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + com.clothingshop.styleera.util.VnPayConfig.vnp_ReturnUrl;
+                vnp_Params.put("vnp_ReturnUrl", returnUrl);
+                vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
+
+                java.util.Calendar cld = java.util.Calendar.getInstance(java.util.TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+                java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("yyyyMMddHHmmss");
+                formatter.setTimeZone(java.util.TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+                String vnp_CreateDate = formatter.format(cld.getTime());
+                vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
+                
+                cld.add(java.util.Calendar.MINUTE, 30);
+                String vnp_ExpireDate = formatter.format(cld.getTime());
+                vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
+
+                java.util.List<String> fieldNames = new java.util.ArrayList<>(vnp_Params.keySet());
+                java.util.Collections.sort(fieldNames);
+                StringBuilder hashData = new StringBuilder();
+                StringBuilder query = new StringBuilder();
+                java.util.Iterator<String> itr = fieldNames.iterator();
+                while (itr.hasNext()) {
+                    String fieldName = (String) itr.next();
+                    String fieldValue = (String) vnp_Params.get(fieldName);
+                    if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                        hashData.append(fieldName);
+                        hashData.append('=');
+                        hashData.append(java.net.URLEncoder.encode(fieldValue, java.nio.charset.StandardCharsets.US_ASCII.toString()));
+                        query.append(java.net.URLEncoder.encode(fieldName, java.nio.charset.StandardCharsets.US_ASCII.toString()));
+                        query.append('=');
+                        query.append(java.net.URLEncoder.encode(fieldValue, java.nio.charset.StandardCharsets.US_ASCII.toString()));
+                        if (itr.hasNext()) {
+                            query.append('&');
+                            hashData.append('&');
+                        }
+                    }
+                }
+                String queryUrl = query.toString();
+                String vnp_SecureHash = com.clothingshop.styleera.util.VnPayUtils.hmacSHA512(com.clothingshop.styleera.util.VnPayConfig.vnp_HashSecret, hashData.toString());
+                queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
+                String paymentUrl = com.clothingshop.styleera.util.VnPayConfig.vnp_PayUrl + "?" + queryUrl;
+                
+                response.sendRedirect(paymentUrl);
+            } else {
+                // Chuyển hướng đến trang hoàn tất đặt hàng (COD)
+                response.sendRedirect(request.getContextPath() + "/order-success?id=" + currentOrderId);
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("errorMessage", "Có lỗi xảy ra trong quá trình đặt hàng: " + e.getMessage());
+            request.getRequestDispatcher("/views/pages/checkout.jsp").forward(request, response);
+        }
     }
 }
