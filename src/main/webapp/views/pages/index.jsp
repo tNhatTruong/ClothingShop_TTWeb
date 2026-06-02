@@ -128,9 +128,8 @@
                                 <span class="price"><%=String.format("%,.0f", p.getPrice())%>₫</span>
                             </div>
 
-                            <button class="btn-cart" type="button" title="Thêm vào giỏ"
-                                    <%= p.getDefaultVariantId() == null ? "disabled" : "" %>
-                                    onclick="addToCart(<%= p.getDefaultVariantId() %>)">
+                            <button class="btn-cart" type="button" title="Chọn phân loại"
+                                    onclick="openQuickView(<%= p.getProduct_id() %>, '<%= p.getProduct_name().replace("'", "\\'") %>', <%= p.getPrice() %>, '<%= imgPath %>')">
                                 <i class="fas fa-shopping-cart"></i>
                             </button>
                         </div>
@@ -189,9 +188,8 @@
                                 <span class="price"><%=String.format("%,.0f", p.getPrice())%>₫</span>
                             </div>
 
-                            <button class="btn-cart" type="button" title="Thêm vào giỏ"
-                                    <%= p.getDefaultVariantId() == null ? "disabled" : "" %>
-                                    onclick="addToCart(<%= p.getDefaultVariantId() %>)">
+                            <button class="btn-cart" type="button" title="Chọn phân loại"
+                                    onclick="openQuickView(<%= p.getProduct_id() %>, '<%= p.getProduct_name().replace("'", "\\'") %>', <%= p.getPrice() %>, '<%= imgPath %>')">
                                 <i class="fas fa-shopping-cart"></i>
                             </button>
                         </div>
@@ -283,6 +281,50 @@
     </section>
 </main>
 
+<div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="quickViewModalLabel">Chọn phân loại sản phẩm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex gap-3 mb-3">
+                    <img id="qv-product-img" src="" alt="" style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px;">
+                    <div>
+                        <h6 id="qv-product-name" class="fw-bold mb-1"></h6>
+                        <p id="qv-product-price" class="text-danger fw-bold mb-0"></p>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <span class="d-block fw-semibold mb-2">Màu sắc:</span>
+                    <div id="qv-color-container" class="d-flex flex-wrap gap-2">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <span class="d-block fw-semibold mb-2">Kích cỡ (Size):</span>
+                    <div id="qv-size-container" class="d-flex flex-wrap gap-2">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <span class="d-block fw-semibold mb-2">Số lượng:</span>
+                    <div class="input-group" style="width: 130px;">
+                        <button class="btn btn-outline-secondary" type="button" id="qv-btn-decrease">-</button>
+                        <input type="text" id="qv-quantity" class="form-control text-center" value="1" readonly>
+                        <button class="btn btn-outline-secondary" type="button" id="qv-btn-increase">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" id="qv-btn-add-to-cart" class="btn btn-primary" disabled>Thêm vào giỏ hàng</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <jsp:include page="/views/layout/footer.jsp"/>
 
