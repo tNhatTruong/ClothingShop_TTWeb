@@ -172,6 +172,7 @@ body {
     padding-top: 125%;
     height: 0;
     overflow: hidden;
+    isolation: isolate;
     background: #f8f9fa;
     border-radius: 8px 8px 0 0;
 }
@@ -190,10 +191,17 @@ body {
     transform: scale(1.05);
 }
 
-.product-badge {
+.badges-container {
     position: absolute;
     top: 10px;
     left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    z-index: 2;
+}
+
+.product-badge {
     padding: 4px 10px;
     font-size: 0.7rem;
     font-weight: 700;
@@ -201,11 +209,12 @@ body {
     border-radius: 2px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    z-index: 2;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    width: fit-content;
 }
 
 .badge-new { background: #212121; }
+.badge-hot { background: #FF4500; } /* Orange Red để nổi bật hơn */
 .badge-bestseller { background: #D4AF37; }
 
 /* --- Content Area --- */
@@ -229,6 +238,7 @@ body {
     line-height: 1.4;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     height: 2.8em;

@@ -250,6 +250,7 @@
     width: 100%;
     padding-top: 125%; /* Tỷ lệ 4:5 phù hợp cho sản phẩm thời trang */
     overflow: hidden;
+    isolation: isolate;
     background: #f8f9fa;
     border-radius: 8px 8px 0 0;
 }
@@ -269,33 +270,32 @@
 }
 
 /* Badges (New/Sale) */
-.product-badge {
+.badges-container {
     position: absolute;
     top: 10px;
     left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    z-index: 2;
+}
+
+.product-badge {
     padding: 4px 10px;
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
-    z-index: 2;
     color: #fff;
     border-radius: 2px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: fit-content;
 }
 
-.badge-new {
-    background: var(--color-black);
-}
-
-.badge-sale {
-    background: #E74C3C;
-}
-
-.badge-bestseller {
-    background: var(--color-accent-gold);
-    color: #fff;
-}
+.badge-new { background: var(--color-black); }
+.badge-sale { background: #E74C3C; }
+.badge-hot { background: #FF4500; }
+.badge-bestseller { background: var(--color-accent-gold); color: #fff; }
 
 /* --- Content Area --- */
 .product-details {
@@ -321,6 +321,7 @@
     /* Giới hạn tên sản phẩm 2 dòng, quá dài sẽ hiện dấu ... */
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     height: 2.8em; /* Cố định chiều cao để các card bằng nhau */

@@ -25,7 +25,7 @@
     <link rel="icon" type="image/png" href="${root}/images/logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="${root}/css/style.css">
+    <link rel="stylesheet" href="${root}/css/style.css?v=1.2">
     <link rel="stylesheet" href="${root}/css/header-footer.css">
 </head>
 
@@ -103,7 +103,11 @@
                 <div class="product-card">
                     <a href="${root}/product_detail?id=<%=p.getProduct_id()%>" class="product-card-link">
                         <div class="product-image">
-                            <span class="product-badge badge-new">NEW</span>
+                            <div class="badges-container">
+                                <% if (p.isNew()) { %><span class="product-badge badge-new">NEW</span><% } %>
+                                <% if (p.isHot()) { %><span class="product-badge badge-hot">HOT</span><% } %>
+                                <% if (p.isBestseller()) { %><span class="product-badge badge-bestseller">BESTSELLER</span><% } %>
+                            </div>
                             <img src="<%=imgPath%>" alt="<%=p.getProduct_name()%>" loading="lazy">
                         </div>
                     </a>
@@ -129,7 +133,11 @@
                             </div>
 
                             <button class="btn-cart" type="button" title="Chọn phân loại"
-                                    onclick="openQuickView(<%= p.getProduct_id() %>, '<%= p.getProduct_name().replace("'", "\\'") %>', <%= p.getPrice() %>, '<%= imgPath %>')">
+                                    data-id="<%= p.getProduct_id() %>"
+                                    data-name="<%= p.getProduct_name().replace("\"", "&quot;").replace("'", "\\'") %>"
+                                    data-price="<%= p.getPrice() %>"
+                                    data-img="<%= imgPath %>"
+                                    onclick="openQuickView(this.dataset.id, this.dataset.name, this.dataset.price, this.dataset.img)">
                                 <i class="fas fa-shopping-cart"></i>
                             </button>
                         </div>
@@ -163,7 +171,11 @@
                 <div class="product-card">
                     <a href="${root}/product_detail?id=<%=p.getProduct_id()%>" class="product-card-link">
                         <div class="product-image">
-                            <span class="product-badge badge-bestseller">BEST SELLER</span>
+                            <div class="badges-container">
+                                <% if (p.isNew()) { %><span class="product-badge badge-new">NEW</span><% } %>
+                                <% if (p.isHot()) { %><span class="product-badge badge-hot">HOT</span><% } %>
+                                <% if (p.isBestseller()) { %><span class="product-badge badge-bestseller">BESTSELLER</span><% } %>
+                            </div>
                             <img src="<%=imgPath%>" alt="<%=p.getProduct_name()%>" loading="lazy">
                         </div>
                     </a>
@@ -189,7 +201,11 @@
                             </div>
 
                             <button class="btn-cart" type="button" title="Chọn phân loại"
-                                    onclick="openQuickView(<%= p.getProduct_id() %>, '<%= p.getProduct_name().replace("'", "\\'") %>', <%= p.getPrice() %>, '<%= imgPath %>')">
+                                    data-id="<%= p.getProduct_id() %>"
+                                    data-name="<%= p.getProduct_name().replace("\"", "&quot;").replace("'", "\\'") %>"
+                                    data-price="<%= p.getPrice() %>"
+                                    data-img="<%= imgPath %>"
+                                    onclick="openQuickView(this.dataset.id, this.dataset.name, this.dataset.price, this.dataset.img)">
                                 <i class="fas fa-shopping-cart"></i>
                             </button>
                         </div>
