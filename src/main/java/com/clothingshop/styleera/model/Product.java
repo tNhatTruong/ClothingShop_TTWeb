@@ -18,6 +18,7 @@ public class Product implements Serializable {
     private String thumbnail;
     private Integer defaultVariantId;
     private List<Variants> variants;
+    private int sold_quantity;
 
     public Product() {
     }
@@ -34,6 +35,29 @@ public class Product implements Serializable {
         this.created_at = created_at;
         this.updated_at = updated_at;
     }
+
+    public boolean isNew() {
+        if (created_at == null) return false;
+        long diff = System.currentTimeMillis() - created_at.getTime();
+        return diff <= 7L * 24 * 60 * 60 * 1000;
+    }
+
+    public boolean isHot() {
+        return medium_rating >= 4.5;
+    }
+
+    public boolean isBestseller() {
+        return sold_quantity >= 5;
+    }
+
+    public int getSold_quantity() {
+        return sold_quantity;
+    }
+
+    public void setSold_quantity(int sold_quantity) {
+        this.sold_quantity = sold_quantity;
+    }
+
 
     public int getProduct_id() {
         return product_id;

@@ -963,3 +963,42 @@ UPDATE products SET
   short_description = 'Áo hoodie đôi dáng rộng, có mũ trùm ấm áp cho mùa đông.',
   detail_description = 'Cái ôm ấm áp nhất vào những ngày gió lùa. Hoodie đôi nỉ bông là món đồ minh chứng cho tình yêu bền chặt, rộng rãi để cùng chui vào một chiếc áo!\n\n**THÔNG TIN SẢN PHẨM**\n- Dáng Oversize form rộng thùng thình chuẩn Hàn Quốc.\n- Túi bụng Kangaroo to bản, mũ trùm sâu.\n- Dây rút dệt đôi chắc chắn.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Nỉ lót bông (Fleece Heavyweight) dệt từ sợi CVC cực kỳ dày dặn.\n- Giữ nhiệt độ cơ thể xuất sắc trong mùa đại hàn.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Lộn trái áo trước khi giặt máy.\n- Dùng nước xả vải để giữ độ tơi xốp cho lớp lông.'
 WHERE id = 19;
+
+
+-- Thêm cột sold_quantity vào products
+ALTER TABLE products ADD COLUMN IF NOT EXISTS sold_quantity INT DEFAULT 0;
+
+-- Cập nhật sold_quantity dựa trên dữ liệu orderdetails
+UPDATE products p
+LEFT JOIN (
+    SELECT variant_id, SUM(quantity) as total_sold
+    FROM orderdetails
+    GROUP BY variant_id
+) od ON p.id = (SELECT product_id FROM variants v WHERE v.id = od.variant_id)
+SET p.sold_quantity = COALESCE(od.total_sold, 0);
+
+-- Chèn ảnh giả cho 6 sản phẩm mới
+INSERT INTO images (id, image_name, path, product_id) VALUES 
+(291, 'Áo Khoác Da Biker', '/images/no-image.png', NULL),
+(292, 'Sơ Mi Lụa Hàn Quốc', '/images/no-image.png', NULL),
+(293, 'Quần Jean Ống Rộng', '/images/no-image.png', NULL),
+(294, 'Áo Polo Thể Thao', '/images/no-image.png', NULL),
+(295, 'Váy Chữ A', '/images/no-image.png', NULL),
+(296, 'Áo Len Đôi', '/images/no-image.png', NULL);
+
+-- Chèn 6 sản phẩm mới với đầy đủ ảnh và utf8
+INSERT INTO products (id, image_id, category_sub_id, product_name, short_description, detail_description, price, average_rating, created_at, updated_at, sold_quantity) VALUES 
+(20, 291, 1, 'Áo Khoác Da Biker Nam', 'Áo khoác da thật phong cách bụi bặm', 'Chi tiết áo khoác da biker với khóa kéo chéo...', 850000, 4.3, NOW(), NOW(), 2), 
+(21, 292, 11, 'Áo Sơ Mi Lụa Hàn Quốc Nữ', 'Sơ mi lụa mềm mịn, thoáng mát', 'Thiết kế thanh lịch phù hợp cho dân công sở...', 320000, 4.6, NOW(), NOW(), 1), 
+(22, 293, 15, 'Quần Jean Ống Rộng Nữ', 'Quần jean form rộng hack dáng', 'Chất liệu denim cao cấp, không bai dão...', 450000, 4.9, NOW(), NOW(), 8), 
+(23, 294, 3, 'Áo Polo Thể Thao Nam', 'Polo thoáng khí thấm hút mồ hôi', 'Thích hợp cho vận động và dạo phố...', 250000, 4.5, NOW(), NOW(), 4), 
+(24, 295, 12, 'Váy Chữ A Công Sở', 'Váy thiết kế đơn giản, tôn dáng', 'Váy form chữ A che khuyết điểm cực tốt...', 380000, 4.8, NOW(), NOW(), 6), 
+(25, 296, 16, 'Áo Len Đôi Mùa Đông', 'Áo len giữ ấm, họa tiết dễ thương', 'Món quà tuyệt vời cho các cặp đôi...', 550000, 4.2, NOW(), NOW(), 0);
+
+-- Liên kết ảnh về lại sản phẩm
+UPDATE images SET product_id = 20 WHERE id = 291;
+UPDATE images SET product_id = 21 WHERE id = 292;
+UPDATE images SET product_id = 22 WHERE id = 293;
+UPDATE images SET product_id = 23 WHERE id = 294;
+UPDATE images SET product_id = 24 WHERE id = 295;
+UPDATE images SET product_id = 25 WHERE id = 296;
