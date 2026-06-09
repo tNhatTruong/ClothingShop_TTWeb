@@ -52,20 +52,19 @@
 
                                             <!-- RIGHT: PRODUCT INFO -->
                                             <div class="product_info">
-                                                <h2 class="product_title">${product.product_name}</h2>
+                                                <h2 class="product_title" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">${product.product_name}</h2>
 
                                                 <div class="rating">
-                                                    <c:forEach begin="0" end="5" var="i">
+                                                    <c:forEach begin="1" end="5" var="i">
                                                         <c:choose>
-                                                            <c:when test="${i <= product.medium_rating}">
+                                                            <c:when test="${i <= product.medium_rating + 0.5}">
                                                                 <img src="${root}/images/image_product/start.png"
                                                                     alt="star" width="20">
                                                             </c:when>
-
                                                         </c:choose>
                                                     </c:forEach>
 
-                                                    <span>- Đánh giá ${product.medium_rating}/5</span>
+                                                    <span>- Đánh giá <fmt:formatNumber value="${product.medium_rating}" type="number" maxFractionDigits="1" minFractionDigits="1"/>/5</span>
                                                 </div>
 
                                                 <h3 class="product_price">
