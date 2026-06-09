@@ -178,9 +178,7 @@
                     <%
                         if (products != null && !products.isEmpty()) {
                             for (Product p : products) {
-                                String imgPath = (p.getThumbnail() != null)
-                                        ? request.getContextPath() + p.getThumbnail()
-                                        : request.getContextPath() + "/images/no-image.png";
+                                String imgPath = request.getContextPath() + p.getSafeThumbnail();
                                 String safeName = p.getProduct_name() != null ? p.getProduct_name().replace("'", "\\'") : "";
                     %>
                     <div class="col-lg-4 col-md-6 col-6">
@@ -201,11 +199,20 @@
                                         <h4 class="product-name"><%=p.getProduct_name()%></h4>
                                     </a>
                                     <div class="product-rating">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
+                                        <% pageContext.setAttribute("rating", p.getMedium_rating()); %>
+                                        <c:forEach begin="1" end="5" var="i">
+                                            <c:choose>
+                                                <c:when test="${i <= rating}">
+                                                    <i class="fas fa-star"></i>
+                                                </c:when>
+                                                <c:when test="${i - 0.5 <= rating}">
+                                                    <i class="fas fa-star-half-alt"></i>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <i class="far fa-star" style="color: #ccc;"></i>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:forEach>
                                     </div>
                                 </div>
                                 <div class="product-bottom">

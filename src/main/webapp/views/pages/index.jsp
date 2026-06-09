@@ -98,7 +98,7 @@
                     List<Product> newArrivals = (List<Product>) request.getAttribute("newArrivals");
                     if (newArrivals != null) {
                         for (Product p : newArrivals) {
-                            String imgPath = (p.getThumbnail() != null) ? request.getContextPath() + p.getThumbnail() : request.getContextPath() + "/images/no-image.png";
+                            String imgPath = request.getContextPath() + p.getSafeThumbnail();
                 %>
                 <div class="product-card">
                     <a href="${root}/product_detail?id=<%=p.getProduct_id()%>" class="product-card-link">
@@ -119,11 +119,20 @@
                             </a>
 
                             <div class="product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
+                                <% pageContext.setAttribute("rating", p.getMedium_rating()); %>
+                                <c:forEach begin="1" end="5" var="i">
+                                    <c:choose>
+                                        <c:when test="${i <= rating}">
+                                            <i class="fas fa-star"></i>
+                                        </c:when>
+                                        <c:when test="${i - 0.5 <= rating}">
+                                            <i class="fas fa-star-half-alt"></i>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <i class="far fa-star" style="color: #ccc;"></i>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:forEach>
                             </div>
                         </div>
 
@@ -164,9 +173,7 @@
                     List<Product> bestSellers = (List<Product>) request.getAttribute("bestSellers");
                     if (bestSellers != null && !bestSellers.isEmpty()) {
                         for (Product p : bestSellers) {
-                            String imgPath = (p.getThumbnail() != null)
-                                    ? request.getContextPath() + p.getThumbnail()
-                                    : request.getContextPath() + "/images/no-image.png";
+                            String imgPath = request.getContextPath() + p.getSafeThumbnail();
                 %>
                 <div class="product-card">
                     <a href="${root}/product_detail?id=<%=p.getProduct_id()%>" class="product-card-link">
@@ -187,11 +194,20 @@
                             </a>
 
                             <div class="product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
+                                <% pageContext.setAttribute("rating", p.getMedium_rating()); %>
+                                <c:forEach begin="1" end="5" var="i">
+                                    <c:choose>
+                                        <c:when test="${i <= rating}">
+                                            <i class="fas fa-star"></i>
+                                        </c:when>
+                                        <c:when test="${i - 0.5 <= rating}">
+                                            <i class="fas fa-star-half-alt"></i>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <i class="far fa-star" style="color: #ccc;"></i>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:forEach>
                             </div>
                         </div>
 
@@ -269,7 +285,7 @@
                         <div class="category-items-grid">
                             <c:if test="${not empty p.subCategories}">
                                 <c:forEach items="${p.subCategories}" var="sub">
-                                    <c:set var="categoryImg" value="${not empty sub.image ? sub.image : '/images/no-image.png'}"/>
+                                    <c:set var="categoryImg" value="${not empty sub.image ? sub.image : '/images/no-image.svg'}"/>
                                     <a href="${root}/product?cateId=${sub.id}" class="category-item-card">
                                         <div class="category-item-image">
                                             <img src="${root}${categoryImg}"

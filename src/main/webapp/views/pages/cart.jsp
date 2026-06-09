@@ -78,7 +78,7 @@
                                                                             </td>
                                                                             <td data-label="Hình Ảnh">
                                                                                 <div class="product-item img_product">
-                                                                                    <img src="${pageContext.request.contextPath}${item.variant.product.thumbnail}"
+                                                                                    <img src="${pageContext.request.contextPath}${item.variant.product.safeThumbnail}"
                                                                                         alt="${item.variant.product.product_name}"
                                                                                         style="width: 100px" />
                                                                                 </div>

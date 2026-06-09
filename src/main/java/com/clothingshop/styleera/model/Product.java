@@ -143,6 +143,13 @@ public class Product implements Serializable {
         return thumbnail;
     }
 
+    public String getSafeThumbnail() {
+        if (thumbnail == null || thumbnail.trim().isEmpty() || thumbnail.trim().equals("/images/no-image.png")) {
+            return "/images/no-image.svg";
+        }
+        return thumbnail;
+    }
+
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
     }

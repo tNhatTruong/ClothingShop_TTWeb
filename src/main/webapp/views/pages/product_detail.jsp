@@ -352,9 +352,7 @@
 
                                                             if (relatedProducts != null && !relatedProducts.isEmpty()) {
                                                             for (Product p : relatedProducts) {
-                                                            String imgPath = (p.getThumbnail() != null)
-                                                            ? request.getContextPath() + p.getThumbnail()
-                                                            : request.getContextPath() + "/images/no-image.png";
+                                                            String imgPath = request.getContextPath() + p.getSafeThumbnail();
                                                             %>
                                                             <div class="product-card">
                                                                 <a href="${root}/product_detail?id=<%=p.getProduct_id()%>"
