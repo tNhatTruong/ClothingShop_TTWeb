@@ -771,16 +771,16 @@ CREATE TABLE `users`  (
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (1, 'Nguyễn Văn Anh', 'qutoan23@gmail.com', 'Admin1234', '091456661', 'Hoạt Động', 'Admin', '2025-12-16 00:40:16', NULL, 1, NULL);
-INSERT INTO `users` VALUES (2, 'Trần Linh Xuân', 'lXu2k1@gmail.com', '12345678', '0903015502', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
-INSERT INTO `users` VALUES (3, 'Đào Cẩm Anh', 'CAnh311@gmail.com', '12345678', '0901112893', 'Không Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
-INSERT INTO `users` VALUES (4, 'Đặng Tuấn Anh', 'Admin2@styleera.com', 'Admin1234', '0780220304', 'Hoạt Động', 'Admin', '2025-12-16 00:40:16', NULL, 1, NULL);
-INSERT INTO `users` VALUES (5, 'Linh Cẩm Tú', 'Hoacamtu11@gmail.com', '12345678', '0362019185', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
-INSERT INTO `users` VALUES (6, 'Võ Xuân An', 'Funny6@gmail.com', '12345678', '0971523316', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
-INSERT INTO `users` VALUES (7, 'Trần Ngọc Linh', 'Linhbeauty544@gmail.com', '12345678', '0970000007', 'Không Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
-INSERT INTO `users` VALUES (8, 'Nguyễn An Khánh', 'aKhanh123@gmail.com', '12345678', '0220000008', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
-INSERT INTO `users` VALUES (9, 'Lê Xuân Kiên', 'kien91@gmail.com', '12345678', '0800000009', 'Không Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
-INSERT INTO `users` VALUES (10, 'Phan Hai Long', 'solong356@gmail.com', '12345678', '0776055510', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (1, 'Nguyễn Văn Anh', 'qutoan23@gmail.com', '$2a$12$eHG.yDH42seJJRg0eAFKPuOLU0JDIwEWPxnwdeYy/IRslNCG.60qa', '091456661', 'Hoạt Động', 'Admin', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (2, 'Trần Linh Xuân', 'lXu2k1@gmail.com', '$2a$12$U1Ha3Ax5EQr52oZys8ZbduYJ98Ab9f0J3/01beMFpZQmN1r/gG7Um', '0903015502', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (3, 'Đào Cẩm Anh', 'CAnh311@gmail.com', '$2a$12$U1Ha3Ax5EQr52oZys8ZbduYJ98Ab9f0J3/01beMFpZQmN1r/gG7Um', '0901112893', 'Không Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (4, 'Đặng Tuấn Anh', 'Admin2@styleera.com', '$2a$12$eHG.yDH42seJJRg0eAFKPuOLU0JDIwEWPxnwdeYy/IRslNCG.60qa', '0780220304', 'Hoạt Động', 'Admin', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (5, 'Linh Cẩm Tú', 'Hoacamtu11@gmail.com', '$2a$12$U1Ha3Ax5EQr52oZys8ZbduYJ98Ab9f0J3/01beMFpZQmN1r/gG7Um', '0362019185', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (6, 'Võ Xuân An', 'Funny6@gmail.com', '$2a$12$U1Ha3Ax5EQr52oZys8ZbduYJ98Ab9f0J3/01beMFpZQmN1r/gG7Um', '0971523316', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (7, 'Trần Ngọc Linh', 'Linhbeauty544@gmail.com', '$2a$12$U1Ha3Ax5EQr52oZys8ZbduYJ98Ab9f0J3/01beMFpZQmN1r/gG7Um', '0970000007', 'Không Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (8, 'Nguyễn An Khánh', 'aKhanh123@gmail.com', '$2a$12$U1Ha3Ax5EQr52oZys8ZbduYJ98Ab9f0J3/01beMFpZQmN1r/gG7Um', '0220000008', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (9, 'Lê Xuân Kiên', 'kien91@gmail.com', '$2a$12$U1Ha3Ax5EQr52oZys8ZbduYJ98Ab9f0J3/01beMFpZQmN1r/gG7Um', '0800000009', 'Không Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (10, 'Phan Hai Long', 'solong356@gmail.com', '$2a$12$U1Ha3Ax5EQr52oZys8ZbduYJ98Ab9f0J3/01beMFpZQmN1r/gG7Um', '0776055510', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
 INSERT INTO `users` VALUES (13, 'Trần Nhật Trường', 'tkun2k@gmail.com', '$2a$12$iO2CAYtpHi0OMrPacIjEs.TH6C8znaPmIYAzCErUfZgFLFWE8T2Bu', '0949844246', 'Hoạt Động', 'User', '2026-01-05 14:09:25', NULL, 1, NULL);
 INSERT INTO `users` VALUES (14, 'Trần Nhật Trường', 'trannhattruong257@gmail.com', NULL, NULL, 'Hoạt Động', 'User', '2026-01-05 23:29:46', NULL, 1, '113854648859296000907');
 INSERT INTO `users` VALUES (15, 'Trần Nhật Trường', '22130306@st.hcmuaf.edu.vn', '$2a$12$nj3Ex458lmZqmEnq2Iqoye9TkwVAT9h1yvM/t9u9c7knbnCykFPG2', '0949844246', 'Hoạt Động', 'User', '2026-01-21 03:24:05', NULL, 1, '111049883126427327377');
