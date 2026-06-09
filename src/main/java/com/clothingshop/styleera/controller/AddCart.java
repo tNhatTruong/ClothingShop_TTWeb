@@ -72,6 +72,12 @@ public class AddCart extends HttpServlet {
                 return;
             }
 
+            // KIỂM TRA TỒN KHO
+            if (quantity > variant.getQuantity()) {
+                out.print("{\"status\":\"error\",\"msg\":\"Số lượng trong kho không đủ (Còn: " + variant.getQuantity() + ")\"}");
+                return;
+            }
+
             // 2. THÊM VÀO GIỎ HÀNG SESSION (ĐỂ HIỂN THỊ NHANH)
             HttpSession session = request.getSession();
             Cart cart = (Cart) session.getAttribute("cart");
