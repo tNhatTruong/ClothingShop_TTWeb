@@ -1,4 +1,9 @@
 function addToCart(variantId, optionalQuantity = null) {
+    if (!variantId || variantId === "null" || variantId.trim() === "") {
+        showAppToast("Vui lòng chọn Size và Màu!", "warning");
+        return;
+    }
+    
     let ctx = "";
     if (typeof contextPath !== "undefined") {
         ctx = contextPath;
@@ -39,7 +44,7 @@ function addToCart(variantId, optionalQuantity = null) {
         .then(r => r.json())
         .then(data => {
             if (data.status !== "success") {
-                alert(data.msg || "Không thể thêm vào giỏ hàng");
+                showAppToast(data.msg || "Không thể thêm vào giỏ hàng", "error");
                 return;
             }
 
@@ -54,28 +59,10 @@ function addToCart(variantId, optionalQuantity = null) {
                 });
             }
 
-            showToast("Đã thêm vào giỏ hàng thành công!");
+            showAppToast("Đã thêm vào giỏ hàng thành công!", "success");
         })
         .catch((err) => {
             console.error("Lỗi add-cart:", err);
-            alert("Có lỗi xảy ra. Vui lòng thử lại!");
+            showAppToast("Có lỗi xảy ra. Vui lòng thử lại!", "error");
         });
-}
-
-function showToast(msg) {
-    const oldToast = document.getElementById("cartQuickToast");
-    if (oldToast) oldToast.remove();
-
-    const toast = document.createElement("div");
-    toast.id = "cartQuickToast";
-    toast.className = "alert alert-success position-fixed top-0 end-0 m-4 shadow-lg";
-    toast.style.zIndex = "9999";
-    toast.innerHTML = `<i class="fa-solid fa-circle-check me-2"></i> ${msg}`;
-    document.body.appendChild(toast);
-
-    setTimeout(() => {
-        if (toast.parentNode) {
-            toast.remove();
-        }
-    }, 1200);
 }
