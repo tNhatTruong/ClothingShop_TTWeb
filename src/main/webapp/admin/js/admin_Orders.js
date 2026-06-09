@@ -11,23 +11,23 @@ function viewOrder(orderId) {
 
 function confirmOrder(orderId) {
   if (confirm("Xác nhận đơn hàng " + orderId + "?")) {
-    alert("Đơn hàng " + orderId + " đã được xác nhận!");
-    location.reload();
+    showAppToast("Đơn hàng " + orderId + " đã được xác nhận!", "success");
+    setTimeout(() => location.reload(), 1000);
   }
 }
 
 function trackOrder(orderId) {
-  alert("Theo dõi vận chuyển cho " + orderId);
+  showAppToast("Theo dõi vận chuyển cho " + orderId, "success");
 }
 
 function printInvoice(orderId) {
-  alert("In hóa đơn cho " + orderId);
+  showAppToast("In hóa đơn cho " + orderId, "success");
   window.print();
 }
 
 function deleteOrder(orderId) {
   if (confirm("Bạn có chắc chắn muốn xóa " + orderId + "?")) {
-    alert("Đơn hàng " + orderId + " đã được xóa!");
-    location.reload();
+    showAppToast("Đơn hàng " + orderId + " đã được xóa!", "success");
+    setTimeout(() => location.reload(), 1000);
   }
 }
