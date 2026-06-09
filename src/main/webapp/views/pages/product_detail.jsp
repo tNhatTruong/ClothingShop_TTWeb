@@ -30,6 +30,20 @@
 
                                 <!-- ===== MAIN CONTENT ===== -->
                                 <main class="main-content">
+                                    <c:if test="${not empty sessionScope.error}">
+                                        <script>
+                                            document.addEventListener('DOMContentLoaded', function() {
+                                                const errorToast = document.createElement("div");
+                                                errorToast.className = "alert alert-danger position-fixed top-0 end-0 m-4 shadow-lg";
+                                                errorToast.style.zIndex = "9999";
+                                                errorToast.innerHTML = '<i class="fa-solid fa-circle-exclamation me-2"></i> ${sessionScope.error}';
+                                                document.body.appendChild(errorToast);
+                                                setTimeout(() => { if (errorToast.parentNode) errorToast.remove(); }, 3000);
+                                            });
+                                        </script>
+                                        <c:remove var="error" scope="session" />
+                                    </c:if>
+
                                     <!-- Content goes here -->
                                     <div class="product_detail_container">
                                         <div class="product_detail_wrapper">
@@ -110,7 +124,7 @@
                         <div class="product_detail_quantity">
                             <label for="quantity">Số lượng:</label>
                             <button type="button" id="btn-decrease">−</button>
-                            <input type="number" id="quantity" name="quantity" value="1" min="1" readonly>
+                            <input type="number" id="quantity" name="quantity" value="1" min="1">
                             <button type="button" id="btn-increase">+</button>
                         </div>
                         <input type="hidden" name="productName" value="${product.product_name}">
@@ -120,14 +134,13 @@
 
                         <div class="product_detail_actions"
                              style="margin-top: 25px;"> <%-- Gom nút vào div riêng để dễ căn chỉnh --%>
-                            <button type="submit" id="btnBuyNow" class="btn btn-primary validate_order" disabled>
+                            <button type="submit" id="btnBuyNow" class="btn btn-primary validate_order">
                                 Mua hàng
                             </button>
                             <%-- Nút thêm vào giỏ hàng--%>
                             <button class="btn btn-primary validate_order" type="button"
                                     id="btnAddToCart"
-                                    data-variant-id=""
-                                    onclick="addToCart(this.getAttribute('data-variant-id'))" disabled>
+                                    onclick="addToCart(document.getElementById('finalVariantId').value)">
                                 Thêm vào giỏ hàng
                             </button>
                         </div>
