@@ -236,7 +236,7 @@
                                                              <c:when test="${uIsAdmin}">
                                                                  <c:choose>
                                                                      <c:when test="${isRoot}">
-                                                                         <a href="javascript:void(0);" onclick="confirmDelete(${u.id}, '${u.user_name}')" class="btn btn-sm btn-danger ms-1" title="Xóa vĩnh viễn tài khoản">
+                                                                         <a href="javascript:void(0);" data-id="${u.id}" data-name="${u.user_name}" onclick="confirmDelete(this.getAttribute('data-id'), this.getAttribute('data-name'))" class="btn btn-sm btn-danger ms-1" title="Xóa vĩnh viễn tài khoản">
                                                                              <i class="fas fa-trash"></i>
                                                                          </a>
                                                                      </c:when>
@@ -248,7 +248,7 @@
                                                                  </c:choose>
                                                              </c:when>
                                                              <c:otherwise>
-                                                                 <a href="javascript:void(0);" onclick="confirmDelete(${u.id}, '${u.user_name}')" class="btn btn-sm btn-danger ms-1" title="Xóa vĩnh viễn tài khoản">
+                                                                 <a href="javascript:void(0);" data-id="${u.id}" data-name="${u.user_name}" onclick="confirmDelete(this.getAttribute('data-id'), this.getAttribute('data-name'))" class="btn btn-sm btn-danger ms-1" title="Xóa vĩnh viễn tài khoản">
                                                                      <i class="fas fa-trash"></i>
                                                                  </a>
                                                              </c:otherwise>
@@ -267,97 +267,6 @@
             </div>
         </main>
 
-<%--        <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">--%>
-<%--            <div class="modal-dialog modal-lg">--%>
-<%--                <div class="modal-content">--%>
-<%--                    <div class="modal-header bg-light border-bottom">--%>
-<%--                        <h5 class="modal-title" id="addUserModalLabel">Thêm Tài Khoản</h5>--%>
-<%--                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>--%>
-<%--                    </div>--%>
-<%--                    <form id="addUserForm" class="needs-validation" novalidate>--%>
-<%--                        <div class="modal-body">--%>
-<%--                            <div class="mb-4">--%>
-<%--                                <h6 class="fw-bold mb-3">Thông Tin Cá Nhân</h6>--%>
-<%--                                <div class="mb-3">--%>
-<%--                                    <label class="form-label fw-bold">Họ Tên</label>--%>
-<%--                                    <input type="text" class="form-control" id="addName" placeholder="Nhập họ tên" required/>--%>
-<%--                                </div>--%>
-<%--                                <div class="row">--%>
-<%--                                    <div class="col-md-6 mb-3">--%>
-<%--                                        <label class="form-label fw-bold">Email</label>--%>
-<%--                                        <input type="email" class="form-control" id="addEmail" placeholder="Nhập email" required/>--%>
-<%--                                    </div>--%>
-<%--                                    <div class="col-md-6 mb-3">--%>
-<%--                                        <label class="form-label fw-bold">Số Điện Thoại</label>--%>
-<%--                                        <input type="tel" class="form-control" id="addPhone" placeholder="Nhập số điện thoại" required/>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-<%--                                <div class="row">--%>
-<%--                                    <div class="col-md-6 mb-3">--%>
-<%--                                        <label class="form-label fw-bold">Vai Trò</label>--%>
-<%--                                        <select class="form-select" id="addRole" required>--%>
-<%--                                            <option value="">-- Chọn Vai Trò --</option>--%>
-<%--                                            <option value="user">User</option>--%>
-<%--                                            <option value="admin">Admin</option>--%>
-<%--                                        </select>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-<%--                            </div>--%>
-
-<%--                            <!-- Địa Chỉ -->--%>
-<%--                            <div class="mb-4">--%>
-<%--                                <h6 class="fw-bold mb-3">Địa Chỉ</h6>--%>
-
-<%--                                <div class="mb-3">--%>
-<%--                                    <label class="form-label fw-bold">Địa Chỉ Người Dùng</label>--%>
-<%--                                    <input type="text" class="form-control" id="addAddress" placeholder="Nhập địa chỉ" required/>--%>
-<%--                                </div>--%>
-
-<%--                                <div class="row">--%>
-<%--                                    <div class="col-md-6 mb-3">--%>
-<%--                                        <label class="form-label fw-bold">Tỉnh/Thành Phố</label>--%>
-<%--                                        <input type="text" class="form-control" id="addCity" placeholder="Tỉnh/Thành phố" required/>--%>
-<%--                                    </div>--%>
-<%--                                    <div class="col-md-6 mb-3">--%>
-<%--                                        <label class="form-label fw-bold">Quận/Huyện</label>--%>
-<%--                                        <input type="text" class="form-control" id="addDistrict" placeholder="Quận/Huyện" required/>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-<%--                            </div>--%>
-
-<%--                            <!-- Mật Khẩu -->--%>
-<%--                            <div class="mb-4">--%>
-<%--                                <h6 class="fw-bold mb-3">Thông tin Mật Khẩu</h6>--%>
-<%--                                <div class="mb-3">--%>
-<%--                                    <label class="form-label fw-bold">Mật Khẩu</label>--%>
-<%--                                    <input type="password" class="form-control" id="addPassword" placeholder="Nhập mật khẩu" required/>--%>
-<%--                                    <small class="form-text text-muted">Mật khẩu phải có ít nhất 8 ký tự</small>--%>
-<%--                                </div>--%>
-
-<%--                                <div class="mb-3">--%>
-<%--                                    <label class="form-label fw-bold">Xác Nhận Mật Khẩu</label>--%>
-<%--                                    <input type="password" class="form-control" id="addConfirmPassword" placeholder="Xác nhận mật khẩu" required/>--%>
-<%--                                </div>--%>
-<%--                            </div>--%>
-
-<%--                            <!-- Ghi Chú -->--%>
-<%--                            <div class="mb-4">--%>
-<%--                                <h6 class="fw-bold mb-3">Ghi Chú</h6>--%>
-<%--                                <textarea class="form-control" id="addNote" rows="3" placeholder="Thêm ghi chú (tùy chọn)"></textarea>--%>
-<%--                            </div>--%>
-<%--                        </div>--%>
-<%--                        <div class="modal-footer border-top">--%>
-<%--                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">--%>
-<%--                                <i class="fas fa-times"></i> Hủy--%>
-<%--                            </button>--%>
-<%--                            <button type="submit" class="btn btn-primary">--%>
-<%--                                <i class="fas fa-save"></i> Thêm Tài Khoản--%>
-<%--                            </button>--%>
-<%--                        </div>--%>
-<%--                    </form>--%>
-<%--                </div>--%>
-<%--            </div>--%>
-<%--        </div>--%>
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -437,7 +346,7 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .then(data => {
             if (data.status === "success") {
-                alert(data.message);
+                showAppToast(data.message, "success");
                 
                 // 1. Cập nhật Badge Trạng Thái
                 const statusBadge = document.querySelector(".status-badge[data-user-id='" + userId + "']");
@@ -464,11 +373,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     btn.innerHTML = '<i class="fas fa-ban"></i>';
                 }
             } else {
-                alert(data.message || "Có lỗi xảy ra, vui lòng thử lại!");
+                showAppToast(data.message || "Có lỗi xảy ra, vui lòng thử lại!", "error");
             }
         })
         .catch(error => {
-            alert("Lỗi: " + error.message);
+            showAppToast("Lỗi: " + error.message, "error");
         });
     });
 });

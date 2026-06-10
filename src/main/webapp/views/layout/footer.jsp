@@ -59,3 +59,4 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 </footer>
+<script src="${root}/js/toast-utils.js"></script>

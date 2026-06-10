@@ -25,7 +25,7 @@
     <link rel="icon" type="image/png" href="${root}/images/logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="${root}/css/style.css">
+    <link rel="stylesheet" href="${root}/css/style.css?v=1.2">
     <link rel="stylesheet" href="${root}/css/header-footer.css">
 </head>
 
@@ -98,12 +98,16 @@
                     List<Product> newArrivals = (List<Product>) request.getAttribute("newArrivals");
                     if (newArrivals != null) {
                         for (Product p : newArrivals) {
-                            String imgPath = (p.getThumbnail() != null) ? request.getContextPath() + p.getThumbnail() : request.getContextPath() + "/images/no-image.png";
+                            String imgPath = request.getContextPath() + p.getSafeThumbnail();
                 %>
                 <div class="product-card">
                     <a href="${root}/product_detail?id=<%=p.getProduct_id()%>" class="product-card-link">
                         <div class="product-image">
-                            <span class="product-badge badge-new">NEW</span>
+                            <div class="badges-container">
+                                <% if (p.isNew()) { %><span class="product-badge badge-new">NEW</span><% } %>
+                                <% if (p.isHot()) { %><span class="product-badge badge-hot">HOT</span><% } %>
+                                <% if (p.isBestseller()) { %><span class="product-badge badge-bestseller">BESTSELLER</span><% } %>
+                            </div>
                             <img src="<%=imgPath%>" alt="<%=p.getProduct_name()%>" loading="lazy">
                         </div>
                     </a>
@@ -115,11 +119,20 @@
                             </a>
 
                             <div class="product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
+                                <% pageContext.setAttribute("rating", p.getMedium_rating()); %>
+                                <c:forEach begin="1" end="5" var="i">
+                                    <c:choose>
+                                        <c:when test="${i <= rating}">
+                                            <i class="fas fa-star"></i>
+                                        </c:when>
+                                        <c:when test="${i - 0.5 <= rating}">
+                                            <i class="fas fa-star-half-alt"></i>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <i class="far fa-star" style="color: #ccc;"></i>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:forEach>
                             </div>
                         </div>
 
@@ -129,7 +142,11 @@
                             </div>
 
                             <button class="btn-cart" type="button" title="Chọn phân loại"
-                                    onclick="openQuickView(<%= p.getProduct_id() %>, '<%= p.getProduct_name().replace("'", "\\'") %>', <%= p.getPrice() %>, '<%= imgPath %>')">
+                                    data-id="<%= p.getProduct_id() %>"
+                                    data-name="<%= p.getProduct_name().replace("\"", "&quot;").replace("'", "\\'") %>"
+                                    data-price="<%= p.getPrice() %>"
+                                    data-img="<%= imgPath %>"
+                                    onclick="openQuickView(this.dataset.id, this.dataset.name, this.dataset.price, this.dataset.img)">
                                 <i class="fas fa-shopping-cart"></i>
                             </button>
                         </div>
@@ -156,14 +173,16 @@
                     List<Product> bestSellers = (List<Product>) request.getAttribute("bestSellers");
                     if (bestSellers != null && !bestSellers.isEmpty()) {
                         for (Product p : bestSellers) {
-                            String imgPath = (p.getThumbnail() != null)
-                                    ? request.getContextPath() + p.getThumbnail()
-                                    : request.getContextPath() + "/images/no-image.png";
+                            String imgPath = request.getContextPath() + p.getSafeThumbnail();
                 %>
                 <div class="product-card">
                     <a href="${root}/product_detail?id=<%=p.getProduct_id()%>" class="product-card-link">
                         <div class="product-image">
-                            <span class="product-badge badge-bestseller">BEST SELLER</span>
+                            <div class="badges-container">
+                                <% if (p.isNew()) { %><span class="product-badge badge-new">NEW</span><% } %>
+                                <% if (p.isHot()) { %><span class="product-badge badge-hot">HOT</span><% } %>
+                                <% if (p.isBestseller()) { %><span class="product-badge badge-bestseller">BESTSELLER</span><% } %>
+                            </div>
                             <img src="<%=imgPath%>" alt="<%=p.getProduct_name()%>" loading="lazy">
                         </div>
                     </a>
@@ -175,11 +194,20 @@
                             </a>
 
                             <div class="product-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
+                                <% pageContext.setAttribute("rating", p.getMedium_rating()); %>
+                                <c:forEach begin="1" end="5" var="i">
+                                    <c:choose>
+                                        <c:when test="${i <= rating}">
+                                            <i class="fas fa-star"></i>
+                                        </c:when>
+                                        <c:when test="${i - 0.5 <= rating}">
+                                            <i class="fas fa-star-half-alt"></i>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <i class="far fa-star" style="color: #ccc;"></i>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:forEach>
                             </div>
                         </div>
 
@@ -189,7 +217,11 @@
                             </div>
 
                             <button class="btn-cart" type="button" title="Chọn phân loại"
-                                    onclick="openQuickView(<%= p.getProduct_id() %>, '<%= p.getProduct_name().replace("'", "\\'") %>', <%= p.getPrice() %>, '<%= imgPath %>')">
+                                    data-id="<%= p.getProduct_id() %>"
+                                    data-name="<%= p.getProduct_name().replace("\"", "&quot;").replace("'", "\\'") %>"
+                                    data-price="<%= p.getPrice() %>"
+                                    data-img="<%= imgPath %>"
+                                    onclick="openQuickView(this.dataset.id, this.dataset.name, this.dataset.price, this.dataset.img)">
                                 <i class="fas fa-shopping-cart"></i>
                             </button>
                         </div>
@@ -253,7 +285,7 @@
                         <div class="category-items-grid">
                             <c:if test="${not empty p.subCategories}">
                                 <c:forEach items="${p.subCategories}" var="sub">
-                                    <c:set var="categoryImg" value="${not empty sub.image ? sub.image : '/images/no-image.png'}"/>
+                                    <c:set var="categoryImg" value="${not empty sub.image ? sub.image : '/images/no-image.svg'}"/>
                                     <a href="${root}/product?cateId=${sub.id}" class="category-item-card">
                                         <div class="category-item-image">
                                             <img src="${root}${categoryImg}"

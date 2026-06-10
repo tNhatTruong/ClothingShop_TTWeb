@@ -17,8 +17,8 @@ public class ProductDAO {
     public List<Product> findNewArrivals() {
         Jdbi jdbi = JDBIConnector.getJdbi();
         return jdbi.withHandle(handle -> {
-            String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.short_description, " +
-                    "p.average_rating AS medium_rating, i.path AS thumbnail " +
+            String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.created_at, p.sold_quantity, p.average_rating AS medium_rating, p.short_description, " +
+                    "i.path AS thumbnail " +
                     "FROM products p " +
                     "LEFT JOIN images i ON p.image_id = i.id " +
                     "ORDER BY p.created_at DESC LIMIT 8";
@@ -31,8 +31,8 @@ public class ProductDAO {
     public List<Product> findBestSellers() {
         Jdbi jdbi = JDBIConnector.getJdbi();
         return jdbi.withHandle(handle -> {
-            String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.short_description, " +
-                    "p.average_rating AS medium_rating, i.path AS thumbnail " +
+            String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.created_at, p.sold_quantity, p.average_rating AS medium_rating, p.short_description, " +
+                    "i.path AS thumbnail " +
                     "FROM products p " +
                     "LEFT JOIN images i ON p.image_id = i.id " +
                     "ORDER BY p.average_rating DESC LIMIT 4";
@@ -44,7 +44,7 @@ public class ProductDAO {
     public List<Product> findAll() {
         Jdbi jdbi = JDBIConnector.getJdbi();
         return jdbi.withHandle(handle -> {
-            String sql = "SELECT p.id AS product_id, p.product_name, p.price, " +
+            String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.created_at, p.sold_quantity, p.average_rating AS medium_rating, " +
                     "sc.id AS sub_id, sc.sub_name, sc.category_parent_id, " +
                     "pc.id AS parent_id, pc.parent_name, " +
                     "i.path AS thumbnail " +
@@ -75,6 +75,9 @@ public class ProductDAO {
                         product.setProduct_id(rs.getInt("product_id"));
                         product.setProduct_name(rs.getString("product_name"));
                         product.setPrice(rs.getDouble("price"));
+                        try { product.setCreated_at(rs.getTimestamp("created_at")); } catch(Exception e) {}
+                        try { product.setMedium_rating(rs.getDouble("medium_rating")); } catch(Exception e) {}
+                        try { product.setSold_quantity(rs.getInt("sold_quantity")); } catch(Exception e) {}
                         product.setThumbnail(rs.getString("thumbnail"));
                         product.setSubcategory(subcat); // Đã sửa: setSubcategory
 
@@ -91,8 +94,8 @@ public class ProductDAO {
     public List<Product> findBySubCategoryId(int subId) {
         Jdbi jdbi = JDBIConnector.getJdbi();
         return jdbi.withHandle(handle -> {
-            String sql = "SELECT p.id AS product_id, p.product_name, p.price, " +
-                    "p.average_rating AS medium_rating, i.path AS thumbnail " +
+            String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.created_at, p.sold_quantity, p.average_rating AS medium_rating, " +
+                    "i.path AS thumbnail " +
                     "FROM products p " +
                     "LEFT JOIN images i ON p.image_id = i.id " +
                     "WHERE p.category_sub_id = ?";
@@ -105,8 +108,8 @@ public class ProductDAO {
     public List<Product> findByParentCategoryId(int parentId) {
         Jdbi jdbi = JDBIConnector.getJdbi();
         return jdbi.withHandle(handle -> {
-            String sql = "SELECT p.id AS product_id, p.product_name, p.price, " +
-                    "p.average_rating AS medium_rating, i.path AS thumbnail " +
+            String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.created_at, p.sold_quantity, p.average_rating AS medium_rating, " +
+                    "i.path AS thumbnail " +
                     "FROM products p " +
                     "JOIN subcategories s ON p.category_sub_id = s.id " +
                     "LEFT JOIN images i ON p.image_id = i.id " +
@@ -119,9 +122,9 @@ public class ProductDAO {
     public List<Product> findById(int id) {
         Jdbi jdbi = JDBIConnector.getJdbi();
         return jdbi.withHandle(handle -> {
-            String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.short_description, " +
-                    "p.detail_description, p.average_rating AS medium_rating, " +
-                    "p.category_sub_id, p.created_at, p.updated_at, " +
+            String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.created_at, p.sold_quantity, p.average_rating AS medium_rating, p.short_description, " +
+                    "p.detail_description, " +
+                    "p.category_sub_id, p.updated_at, " +
                     "i.path AS thumbnail " +
                     "FROM products p " +
                     "LEFT JOIN images i ON p.image_id = i.id " +
@@ -135,8 +138,8 @@ public class ProductDAO {
         Jdbi jdbi = JDBIConnector.getJdbi();
         return jdbi.withHandle(handle -> {
             StringBuilder sql = new StringBuilder(
-                    "SELECT p.id AS product_id, p.product_name, p.price, " +
-                            "p.average_rating AS medium_rating, i.path AS thumbnail " +
+                    "SELECT p.id AS product_id, p.product_name, p.price, p.created_at, p.sold_quantity, p.average_rating AS medium_rating, " +
+                            "i.path AS thumbnail " +
                             "FROM products p " +
                             "LEFT JOIN images i ON p.image_id = i.id "
             );
@@ -212,7 +215,7 @@ public class ProductDAO {
     // 11. Lấy sản phẩm liên quan
     public List<Product> findRelatedProducts(int subId, int prodId) {
         return JDBIConnector.getJdbi().withHandle(handle -> {
-            String sql = "SELECT p.id AS product_id, p.product_name, p.price, i.path AS thumbnail " +
+            String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.created_at, p.sold_quantity, p.average_rating AS medium_rating, i.path AS thumbnail " +
                     "FROM products p " +
                     "LEFT JOIN images i ON p.image_id = i.id " +
                     "WHERE p.category_sub_id = :subId AND p.id != :prodId " +
@@ -229,7 +232,7 @@ public class ProductDAO {
     //12. Lọc theo Danh Mục
     public List<Product> filterParentCategory(String parentName) {
         return JDBIConnector.getJdbi().withHandle(h -> {
-            String sql = "SELECT p.id AS product_id, p.product_name, p.price, " +
+            String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.created_at, p.sold_quantity, p.average_rating AS medium_rating, " +
                     "sc.id AS sub_id, sc.sub_name, sc.category_parent_id, " +
                     "pc.id AS parent_id, pc.parent_name, " +
                     "i.path AS thumbnail " +
@@ -262,6 +265,9 @@ public class ProductDAO {
                         product.setProduct_id(rs.getInt("product_id"));
                         product.setProduct_name(rs.getString("product_name"));
                         product.setPrice(rs.getDouble("price"));
+                        try { product.setCreated_at(rs.getTimestamp("created_at")); } catch(Exception e) {}
+                        try { product.setMedium_rating(rs.getDouble("medium_rating")); } catch(Exception e) {}
+                        try { product.setSold_quantity(rs.getInt("sold_quantity")); } catch(Exception e) {}
                         product.setThumbnail(rs.getString("thumbnail"));
                         product.setSubcategory(subcat); // Đã sửa: setSubcategory
 
@@ -276,7 +282,7 @@ public class ProductDAO {
     //13. Lọc theo Phân Loại
     public List<Product> filterSubCategory(String subName) {
         return JDBIConnector.getJdbi().withHandle(h -> {
-            String sql = "SELECT p.id AS product_id, p.product_name, p.price, " +
+            String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.created_at, p.sold_quantity, p.average_rating AS medium_rating, " +
                     "sc.id AS sub_id, sc.sub_name, sc.category_parent_id, " +
                     "pc.id AS parent_id, pc.parent_name, " +
                     "i.path AS thumbnail " +
@@ -297,6 +303,9 @@ public class ProductDAO {
                         product.setProduct_id(rs.getInt("product_id"));
                         product.setProduct_name(rs.getString("product_name"));
                         product.setPrice(rs.getDouble("price"));
+                        try { product.setCreated_at(rs.getTimestamp("created_at")); } catch(Exception e) {}
+                        try { product.setMedium_rating(rs.getDouble("medium_rating")); } catch(Exception e) {}
+                        try { product.setSold_quantity(rs.getInt("sold_quantity")); } catch(Exception e) {}
                         product.setThumbnail(rs.getString("thumbnail"));
                         product.setSubcategory(sub); // Đã sửa: setSubcategory
 
@@ -327,7 +336,7 @@ public class ProductDAO {
     //15. Lọc sản phẩm theo cả ParentCategory và SubCategory
     public List<Product> filterParentAndSubCategory(String parentName, String subName) {
         return JDBIConnector.getJdbi().withHandle(h -> {
-            String sql = "SELECT p.id AS product_id, p.product_name, p.price, " +
+            String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.created_at, p.sold_quantity, p.average_rating AS medium_rating, " +
                     "sc.id AS sub_id, sc.sub_name, sc.category_parent_id, " +
                     "pc.id AS parent_id, pc.parent_name, " +
                     "i.path AS thumbnail " +
@@ -349,6 +358,9 @@ public class ProductDAO {
                         product.setProduct_id(rs.getInt("product_id"));
                         product.setProduct_name(rs.getString("product_name"));
                         product.setPrice(rs.getDouble("price"));
+                        try { product.setCreated_at(rs.getTimestamp("created_at")); } catch(Exception e) {}
+                        try { product.setMedium_rating(rs.getDouble("medium_rating")); } catch(Exception e) {}
+                        try { product.setSold_quantity(rs.getInt("sold_quantity")); } catch(Exception e) {}
                         product.setThumbnail(rs.getString("thumbnail"));
                         product.setSubcategory(sub); // Đã sửa: setSubcategory
                         product.setVariants(findVariantsByProductId(rs.getInt("product_id")));
@@ -450,7 +462,7 @@ public class ProductDAO {
         Jdbi jdbi = JDBIConnector.getJdbi();
 
         return jdbi.withHandle(handle -> {
-            String sql = "SELECT p.id AS product_id, p.product_name, p.price, " +
+            String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.created_at, p.sold_quantity, p.average_rating AS medium_rating, " +
                     "sc.id AS sub_id, sc.sub_name, sc.category_parent_id, " +
                     "pc.id AS parent_id, pc.parent_name " +
                     "FROM products p " +
@@ -482,8 +494,8 @@ public class ProductDAO {
     public List<Product> findBestSellersAdmin() {
         Jdbi jdbi = JDBIConnector.getJdbi();
         return jdbi.withHandle(handle -> {
-            String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.short_description, " +
-                    "p.average_rating AS medium_rating, i.path AS thumbnail " +
+            String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.created_at, p.sold_quantity, p.average_rating AS medium_rating, p.short_description, " +
+                    "i.path AS thumbnail " +
                     "FROM products p " +
                     "LEFT JOIN images i ON p.image_id = i.id " +
                     "ORDER BY p.average_rating DESC LIMIT 5";
@@ -587,7 +599,7 @@ public class ProductDAO {
     public List<Product> getProductsByPriceRange(int subCategoryId, int rangeType) {
         Jdbi jdbi = JDBIConnector.getJdbi();
         return jdbi.withHandle(handle -> {
-            String sql = "SELECT p.id AS product_id, p.product_name, p.price, " +
+            String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.created_at, p.sold_quantity, p.average_rating AS medium_rating, " +
                     "i.path AS thumbnail " +
                     "FROM products p " +
                     "LEFT JOIN images i ON p.image_id = i.id " +
@@ -616,7 +628,7 @@ public class ProductDAO {
     public List<Product> getAllProductsByPriceRange(int rangeType) {
         Jdbi jdbi = JDBIConnector.getJdbi();
         return jdbi.withHandle(handle -> {
-            String sql = "SELECT p.id AS product_id, p.product_name, p.price, " +
+            String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.created_at, p.sold_quantity, p.average_rating AS medium_rating, " +
                     "i.path AS thumbnail " +
                     "FROM products p " +
                     "LEFT JOIN images i ON p.image_id = i.id WHERE 1=1 ";

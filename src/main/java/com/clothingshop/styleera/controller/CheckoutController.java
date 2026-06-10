@@ -96,6 +96,15 @@ public class CheckoutController extends HttpServlet {
                 double price = (variant != null) ? variant.getProduct().getPrice() : 0.0;
 
                 int quantity = Integer.parseInt(request.getParameter("quantity"));
+
+                // Kiểm tra tồn kho
+                if (variant == null || quantity > variant.getQuantity()) {
+                    session.setAttribute("error", "Số lượng trong kho không đủ (Còn: " + (variant != null ? variant.getQuantity() : 0) + ")");
+                    int productId = (variant != null && variant.getProduct() != null) ? variant.getProduct().getProduct_id() : 0;
+                    response.sendRedirect(request.getContextPath() + "/product_detail?id=" + productId);
+                    return;
+                }
+
                 double subTotal = price * quantity;
                 double shipping = 30000.0;
 

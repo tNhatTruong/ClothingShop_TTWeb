@@ -14,7 +14,7 @@ function toggleAccountDropdown() {
 function handleLogout() {
     localStorage.removeItem('loggedIn'); // Xóa trạng thái login
     localStorage.removeItem('userType');
-    alert("Đăng xuất thành công!");
+    showAppToast("Đăng xuất thành công!", "success");
     window.location.href = "login.jsp"; // Chuyển về login
 }
 

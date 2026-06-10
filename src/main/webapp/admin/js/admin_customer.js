@@ -109,7 +109,7 @@ function deleteUserFromTable(userId) {
         users = users.filter((user) => user.id !== userId);
         saveUsers(users);
         loadUserTable();
-        alert("Xóa tài khoản thành công!");
+        showAppToast("Xóa tài khoản thành công!", "success");
     }
 }
 
@@ -132,14 +132,14 @@ function deleteUserFromTable(userId) {
                             if (newPassword.value !== confirmPassword.value) {
                                 event.preventDefault();
                                 event.stopPropagation();
-                                alert("Mật khẩu xác nhận không khớp!");
+                                showAppToast("Mật khẩu xác nhận không khớp!", "error");
                                 return;
                             }
 
                             if (newPassword.value.length < 8) {
                                 event.preventDefault();
                                 event.stopPropagation();
-                                alert("Mật khẩu mới phải có ít nhất 8 ký tự!");
+                                showAppToast("Mật khẩu mới phải có ít nhất 8 ký tự!", "warning");
                                 return;
                             }
                         }
@@ -173,12 +173,12 @@ if (addUserForm) {
         const confirmPassword = document.getElementById("addConfirmPassword").value;
 
         if (password.length < 8) {
-            alert("Mật khẩu phải có ít nhất 8 ký tự");
+            showAppToast("Mật khẩu phải có ít nhất 8 ký tự", "warning");
             return;
         }
 
         if (password !== confirmPassword) {
-            alert("Mật khẩu xác nhận không trùng khớp");
+            showAppToast("Mật khẩu xác nhận không trùng khớp", "error");
             return;
         }
 
@@ -232,6 +232,6 @@ if (addUserForm) {
         // Reload bảng
         loadUserTable();
 
-        alert("Thêm tài khoản thành công!");
+        showAppToast("Thêm tài khoản thành công!", "success");
     });
 }

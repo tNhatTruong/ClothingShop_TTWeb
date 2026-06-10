@@ -41,7 +41,7 @@ function removeItem(variantId, btn) {
                     window.location.reload();
                 }
             } else {
-                alert(data.msg);
+                showAppToast(data.msg, "error");
             }
         })
         .catch(err => console.error(err));

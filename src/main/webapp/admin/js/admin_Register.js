@@ -6,10 +6,10 @@ document
     const confirmPassword = this.querySelectorAll('input[type="password"]')[1];
 
     if (password.value !== confirmPassword.value) {
-      alert("Mật khẩu không khớp!");
+      showAppToast("Mật khẩu không khớp!", "error");
       return;
     }
 
-    alert("Đăng ký thành công! Vui lòng đăng nhập.");
+    showAppToast("Đăng ký thành công! Vui lòng đăng nhập.", "success");
     window.location.href = "admin-login.jsp";
   });

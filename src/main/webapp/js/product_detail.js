@@ -75,8 +75,6 @@ function updateVariantIdForCart() {
   const finalSizeInput = document.getElementById('finalSize');
   const finalColorInput = document.getElementById('finalColor');
   const finalVariantIdInput = document.getElementById('finalVariantId');
-  const btnAddToCart = document.getElementById('btnAddToCart');
-  const btnBuyNow = document.getElementById('btnBuyNow');
 
   if (!finalSizeInput || !finalColorInput || typeof variantsData === 'undefined') return;
 
@@ -88,31 +86,30 @@ function updateVariantIdForCart() {
     const matchedVariant = variantsData.find(v => v.size === currentSize && v.color === currentColor);
 
     if (matchedVariant) {
-
-      // Cập nhật cho nút Thêm vào giỏ hàng
-      if (btnAddToCart) {
-        btnAddToCart.setAttribute('data-variant-id', matchedVariant.variantId);
-        btnAddToCart.disabled = false;
-      }
-
-      // Cập nhật cho Form Mua hàng
       if (finalVariantIdInput) {
         finalVariantIdInput.value = matchedVariant.variantId; // Gắn ID vào để submit form
-      }
-      if (btnBuyNow) {
-        btnBuyNow.disabled = false; // Bật nút mua hàng
       }
       return; // Thoát hàm thành công
     }
   }
 
-  if (btnAddToCart) btnAddToCart.disabled = true;
-  if (btnBuyNow) btnBuyNow.disabled = true;
   if (finalVariantIdInput) finalVariantIdInput.value = '';
 }
 
 // Khởi tạo các sự kiện khi load trang
 document.addEventListener("DOMContentLoaded", () => {
+  // Validate form Mua hàng (chặn submit nếu chưa có variantId)
+  const checkoutForm = document.getElementById('checkoutForm');
+  if (checkoutForm) {
+    checkoutForm.addEventListener('submit', function (e) {
+      const finalVariantIdInput = document.getElementById('finalVariantId');
+      if (!finalVariantIdInput || !finalVariantIdInput.value) {
+        e.preventDefault(); // Dừng việc submit form
+        showAppToast("Vui lòng chọn Size và Màu!", "error");
+      }
+    });
+  }
+
   // Xử lý tăng giảm số lượng
   const qtyInput = document.getElementById('quantity');
   const btnInc = document.getElementById('btn-increase');

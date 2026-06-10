@@ -771,16 +771,16 @@ CREATE TABLE `users`  (
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (1, 'Nguyễn Văn Anh', 'qutoan23@gmail.com', 'Admin1234', '091456661', 'Hoạt Động', 'Admin', '2025-12-16 00:40:16', NULL, 1, NULL);
-INSERT INTO `users` VALUES (2, 'Trần Linh Xuân', 'lXu2k1@gmail.com', '12345678', '0903015502', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
-INSERT INTO `users` VALUES (3, 'Đào Cẩm Anh', 'CAnh311@gmail.com', '12345678', '0901112893', 'Không Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
-INSERT INTO `users` VALUES (4, 'Đặng Tuấn Anh', 'Admin2@styleera.com', 'Admin1234', '0780220304', 'Hoạt Động', 'Admin', '2025-12-16 00:40:16', NULL, 1, NULL);
-INSERT INTO `users` VALUES (5, 'Linh Cẩm Tú', 'Hoacamtu11@gmail.com', '12345678', '0362019185', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
-INSERT INTO `users` VALUES (6, 'Võ Xuân An', 'Funny6@gmail.com', '12345678', '0971523316', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
-INSERT INTO `users` VALUES (7, 'Trần Ngọc Linh', 'Linhbeauty544@gmail.com', '12345678', '0970000007', 'Không Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
-INSERT INTO `users` VALUES (8, 'Nguyễn An Khánh', 'aKhanh123@gmail.com', '12345678', '0220000008', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
-INSERT INTO `users` VALUES (9, 'Lê Xuân Kiên', 'kien91@gmail.com', '12345678', '0800000009', 'Không Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
-INSERT INTO `users` VALUES (10, 'Phan Hai Long', 'solong356@gmail.com', '12345678', '0776055510', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (1, 'Nguyễn Văn Anh', 'qutoan23@gmail.com', '$2a$12$eHG.yDH42seJJRg0eAFKPuOLU0JDIwEWPxnwdeYy/IRslNCG.60qa', '091456661', 'Hoạt Động', 'Admin', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (2, 'Trần Linh Xuân', 'lXu2k1@gmail.com', '$2a$12$U1Ha3Ax5EQr52oZys8ZbduYJ98Ab9f0J3/01beMFpZQmN1r/gG7Um', '0903015502', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (3, 'Đào Cẩm Anh', 'CAnh311@gmail.com', '$2a$12$U1Ha3Ax5EQr52oZys8ZbduYJ98Ab9f0J3/01beMFpZQmN1r/gG7Um', '0901112893', 'Không Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (4, 'Đặng Tuấn Anh', 'Admin2@styleera.com', '$2a$12$eHG.yDH42seJJRg0eAFKPuOLU0JDIwEWPxnwdeYy/IRslNCG.60qa', '0780220304', 'Hoạt Động', 'Admin', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (5, 'Linh Cẩm Tú', 'Hoacamtu11@gmail.com', '$2a$12$U1Ha3Ax5EQr52oZys8ZbduYJ98Ab9f0J3/01beMFpZQmN1r/gG7Um', '0362019185', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (6, 'Võ Xuân An', 'Funny6@gmail.com', '$2a$12$U1Ha3Ax5EQr52oZys8ZbduYJ98Ab9f0J3/01beMFpZQmN1r/gG7Um', '0971523316', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (7, 'Trần Ngọc Linh', 'Linhbeauty544@gmail.com', '$2a$12$U1Ha3Ax5EQr52oZys8ZbduYJ98Ab9f0J3/01beMFpZQmN1r/gG7Um', '0970000007', 'Không Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (8, 'Nguyễn An Khánh', 'aKhanh123@gmail.com', '$2a$12$U1Ha3Ax5EQr52oZys8ZbduYJ98Ab9f0J3/01beMFpZQmN1r/gG7Um', '0220000008', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (9, 'Lê Xuân Kiên', 'kien91@gmail.com', '$2a$12$U1Ha3Ax5EQr52oZys8ZbduYJ98Ab9f0J3/01beMFpZQmN1r/gG7Um', '0800000009', 'Không Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
+INSERT INTO `users` VALUES (10, 'Phan Hai Long', 'solong356@gmail.com', '$2a$12$U1Ha3Ax5EQr52oZys8ZbduYJ98Ab9f0J3/01beMFpZQmN1r/gG7Um', '0776055510', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
 INSERT INTO `users` VALUES (13, 'Trần Nhật Trường', 'tkun2k@gmail.com', '$2a$12$iO2CAYtpHi0OMrPacIjEs.TH6C8znaPmIYAzCErUfZgFLFWE8T2Bu', '0949844246', 'Hoạt Động', 'User', '2026-01-05 14:09:25', NULL, 1, NULL);
 INSERT INTO `users` VALUES (14, 'Trần Nhật Trường', 'trannhattruong257@gmail.com', NULL, NULL, 'Hoạt Động', 'User', '2026-01-05 23:29:46', NULL, 1, '113854648859296000907');
 INSERT INTO `users` VALUES (15, 'Trần Nhật Trường', '22130306@st.hcmuaf.edu.vn', '$2a$12$nj3Ex458lmZqmEnq2Iqoye9TkwVAT9h1yvM/t9u9c7knbnCykFPG2', '0949844246', 'Hoạt Động', 'User', '2026-01-21 03:24:05', NULL, 1, '111049883126427327377');
@@ -865,3 +865,140 @@ INSERT INTO `variants` VALUES (59, 19, 'L', 'Be', 30);
 INSERT INTO `variants` VALUES (60, 19, 'XL', 'Be', 20);
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+SET NAMES utf8mb4;
+SET NAMES utf8mb4;
+
+UPDATE products SET 
+  short_description = 'Áo khoác gió nam 2 lớp chống thấm nước, cản gió cực tốt.',
+  detail_description = 'Người bạn đồng hành lý tưởng trên những chuyến đi xa. Gọn nhẹ, dễ dàng gấp gọn mang theo mọi lúc mọi nơi.\n\n**THÔNG TIN SẢN PHẨM**\n- Thiết kế tay dài có mũ trùm đầu tiện lợi.\n- Bo chun tay áo và gấu áo giúp cản gió tối đa.\n- Hệ thống túi zip an toàn 2 bên hông và túi trong ngực áo để giữ đồ cá nhân.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Lớp ngoài là Polyester công nghệ Nano chống thấm nước, chống xước.\n- Lớp trong lót lưới dệt kim thoáng khí, ngăn cảm giác hầm bí khi mặc liên tục.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Giặt máy ở chế độ nhẹ nhàng.\n- Không sử dụng hóa chất tẩy rửa mạnh.'
+WHERE id = 1;
+
+UPDATE products SET 
+  short_description = 'Áo thun nam dáng basic 100% cotton thoáng mát, form chuẩn dễ phối đồ.',
+  detail_description = 'Chiếc áo quốc dân cho mọi chàng trai, dễ dàng kết hợp với mọi loại quần từ jeans đến kaki.\n\n**THÔNG TIN SẢN PHẨM**\n- Form Regular Fit ôm vừa phải tôn dáng.\n- Cổ tròn bo gân không bai dão.\n- Mũi chỉ may tỉ mỉ, chắc chắn.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Cotton 100% tự nhiên siêu thoáng mát.\n- Thấm hút mồ hôi tốt, lý tưởng cho những ngày hè nắng nóng.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Không giặt chung với quần áo dễ phai màu.\n- Tránh phơi trực tiếp dưới ánh nắng mặt trời gắt.'
+WHERE id = 2;
+
+UPDATE products SET 
+  short_description = 'Áo polo nam chất liệu cá sấu cotton, bề mặt mềm mịn, thanh lịch.',
+  detail_description = 'Áo polo nam mang phong cách tối giản, thanh lịch, phù hợp cho cả đi làm và đi chơi. Đây là mẫu áo luôn nằm trong top best-seller.\n\n**THÔNG TIN SẢN PHẨM**\n- Form áo Regular Fit vừa vặn, không quá ôm sát.\n- Cổ áo dệt gân chắc chắn, phối nút cài tinh tế, giữ form tốt.\n- Logo thương hiệu được thêu tỉ mỉ trước ngực tạo điểm nhấn sang trọng.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải cá sấu cotton interlock 100% tự nhiên cao cấp, mềm mịn.\n- Sợi vải đã qua xử lý công nghệ cao giúp chống co rút và chống nhăn hiệu quả.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Lộn trái áo khi giặt và phơi.'
+WHERE id = 3;
+
+UPDATE products SET 
+  short_description = 'Áo sơ mi nam tay dài, form Slim Fit tôn dáng, chất liệu lụa nến cao cấp.',
+  detail_description = 'Biểu tượng của sự trưởng thành và quyến rũ. Áo sơ mi tay dài giúp phái mạnh luôn tự tin và nổi bật trong các buổi tiệc hay nơi công sở.\n\n**THÔNG TIN SẢN PHẨM**\n- Form Slim Fit ôm khéo léo đường nét cơ thể.\n- Cổ bẻ cứng cáp với lớp lót đệm tinh tế.\n- Cúc áo đính kèm viền ngọc trai sang trọng, tay áo măng sét.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Lụa nến nhập khẩu cao cấp, bề mặt trơn nhẵn.\n- Chống nhăn tự nhiên, tiết kiệm thời gian ủi đồ.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Treo áo bằng móc gỗ hoặc móc bản to để giữ form vai.'
+WHERE id = 4;
+
+UPDATE products SET 
+  short_description = 'Quần short Kaki nam trên gối, trẻ trung năng động, co giãn thoải mái.',
+  detail_description = 'Giải nhiệt mùa hè với chiếc quần short Kaki đa năng, lựa chọn số 1 cho các hoạt động dã ngoại hay dạo phố cuối tuần.\n\n**THÔNG TIN SẢN PHẨM**\n- Độ dài quần vừa vặn trên đầu gối, ống rộng rãi.\n- Túi xéo hai bên sâu rộng, túi mổ phía sau cài cúc thanh lịch.\n- Thiết kế cạp quần vừa vặn, chuẩn số đo.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Kaki thun pha Spandex độ co giãn 4 chiều linh hoạt.\n- Vải đã qua xử lý enzyme giúp bề mặt mềm mại, không thô cứng.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Không dùng chất tẩy rửa mạnh.'
+WHERE id = 5;
+
+UPDATE products SET 
+  short_description = 'Quần tây nam dáng đứng chuẩn công sở, vải tuyết mưa lên form cực chuẩn.',
+  detail_description = 'Mảnh ghép hoàn hảo cho một diện mạo quý ông lịch lãm. Kết hợp cùng sơ mi hoặc áo polo để có ngay một bộ trang phục chuẩn mực.\n\n**THÔNG TIN SẢN PHẨM**\n- Dáng quần Regular Fit suông đứng, tạo cảm giác kéo dài chân.\n- Xếp ly tỉ mỉ trước quần giữ nếp phẳng phiu.\n- Đai quần lót cao su chống tuột áo khi sơ vin.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải tuyết mưa (Vitex) nhập khẩu, có độ rũ tự nhiên, lên form đứng dáng.\n- Chất vải không nhăn, không bám bụi và hoàn toàn không xù lông.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Ưu tiên giặt khô hoặc giặt tay để giữ form lâu dài.'
+WHERE id = 6;
+
+UPDATE products SET 
+  short_description = 'Quần Jeans nam dáng Slim Fit, chất bò denim co giãn nhẹ, thời trang.',
+  detail_description = 'Chiếc quần Jeans quốc dân dễ dàng phối với mọi loại áo, từ T-shirt năng động đến sơ mi lịch lãm.\n\n**THÔNG TIN SẢN PHẨM**\n- Dáng quần Slim Fit ôm vừa phải, tôn dáng nhưng không gò bó.\n- Ống quần may viền chắc chắn, túi xéo tiện lợi rộng rãi.\n- Khóa kéo đồng chống gỉ sét trơn tru.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải Denim pha Spandex mang lại độ co giãn tuyệt vời.\n- Công nghệ wash màu hiện đại giúp quần giữ được màu xanh tự nhiên.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Hạn chế giặt bằng máy giặt ở nhiệt độ cao.'
+WHERE id = 7;
+
+UPDATE products SET 
+  short_description = 'Áo khoác gió nữ siêu nhẹ, chống gió và chống thấm nước tiện lợi.',
+  detail_description = 'Lựa chọn hoàn hảo cho những ngày se lạnh hoặc có mưa phùn nhỏ, thiết kế trẻ trung nữ tính.\n\n**THÔNG TIN SẢN PHẨM**\n- Kiểu dáng ôm nhẹ eo tạo đường cong.\n- Có mũ trùm và túi hai bên tiện ích.\n- Gấp gọn siêu nhanh bỏ vừa túi xách.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải Polyester tráng màng Nano siêu nhẹ.\n- Chống thấm, cản gió cực đỉnh nhưng vẫn thoáng khí.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Chỉ cần giặt nhẹ bằng tay hoặc lau bằng khăn ẩm.'
+WHERE id = 8;
+
+UPDATE products SET 
+  short_description = 'Áo thun nữ cơ bản tôn dáng, dễ phối đồ hàng ngày.',
+  detail_description = 'Mẫu áo không thể thiếu trong tủ đồ mọi cô gái, đa năng và cực kỳ dễ chịu khi mặc.\n\n**THÔNG TIN SẢN PHẨM**\n- Dáng áo ôm nhẹ, cổ tròn thanh lịch.\n- Đường may viền tỉ mỉ, độ bền cao.\n- Phù hợp mặc trong áo khoác hoặc mặc đơn lẻ.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Cotton 100% tự nhiên co giãn nhẹ.\n- Mềm mại và an toàn cho làn da nhạy cảm.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Tránh ủi trực tiếp ở nhiệt độ cao.'
+WHERE id = 9;
+
+UPDATE products SET 
+  short_description = 'Áo polo nữ cổ bẻ trang nhã, dáng suông vừa vặn thoải mái.',
+  detail_description = 'Sự kết hợp giữa vẻ đẹp thanh lịch của áo sơ mi và sự năng động của áo thun.\n\n**THÔNG TIN SẢN PHẨM**\n- Thiết kế cổ bẻ đính cúc ngọc trai nữ tính.\n- Tay áo bo nhẹ gọn gàng.\n- Phom dáng thanh lịch, phù hợp môi trường văn phòng lẫn đi chơi.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải cá sấu Cotton cao cấp, thoáng mát.\n- Không đổ lông, không nhăn nhúm sau nhiều lần giặt.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Không ngâm áo quá lâu trong bột giặt.'
+WHERE id = 10;
+
+UPDATE products SET 
+  short_description = 'Sơ mi trắng nữ form chuẩn, biểu tượng của sự thanh lịch vượt thời gian.',
+  detail_description = 'Vẻ đẹp thuần khiết và chuyên nghiệp. Sơ mi trắng là món đồ "must-have" của các quý cô văn phòng.\n\n**THÔNG TIN SẢN PHẨM**\n- Thiết kế cổ đức truyền thống, phom dáng chiết eo nhẹ tôn dáng.\n- Cúc áo ẩn tinh tế, tay áo măng sét thanh lịch.\n- Dễ dàng kết hợp với chân váy chữ A hoặc quần tây.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Lụa tơ tằm pha Cotton chống nhăn tuyệt vời.\n- Bề mặt mịn màng, thân thiện với làn da.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- ủi ở nhiệt độ thấp để giữ độ bóng của vải.'
+WHERE id = 11;
+
+UPDATE products SET 
+  short_description = 'Váy xòe hoa nhí phong cách vintage ngọt ngào, dịu dàng.',
+  detail_description = 'Làn gió mát mẻ mùa hè mang đến sự nữ tính và ngọt ngào qua họa tiết hoa nhí xinh xắn.\n\n**THÔNG TIN SẢN PHẨM**\n- Dáng chữ A xòe bồng bềnh, che khuyết điểm vùng hông.\n- Cổ vuông cổ điển khoe xương quai xanh.\n- Dây kéo chìm phía sau tinh tế.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải Voan lụa 2 lớp siêu nhẹ, không lo lộ nội y.\n- Thoáng mát và rũ mềm mại.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Giặt tay với nước lạnh để giữ nếp bồng bềnh.'
+WHERE id = 12;
+
+UPDATE products SET 
+  short_description = 'Đầm body nữ quyến rũ, chất thun ôm sát tôn đường cong hoàn hảo.',
+  detail_description = 'Nữ hoàng của những buổi tiệc tối. Thiết kế ôm trọn cơ thể, phô diễn trọn vẹn nét quyến rũ.\n\n**THÔNG TIN SẢN PHẨM**\n- Phom dáng Bodycon ôm sát đường cong.\n- Chiều dài qua gối thanh lịch, xẻ tà quyến rũ.\n- Cổ chữ V khoét sâu gợi cảm.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Thun lụa co giãn 4 chiều định hình cơ thể xuất sắc.\n- Chất vải dày dặn, không lộ viền nội y.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Giặt khô hoặc giặt nhẹ bằng tay, phơi ngang mặt phẳng.'
+WHERE id = 13;
+
+UPDATE products SET 
+  short_description = 'Quần short jean nữ cạp cao, rách gấu tua rua cá tính.',
+  detail_description = 'Đại diện cho sự trẻ trung, phá cách và gợi cảm. Quần short jean cạp cao giúp các nàng hack dáng tuyệt đối.\n\n**THÔNG TIN SẢN PHẨM**\n- Cạp cao qua rốn che bụng hoàn hảo.\n- Ống quần rách gấu tua rua cực cool ngầu.\n- Dáng A-line tạo cảm giác đùi thon gọn.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải Jean Cotton tinh khiết không co giãn, giữ form tuyệt đối.\n- Công nghệ nhuộm Denim bền màu.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Lộn trái trước khi giặt máy.'
+WHERE id = 14;
+
+UPDATE products SET 
+  short_description = 'Quần tây ống đứng nữ lưng cao, thanh lịch chốn văn phòng.',
+  detail_description = 'Khẳng định sự chuyên nghiệp và khí chất tự tin nơi công sở với quần tây chuẩn form.\n\n**THÔNG TIN SẢN PHẨM**\n- Cạp cao bản to định hình vòng eo.\n- Ống suông đứng kéo dài đôi chân.\n- Ly nổi ép nhiệt phía trước dọc ống quần tạo đường nét sắc sảo.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải Tuyết Mưa dệt thoi nhập khẩu.\n- Dày dặn, không nhăn, không xước chỉ.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Treo quần bằng kẹp để giữ nếp ly.'
+WHERE id = 15;
+
+UPDATE products SET 
+  short_description = 'Áo khoác bomber bóng chày đôi, chất nỉ da cá năng động.',
+  detail_description = 'Mang đậm phong cách High-school Mỹ. Áo bomber đôi giúp cặp đôi đánh dấu chủ quyền một cách thể thao, đáng yêu.\n\n**THÔNG TIN SẢN PHẨM**\n- Cổ bẻ bóng chày, bo chun kẻ sọc tay áo và gấu áo.\n- Nút bấm kim loại siêu bền.\n- Logo chữ thêu nổi bật ngực áo.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Nỉ da cá dày dặn, giữ ấm vừa phải, phù hợp thời tiết se lạnh.\n- Phối tay da PU tạo cảm giác hiện đại.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Giặt tay hoặc giặt máy với chế độ cho đồ nỉ.'
+WHERE id = 16;
+
+UPDATE products SET 
+  short_description = 'Áo thun cặp đôi in họa tiết trái tim, đơn giản mà lãng mạn.',
+  detail_description = 'Thông điệp tình yêu không cần nói thành lời. Cùng diện chiếc áo đôi nhỏ xinh này trong những chuyến du lịch để ghi lại khoảnh khắc đẹp nhất.\n\n**THÔNG TIN SẢN PHẨM**\n- Thiết kế unisex phù hợp nam nữ.\n- Họa tiết trái tim in chuyển nhiệt sắc nét giữa ngực.\n- Form áo rộng vừa phải.\n\n**CHẤT LIỆU SỬ DỤNG**\n- 100% Cotton chải kỹ (Combed Cotton) siêu láng mịn.\n- Bề mặt mát tay, hình in không bong tróc.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- ủi mặt trái của hình in.'
+WHERE id = 17;
+
+UPDATE products SET 
+  short_description = 'Set Pijama lụa satin cao cấp, thiết kế thanh lịch mang lại cảm giác thư giãn tuyệt đối.',
+  detail_description = 'Khám phá sự nuông chiều bản thân sau một ngày dài mệt mỏi. Không chỉ là đồ mặc nhà, đây còn là tuyên ngôn về phong cách sống tinh tế.\n\n**THÔNG TIN SẢN PHẨM**\n- Thiết kế tay dài, quần dài lịch sự.\n- Cổ áo pijama viền lé nổi bật.\n- Cúc ngọc trai nhân tạo sang trọng.\n- Quần chun mềm không hằn bụng.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Lụa Satin nhân tạo (Satin Silk) bóng mượt bắt sáng nhẹ.\n- Siêu mềm mịn, lướt trên da mát mẻ.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Giặt tay với dầu gội đầu hoặc xà phòng loãng.\n- Phơi trong bóng râm.'
+WHERE id = 18;
+
+UPDATE products SET 
+  short_description = 'Áo hoodie đôi dáng rộng, có mũ trùm ấm áp cho mùa đông.',
+  detail_description = 'Cái ôm ấm áp nhất vào những ngày gió lùa. Hoodie đôi nỉ bông là món đồ minh chứng cho tình yêu bền chặt, rộng rãi để cùng chui vào một chiếc áo!\n\n**THÔNG TIN SẢN PHẨM**\n- Dáng Oversize form rộng thùng thình chuẩn Hàn Quốc.\n- Túi bụng Kangaroo to bản, mũ trùm sâu.\n- Dây rút dệt đôi chắc chắn.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Nỉ lót bông (Fleece Heavyweight) dệt từ sợi CVC cực kỳ dày dặn.\n- Giữ nhiệt độ cơ thể xuất sắc trong mùa đại hàn.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Lộn trái áo trước khi giặt máy.\n- Dùng nước xả vải để giữ độ tơi xốp cho lớp lông.'
+WHERE id = 19;
+
+
+-- Thêm cột sold_quantity vào products
+ALTER TABLE products ADD COLUMN IF NOT EXISTS sold_quantity INT DEFAULT 0;
+
+-- Cập nhật sold_quantity dựa trên dữ liệu orderdetails
+UPDATE products p
+LEFT JOIN (
+    SELECT variant_id, SUM(quantity) as total_sold
+    FROM orderdetails
+    GROUP BY variant_id
+) od ON p.id = (SELECT product_id FROM variants v WHERE v.id = od.variant_id)
+SET p.sold_quantity = COALESCE(od.total_sold, 0);
+
+-- Chèn ảnh giả cho 6 sản phẩm mới
+INSERT INTO images (id, image_name, path, product_id) VALUES 
+(291, 'Áo Khoác Da Biker', '/images/no-image.png', NULL),
+(292, 'Sơ Mi Lụa Hàn Quốc', '/images/no-image.png', NULL),
+(293, 'Quần Jean Ống Rộng', '/images/no-image.png', NULL),
+(294, 'Áo Polo Thể Thao', '/images/no-image.png', NULL),
+(295, 'Váy Chữ A', '/images/no-image.png', NULL),
+(296, 'Áo Len Đôi', '/images/no-image.png', NULL);
+
+-- Chèn 6 sản phẩm mới với đầy đủ ảnh và utf8
+INSERT INTO products (id, image_id, category_sub_id, product_name, short_description, detail_description, price, average_rating, created_at, updated_at, sold_quantity) VALUES 
+(20, 291, 1, 'Áo Khoác Da Biker Nam', 'Áo khoác da thật phong cách bụi bặm', 'Chi tiết áo khoác da biker với khóa kéo chéo...', 850000, 4.3, NOW(), NOW(), 2), 
+(21, 292, 11, 'Áo Sơ Mi Lụa Hàn Quốc Nữ', 'Sơ mi lụa mềm mịn, thoáng mát', 'Thiết kế thanh lịch phù hợp cho dân công sở...', 320000, 4.6, NOW(), NOW(), 1), 
+(22, 293, 15, 'Quần Jean Ống Rộng Nữ', 'Quần jean form rộng hack dáng', 'Chất liệu denim cao cấp, không bai dão...', 450000, 4.9, NOW(), NOW(), 8), 
+(23, 294, 3, 'Áo Polo Thể Thao Nam', 'Polo thoáng khí thấm hút mồ hôi', 'Thích hợp cho vận động và dạo phố...', 250000, 4.5, NOW(), NOW(), 4), 
+(24, 295, 12, 'Váy Chữ A Công Sở', 'Váy thiết kế đơn giản, tôn dáng', 'Váy form chữ A che khuyết điểm cực tốt...', 380000, 4.8, NOW(), NOW(), 6), 
+(25, 296, 16, 'Áo Len Đôi Mùa Đông', 'Áo len giữ ấm, họa tiết dễ thương', 'Món quà tuyệt vời cho các cặp đôi...', 550000, 4.2, NOW(), NOW(), 0);
+
+-- Liên kết ảnh về lại sản phẩm
+UPDATE images SET product_id = 20 WHERE id = 291;
+UPDATE images SET product_id = 21 WHERE id = 292;
+UPDATE images SET product_id = 22 WHERE id = 293;
+UPDATE images SET product_id = 23 WHERE id = 294;
+UPDATE images SET product_id = 24 WHERE id = 295;
+UPDATE images SET product_id = 25 WHERE id = 296;

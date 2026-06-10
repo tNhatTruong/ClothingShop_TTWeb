@@ -280,9 +280,21 @@ function selectQuickViewSize(element, size) {
 // Thiết lập tăng giảm số lượng trong Modal khi DOM sẵn sàng
 document.addEventListener("DOMContentLoaded", () => {
     const qtyInput = document.getElementById('qv-quantity');
-    document.getElementById('qv-btn-increase').onclick = () => qtyInput.value = parseInt(qtyInput.value) + 1;
-    document.getElementById('qv-btn-decrease').onclick = () => {
-        let v = parseInt(qtyInput.value);
-        if (v > 1) qtyInput.value = v - 1;
-    };
+    const btnInc = document.getElementById('qv-btn-increase');
+    const btnDec = document.getElementById('qv-btn-decrease');
+
+    if (btnInc) {
+        btnInc.onclick = () => {
+            if (qtyInput) qtyInput.value = parseInt(qtyInput.value) + 1;
+        };
+    }
+    
+    if (btnDec) {
+        btnDec.onclick = () => {
+            if (qtyInput) {
+                let v = parseInt(qtyInput.value);
+                if (v > 1) qtyInput.value = v - 1;
+            }
+        };
+    }
 });

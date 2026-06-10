@@ -1,4 +1,4 @@
-﻿@import url('variables.css');
+@import url('variables.css');
 * {
     margin: 0;
     padding: 0;
@@ -374,19 +374,87 @@ body {
     }
 
     .table_shopping_cart {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+        border: none !important;
         margin-bottom: 20px;
     }
 
-    .table {
-        min-width: 600px;
-        font-size: 12px;
+    .table_shopping_cart table, 
+    .table_shopping_cart thead, 
+    .table_shopping_cart tbody, 
+    .table_shopping_cart th, 
+    .table_shopping_cart td, 
+    .table_shopping_cart tr {
+        display: block !important;
+        width: 100% !important;
+        min-width: unset !important;
     }
 
-    .table th,
-    .table td {
-        padding: 10px 5px;
+    .table_shopping_cart thead tr {
+        display: none !important;
+    }
+
+    .table_shopping_cart tr {
+        margin-bottom: 15px;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 10px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .table_shopping_cart td {
+        border: none;
+        position: relative;
+        padding-left: 40% !important;
+        text-align: right !important;
+        min-height: 40px;
+        display: flex !important;
+        align-items: center;
+        justify-content: flex-end;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        border-bottom: 1px solid #eee;
+    }
+
+    .table_shopping_cart td:last-child {
+        border-bottom: none;
+    }
+
+    .table_shopping_cart td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 35%;
+        text-align: left;
+        font-weight: bold;
+        font-size: 13px;
+        color: #555;
+    }
+
+    .table_shopping_cart td.empty-table-td {
+        padding: 40px 20px !important;
+        text-align: center !important;
+        justify-content: center !important;
+        display: block !important;
+    }
+
+    .table_shopping_cart td.empty-table-td::before {
+        display: none !important;
+    }
+
+    .product-item {
+        text-align: right;
+        width: 100%;
+    }
+
+    .quantity-item {
+        margin: 0;
+    }
+
+    .btn-remove {
+        margin: 0;
     }
 
     .img_product img {

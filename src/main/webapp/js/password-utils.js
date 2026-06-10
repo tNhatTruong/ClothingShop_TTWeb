@@ -75,13 +75,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!validatePassword(pwd)) {
             e.preventDefault();
-            alert("Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.");
+            showAppToast("Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.", "error");
             return;
         }
 
         if (!confirmPassword(pwd, confirm)) {
             e.preventDefault();
-            alert("Mật khẩu nhập lại không khớp.");
+            showAppToast("Mật khẩu nhập lại không khớp.", "error");
             return;
         }
     });

@@ -4,3 +4,4 @@
         <p class="mb-0">&copy; 2025 StyleEra Admin. All rights reserved.</p>
     </div>
 </footer>
+<script src="${pageContext.request.contextPath}/js/toast-utils.js"></script>

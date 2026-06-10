@@ -7,7 +7,7 @@ document
   .getElementById("changePasswordForm")
   .addEventListener("submit", function (e) {
     e.preventDefault();
-    alert("Mật khẩu đã được đổi!");
+    showAppToast("Mật khẩu đã được đổi!", "success");
     this.reset();
   });
 

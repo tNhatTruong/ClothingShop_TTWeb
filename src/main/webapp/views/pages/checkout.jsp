@@ -169,7 +169,7 @@
                                     <c:forEach var="item" items="${checkoutItems}">
                                         <div class="d-flex align-items-center mb-3">
                                                 <%-- Đã sửa lại đường dẫn lấy Ảnh --%>
-                                            <img src="${pageContext.request.contextPath}${item.variant.product.thumbnail}"
+                                            <img src="${pageContext.request.contextPath}${item.variant.product.safeThumbnail}"
                                                  alt="${item.variant.product.product_name}"
                                                  style="width: 80px; height: 100px; object-fit: cover;"
                                                  class="me-3 border">

@@ -15,7 +15,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="${root}/css/header-footer.css">
-    <link rel="stylesheet" href="${root}/css/product.css">
+    <link rel="stylesheet" href="${root}/css/product.css?v=1.2">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
 </head>
@@ -178,15 +178,18 @@
                     <%
                         if (products != null && !products.isEmpty()) {
                             for (Product p : products) {
-                                String imgPath = (p.getThumbnail() != null)
-                                        ? request.getContextPath() + p.getThumbnail()
-                                        : request.getContextPath() + "/images/no-image.png";
+                                String imgPath = request.getContextPath() + p.getSafeThumbnail();
+                                String safeName = p.getProduct_name() != null ? p.getProduct_name().replace("'", "\\'") : "";
                     %>
                     <div class="col-lg-4 col-md-6 col-6">
                         <div class="product-card">
                             <a href="${root}/product_detail?id=<%=p.getProduct_id()%>" class="product-card-link">
                                 <div class="product-image">
-                                    <span class="product-badge badge-new">NEW</span>
+                                    <div class="badges-container">
+                                        <% if (p.isNew()) { %><span class="product-badge badge-new">NEW</span><% } %>
+                                        <% if (p.isHot()) { %><span class="product-badge badge-hot">HOT</span><% } %>
+                                        <% if (p.isBestseller()) { %><span class="product-badge badge-bestseller">BESTSELLER</span><% } %>
+                                    </div>
                                     <img src="<%= imgPath %>" alt="<%=p.getProduct_name()%>" loading="lazy">
                                 </div>
                             </a>
@@ -196,11 +199,20 @@
                                         <h4 class="product-name"><%=p.getProduct_name()%></h4>
                                     </a>
                                     <div class="product-rating">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
+                                        <% pageContext.setAttribute("rating", p.getMedium_rating()); %>
+                                        <c:forEach begin="1" end="5" var="i">
+                                            <c:choose>
+                                                <c:when test="${i <= rating}">
+                                                    <i class="fas fa-star"></i>
+                                                </c:when>
+                                                <c:when test="${i - 0.5 <= rating}">
+                                                    <i class="fas fa-star-half-alt"></i>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <i class="far fa-star" style="color: #ccc;"></i>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:forEach>
                                     </div>
                                 </div>
                                 <div class="product-bottom">
@@ -208,7 +220,11 @@
                                         <span class="price"><%=String.format("%,.0f", p.getPrice())%>₫</span>
                                     </div>
                                     <button class="btn-cart" type="button" title="Chọn phân loại"
-                                            onclick="openQuickView(<%= p.getProduct_id() %>, '<%= p.getProduct_name().replace("'", "\\'") %>', <%= p.getPrice() %>, '<%= imgPath %>')">
+                                            data-id="<%= p.getProduct_id() %>"
+                                            data-name="<%= safeName %>"
+                                            data-price="<%= p.getPrice() %>"
+                                            data-img="<%= imgPath %>"
+                                            onclick="openQuickView(this.dataset.id, this.dataset.name, this.dataset.price, this.dataset.img)">
                                         <i class="fas fa-shopping-cart"></i>
                                     </button>
                                 </div>
@@ -311,7 +327,7 @@
 <jsp:include page="/views/layout/footer.jsp"/>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    const contextPath = "<%= request.getContextPath() %>";
+    const contextPath = "${pageContext.request.contextPath}";
 </script>
 <script src="${root}/js/add-cart.js?v=<%= System.currentTimeMillis() %>"></script>
 <script src="${root}/js/main.js"></script>
@@ -332,10 +348,75 @@
     }
     document.querySelectorAll('#priceFilterForm input[name="priceRange"]').forEach(function(el) {
         el.addEventListener('change', function() {
-            document.getElementById('priceFilterForm').submit();
+            const form = document.getElementById('priceFilterForm');
+            const url = new URL(form.action);
+            const formData = new FormData(form);
+            const searchParams = new URLSearchParams(formData);
+            url.search = searchParams.toString();
+            fetchProducts(url.toString());
         });
     });
+
+    function fetchProducts(urlStr) {
+        fetch(urlStr)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // Cập nhật Product List
+                const newProductList = doc.getElementById('product-list');
+                if (newProductList) {
+                    document.getElementById('product-list').innerHTML = newProductList.innerHTML;
+                }
+                
+                // Cập nhật Pagination
+                const newPaginationContainer = doc.querySelector('nav[aria-label="Page navigation"]');
+                const oldPaginationContainer = document.querySelector('nav[aria-label="Page navigation"]');
+                
+                if (newPaginationContainer && oldPaginationContainer) {
+                    oldPaginationContainer.innerHTML = newPaginationContainer.innerHTML;
+                    bindPaginationEvents();
+                } else if (newPaginationContainer && !oldPaginationContainer) {
+                    const productSection = document.querySelector('section.col-lg-9.col-md-8');
+                    if (productSection) {
+                        productSection.appendChild(newPaginationContainer);
+                        bindPaginationEvents();
+                    }
+                } else if (!newPaginationContainer && oldPaginationContainer) {
+                    oldPaginationContainer.remove();
+                }
+
+                // Cập nhật text Hiển thị trang
+                const newSortSpan = doc.querySelector('.sort-bar span.text-muted');
+                const oldSortSpan = document.querySelector('.sort-bar span.text-muted');
+                if (newSortSpan && oldSortSpan) {
+                    oldSortSpan.innerHTML = newSortSpan.innerHTML;
+                }
+                
+                // Cập nhật URL History
+                window.history.pushState({}, '', urlStr);
+            })
+            .catch(error => console.error('Lỗi khi tải dữ liệu sản phẩm:', error));
+    }
+
+    function bindPaginationEvents() {
+        document.querySelectorAll('.pagination a.page-link').forEach(function(link) {
+            const newLink = link.cloneNode(true);
+            link.parentNode.replaceChild(newLink, link);
+            
+            newLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = this.getAttribute('href');
+                if (url) {
+                    const fullUrl = new URL(url, window.location.origin + contextPath + "/product");
+                    fetchProducts(fullUrl.toString());
+                }
+            });
+        });
+    }
     document.addEventListener("DOMContentLoaded", function() {
+        bindPaginationEvents();
         function setupToggle(toggleClass, hiddenClass) {
             const cleanClassName = hiddenClass.replace('.', '');
             const expandedClassName = cleanClassName + '-expanded';
@@ -383,7 +464,20 @@
             url.searchParams.delete('sort');
         }
         url.searchParams.set('page', '1');
-        window.location.href = url.toString();
+        
+        // Cập nhật giá trị vào form để khi lọc theo giá không bị mất sort
+        const formSort = document.querySelector('#priceFilterForm input[name="sort"]');
+        if (formSort) {
+            formSort.value = sortValue;
+        } else if (sortValue) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'sort';
+            input.value = sortValue;
+            document.getElementById('priceFilterForm').appendChild(input);
+        }
+
+        fetchProducts(url.toString());
     }
 </script>
 </body>

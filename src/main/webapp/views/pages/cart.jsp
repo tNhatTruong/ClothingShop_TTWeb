@@ -46,10 +46,10 @@
                                                         <th><input type="checkbox" class="form-check-input"
                                                                 id="checkAllCart" /></th>
                                                         <th>Hình Ảnh</th>
-                                                        <th>SẢN PHẨM</th>
-                                                        <th>GIÁ TIỀN</th>
-                                                        <th>SỐ LƯỢNG</th>
-                                                        <th>TỔNG GIÁ TIỀN</th>
+                                                        <th>Sản Phẩm</th>
+                                                        <th>Giá tiền</th>
+                                                        <th>Số lượng</th>
+                                                        <th>Tổng giá tiền</th>
                                                         <th></th>
                                                     </tr>
                                                 </thead>
@@ -70,20 +70,20 @@
                                                                 <c:forEach items="${sessionScope.cart.item}" var="item">
                                                                     <tr>
                                                                         <%-- tạo checkbox để chọn thanh toán--%>
-                                                                            <td><input type="checkbox"
+                                                                            <td data-label="Chọn"><input type="checkbox"
                                                                                     class="form-check-input cart-item-checkbox"
                                                                                     data-variant-id="${item.variant.variantId}"
                                                                                     data-price="${item.variant.product.price}"
                                                                                     data-quantity="${item.quantity}" />
                                                                             </td>
-                                                                            <td>
+                                                                            <td data-label="Hình Ảnh">
                                                                                 <div class="product-item img_product">
-                                                                                    <img src="${pageContext.request.contextPath}${item.variant.product.thumbnail}"
+                                                                                    <img src="${pageContext.request.contextPath}${item.variant.product.safeThumbnail}"
                                                                                         alt="${item.variant.product.product_name}"
                                                                                         style="width: 100px" />
                                                                                 </div>
                                                                             </td>
-                                                                            <td>
+                                                                            <td data-label="SẢN PHẨM">
                                                                                 <div class="product-item">
                                                                                     <p class="fw-bold mb-0">${item.variant.product.product_name}</p>
                                                                                     <small class="text-muted d-block mt-1">
@@ -91,7 +91,7 @@
                                                                                     </small>
                                                                                 </div>
                                                                             </td>
-                                                                            <td>
+                                                                            <td data-label="GIÁ TIỀN">
                                                                                 <div class="product-item">
                                                                                     <h6>
                                                                                         <fmt:formatNumber
@@ -100,7 +100,7 @@
                                                                                     </h6>
                                                                                 </div>
                                                                             </td>
-                                                                            <td>
+                                                                            <td data-label="SỐ LƯỢNG">
                                                                                 <div class="quantity-item">
                                                                                     <button type="button"
                                                                                         class="qty-btn"
@@ -125,7 +125,7 @@
                                                                                 </div>
 
                                                                             </td>
-                                                                            <td>
+                                                                            <td data-label="TỔNG GIÁ TIỀN">
                                                                                 <div class="price-item">
                                                                                     <div class="cart_price">
                                                                                         <fmt:formatNumber
@@ -136,7 +136,7 @@
                                                                             </td>
                                                                             <%--Chức năng xoá sản phẩm ra khỏi giỏ
                                                                                 hàng--%>
-                                                                                <td>
+                                                                                <td data-label="THAO TÁC">
                                                                                     <button type="button"
                                                                                         class="btn-remove"
                                                                                         data-variant-id="${item.variant.variantId}"

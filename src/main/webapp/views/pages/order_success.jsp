@@ -103,7 +103,7 @@
         <c:forEach var="item" items="${details}">
             <c:set var="variant" value="${variantMap[item.variant_id]}" />
             <div class="product-row">
-                <img src="${root}${variant.product.thumbnail}" alt="${variant.product.product_name}">
+                <img src="${root}${variant.product.safeThumbnail}" alt="${variant.product.product_name}">
                 <div style="flex:1">
                     <div class="prod-name">${variant.product.product_name}</div>
                     <div class="prod-meta">Size ${variant.size} • Màu: ${variant.color}</div>
