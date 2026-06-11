@@ -251,7 +251,7 @@ ul, li,
 }
 
 .btn-outline-secondary:hover {
-  background-color: var(--light-color);
+  background-color: var(--primary-color);
   border-color: var(--gray-color);
 }
 
