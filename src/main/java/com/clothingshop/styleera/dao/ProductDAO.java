@@ -8,6 +8,7 @@ import com.clothingshop.styleera.model.Product;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ProductDAO {
@@ -371,84 +372,119 @@ public class ProductDAO {
         });
     }
 
-    //16. Cập nhật sản phẩm (edit)
+    // 16. Cập nhật thông tin cơ bản sản phẩm
     public boolean updateProducts(Product p) {
         Jdbi jdbi = JDBIConnector.getJdbi();
-        String sql = "Update Products" +
-                " Set product_name = :name," +
-                " price = :price," +
-                " category_sub_id = :subID," +
-                " updated_at = NOW()" +
-                " Where id = :id";
+        String sql = "UPDATE products " +
+                "SET product_name = :name, " +
+                "price = :price, " +
+                "category_sub_id = :subID, " +
+                "short_description = :shortDesc, " +
+                "detail_description = :detailDesc, " +
+                "updated_at = NOW() " +
+                "WHERE id = :id";
         return jdbi.withHandle(h ->
                 h.createUpdate(sql)
                         .bind("name", p.getProduct_name())
                         .bind("price", p.getPrice())
-                        .bind("subID", p.getSubcategory().getId()) // Đã sửa: getSubcategory
+                        .bind("subID", p.getSubcategory().getId())
+                        .bind("shortDesc", p.getShort_description())
+                        .bind("detailDesc", p.getDetail_description())
                         .bind("id", p.getProduct_id())
                         .execute() > 0
         );
     }
 
-    //17. Cập nhật biến thể (edit)
-    public boolean updateVariantQuantity(int variantId, int quantity) {
+    public boolean deleteProductImageById(int imageId) {
+        Jdbi jdbi = com.clothingshop.styleera.JDBiConnector.JDBIConnector.getJdbi();
+        return jdbi.withHandle(handle -> {
+            // Gỡ liên kết ảnh đại diện trong bảng products trước
+            handle.createUpdate("UPDATE products SET image_id = NULL WHERE image_id = :imgId")
+                    .bind("imgId", imageId)
+                    .execute();
+
+            // Xóa hẳn dòng dữ liệu ảnh trong bảng images
+            return handle.createUpdate("DELETE FROM images WHERE id = :imgId")
+                    .bind("imgId", imageId)
+                    .execute() > 0;
+        });
+    }
+    public List<Map<String, Object>> findDetailedImagesByProductId(int productId) {
+        org.jdbi.v3.core.Jdbi jdbi = com.clothingshop.styleera.JDBiConnector.JDBIConnector.getJdbi();
+        return jdbi.withHandle(handle ->
+                handle.createQuery("SELECT id, image_name, path FROM images WHERE product_id = :id")
+                        .bind("id", productId)
+                        .mapToMap()
+                        .list()
+        );
+    }
+
+    // Sửa hàm: Xóa một biến thể cụ thể theo ID biến thể
+    public boolean deleteVariantById(int variantId) {
+        return com.clothingshop.styleera.JDBiConnector.JDBIConnector.getJdbi().withHandle(h ->
+                h.createUpdate("DELETE FROM variants WHERE id = :vId")
+                        .bind("vId", variantId)
+                        .execute() > 0
+        );
+    }
+
+    // Sửa hàm: Gỡ ảnh đại diện (thumbnail)
+    public boolean removeProductThumbnail(int productId) {
+        return com.clothingshop.styleera.JDBiConnector.JDBIConnector.getJdbi().withHandle(h ->
+                h.createUpdate("UPDATE products SET image_id = NULL WHERE id = :pId")
+                        .bind("pId", productId)
+                        .execute() > 0
+        );
+    }
+
+    // 17. Cập nhật thông số biến thể cũ
+    public boolean updateVariant(int variantId, String size, String color, int quantity) {
         Jdbi jdbi = JDBIConnector.getJdbi();
-
-        String sql = "UPDATE variants SET quantity = :qty WHERE id = :id";
-
+        String sql = "UPDATE variants SET size = :size, color = :color, quantity = :qty WHERE id = :id";
         return jdbi.withHandle(h ->
                 h.createUpdate(sql)
+                        .bind("size", size)
+                        .bind("color", color)
                         .bind("qty", quantity)
                         .bind("id", variantId)
                         .execute() > 0
         );
     }
 
-    //17. Edit sản phẩm
-    public void editProduct(Product product, int qty, int variantId) {
+    // 17b. Thêm biến thể mới khi sửa sản phẩm
+    public boolean addVariant(int productId, String size, String color, int quantity) {
         Jdbi jdbi = JDBIConnector.getJdbi();
-        jdbi.useTransaction(handle -> {
-            boolean updatedProduct = handle.attach(ProductDAO.class).updateProducts(product);
-            if (!updatedProduct) {
-                throw new RuntimeException("Không cập nhật được product");
-            }
-            if (variantId > 0) {
-                boolean updatedVariant = handle.attach(ProductDAO.class).updateVariantQuantity(variantId, qty);
-                if (!updatedVariant) {
-                    throw new RuntimeException("Không cập nhật được variant");
-                }
-            }
-        });
+        String sql = "INSERT INTO variants (product_id, size, color, quantity) VALUES (:productId, :size, :color, :qty)";
+        return jdbi.withHandle(h ->
+                h.createUpdate(sql)
+                        .bind("productId", productId)
+                        .bind("size", size)
+                        .bind("color", color)
+                        .bind("qty", quantity)
+                        .execute() > 0
+        );
     }
 
-    // Cập nhật ảnh sản phẩm (edit)
-    public void updateProductImage(int productId, String imageName, String imagePath) {
-        JDBIConnector.getJdbi().useTransaction(handle -> {
-            // 1. Kiểm tra xem sản phẩm đã có image_id chưa
-            Integer imageId = handle.createQuery("SELECT image_id FROM products WHERE id = ?")
+    // 17c. Thêm đa ảnh vào DB và tự động kích hoạt thumbnail nếu sản phẩm trống ảnh
+    public void addProductImage(int productId, String imageName, String imagePath) {
+        com.clothingshop.styleera.JDBiConnector.JDBIConnector.getJdbi().useTransaction(handle -> {
+            int newImageId = handle.createUpdate("INSERT INTO images (product_id, image_name, path, updated_at) VALUES (?, ?, ?, NOW())")
+                    .bind(0, productId)
+                    .bind(1, imageName)
+                    .bind(2, imagePath)
+                    .executeAndReturnGeneratedKeys("id")
+                    .mapTo(Integer.class)
+                    .one();
+
+            // Kiểm tra xem sản phẩm đã có ảnh đại diện (image_id) chưa
+            Integer currentImageId = handle.createQuery("SELECT image_id FROM products WHERE id = ?")
                     .bind(0, productId)
                     .mapTo(Integer.class)
                     .findOne()
                     .orElse(null);
 
-            if (imageId != null) {
-                // 2. Đã có ảnh -> update dòng ảnh cũ trong table images
-                handle.createUpdate("UPDATE images SET image_name = ?, path = ?, updated_at = NOW() WHERE id = ?")
-                        .bind(0, imageName)
-                        .bind(1, imagePath)
-                        .bind(2, imageId)
-                        .execute();
-            } else {
-                // 3. Chưa có ảnh -> insert ảnh mới vào table images
-                int newImageId = handle.createUpdate("INSERT INTO images (product_id, image_name, path, updated_at) VALUES (?, ?, ?, NOW())")
-                        .bind(0, productId)
-                        .bind(1, imageName)
-                        .bind(2, imagePath)
-                        .executeAndReturnGeneratedKeys("id")
-                        .mapTo(Integer.class)
-                        .one();
-
-                // Cập nhật ngược lại image_id cho product
+            // Nếu chưa có hoặc image_id bằng 0/null, lấy ngay ảnh vừa upload này làm ảnh đại diện chính
+            if (currentImageId == null || currentImageId == 0) {
                 handle.createUpdate("UPDATE products SET image_id = ? WHERE id = ?")
                         .bind(0, newImageId)
                         .bind(1, productId)
@@ -462,12 +498,16 @@ public class ProductDAO {
         Jdbi jdbi = JDBIConnector.getJdbi();
 
         return jdbi.withHandle(handle -> {
-            String sql = "SELECT p.id AS product_id, p.product_name, p.price, p.created_at, p.sold_quantity, p.average_rating AS medium_rating, " +
+            String sql = "SELECT p.id AS product_id, p.product_name, p.price, " +
+                    "p.created_at, p.sold_quantity, p.average_rating AS medium_rating, " +
+                    "p.short_description, p.detail_description, " +
                     "sc.id AS sub_id, sc.sub_name, sc.category_parent_id, " +
-                    "pc.id AS parent_id, pc.parent_name " +
+                    "pc.id AS parent_id, pc.parent_name, " +
+                    "i.path AS thumbnail " +
                     "FROM products p " +
                     "JOIN subcategories sc ON p.category_sub_id = sc.id " +
                     "JOIN parentcategories pc ON sc.category_parent_id = pc.id " +
+                    "LEFT JOIN images i ON p.image_id = i.id " +
                     "WHERE p.id = ?";
 
             return handle.createQuery(sql)
@@ -481,7 +521,12 @@ public class ProductDAO {
                         p.setProduct_id(rs.getInt("product_id"));
                         p.setProduct_name(rs.getString("product_name"));
                         p.setPrice(rs.getDouble("price"));
-                        p.setSubcategory(sub); // Đã sửa: setSubcategory
+                        p.setSubcategory(sub);
+
+                        try { p.setShort_description(rs.getString("short_description")); } catch(Exception e) {}
+                        try { p.setDetail_description(rs.getString("detail_description")); } catch(Exception e) {}
+
+                        p.setThumbnail(rs.getString("thumbnail"));
 
                         return p;
                     })

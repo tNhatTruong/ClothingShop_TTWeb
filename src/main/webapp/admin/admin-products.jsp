@@ -20,6 +20,31 @@
 <!-- ===== HEADER ===== -->
 <%@ include file="/admin/layout/Layoutadmin.jsp" %>
 <!-- ===== CONTENT ===== -->
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+    <c:if test="${not empty sessionScope.successMessage}">
+        <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-check-circle me-2"></i> ${sessionScope.successMessage}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+        <c:remove var="successMessage" scope="session" />
+    </c:if>
+
+    <c:if test="${not empty sessionScope.errorMessage}">
+        <div id="errorToast" class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-exclamation-circle me-2"></i> ${sessionScope.errorMessage}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+        <c:remove var="errorMessage" scope="session" />
+    </c:if>
+</div>
 <main class="admin-content">
     <!-- Page Header -->
     <div class="page-header mb-5">
@@ -348,5 +373,19 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="${root}/admin/js/admin_Product.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var successEl = document.getElementById('successToast');
+        if (successEl) {
+            var toast = new bootstrap.Toast(successEl, { delay: 3000 });
+            toast.show();
+        }
+        var errorEl = document.getElementById('errorToast');
+        if (errorEl) {
+            var toast = new bootstrap.Toast(errorEl, { delay: 3000 });
+            toast.show();
+        }
+    });
+</script>
 </body>
 </html>
