@@ -159,7 +159,7 @@
                                             <td><strong>#${o.id}</strong></td>
                                             <td>${o.userName}</td>
                                             <td>${o.email}</td>
-                                            <td><strong>${o.createdAt.toString().replace('T', ' ')}</strong></td>
+                                            <td><strong>${o.formattedCreatedAt}</strong></td>
                                             <td>
                                                 <strong><fmt:formatNumber value="${o.totalPrice}" type="currency" currencySymbol="₫" maxFractionDigits="0"/></strong>
                                             </td>

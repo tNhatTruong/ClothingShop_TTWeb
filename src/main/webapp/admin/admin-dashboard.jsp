@@ -165,7 +165,7 @@
                                     <c:forEach var="order" items="${latestOrders}">
                                         <tr class="text-center align-middle">
                                             <td>#${order.id}</td>
-                                            <td> <strong>${order.createdAt.toString().replace('T', ' ')}</strong></td>
+                                            <td> <strong>${order.formattedCreatedAt}</strong></td>
                                             <td>
                                                 <fmt:formatNumber value="${order.totalPrice}" pattern="#,### VNĐ"/>
                                             </td>
