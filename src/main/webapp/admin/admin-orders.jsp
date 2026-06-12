@@ -22,6 +22,20 @@
 
         <!-- ===== CONTENT ===== -->
         <main class="admin-content">
+            <!-- Flash messages -->
+            <c:if test="${param.success eq 'updated'}">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>Cập nhật trạng thái đơn hàng thành công!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </c:if>
+            <c:if test="${param.error eq 'invalid'}">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>Yêu cầu không hợp lệ!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </c:if>
+
             <!-- Page Header -->
             <div class="page-header mb-5">
                 <div>
@@ -169,9 +183,19 @@
                                                 </c:choose>
                                             </td>
                                             <td>
-                                                <button class="btn btn-sm btn-info" title="Chi tiết" onclick="viewOrder('${o.id}')">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
+                                                <!-- Dropdown đổi trạng thái -->
+                                                <div class="d-flex gap-1 justify-content-center flex-wrap">
+                                                    <form action="${root}/admin-update-order-status" method="post" class="d-flex gap-1">
+                                                        <input type="hidden" name="orderId" value="${o.id}">
+                                                        <select name="status" class="form-select form-select-sm" style="width:160px; font-size:12px;"
+                                                                onchange="this.form.submit()" title="Đổi trạng thái">
+                                                            <option value="Chờ vận chuyển"  ${o.status eq 'Chờ vận chuyển'  ? 'selected' : ''}>Chờ vận chuyển</option>
+                                                            <option value="Đang vận chuyển" ${o.status eq 'Đang vận chuyển' ? 'selected' : ''}>Đang vận chuyển</option>
+                                                            <option value="Đã Giao"         ${o.status eq 'Đã Giao'         ? 'selected' : ''}>Đã Giao</option>
+                                                            <option value="Đã hủy"          ${o.status eq 'Đã hủy'          ? 'selected' : ''}>Đã hủy</option>
+                                                        </select>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
                                     </c:forEach>
