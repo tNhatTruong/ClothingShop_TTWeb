@@ -43,7 +43,7 @@
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div>
                                     <p class="text-muted small mb-1">Tổng số Người dùng</p>
-                                    <h3 class="mb-0">${totalUser.size()} người dùng</h3>
+                                    <h3 class="mb-0">${totalUser} người dùng</h3>
                                 </div>
                                 <div class="stat-icon bg-primary text-white rounded-circle p-3">
                                     <i class="fas fa-users fa-lg"></i>

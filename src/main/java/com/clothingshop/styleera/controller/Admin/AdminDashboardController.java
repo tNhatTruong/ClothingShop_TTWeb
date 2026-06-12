@@ -29,7 +29,7 @@ public class AdminDashboardController extends HttpServlet {
         int totalOrders = ordersService.getTotalOrders();
         int totalProducts = productService.getTotalProducts();
         double totalRevenue = ordersService.getTotalRevenue();
-        List<User> userTotal = userService.getAllUsers();
+        int totalUserCount = userService.countTotalUsers();
         double totalProductPrice = productService.getTotalProductPrice();
         List<Orders> latestOrders = ordersService.getLatestOrders(4);
         List<String> revenueChartLabels = ordersService.getRevenueChartLabels();
@@ -43,7 +43,7 @@ public class AdminDashboardController extends HttpServlet {
         request.setAttribute("totalOrders", totalOrders);
         request.setAttribute("totalProducts", totalProducts);
         request.setAttribute("totalRevenue", totalRevenue);
-        request.setAttribute("totalUser", userTotal);
+        request.setAttribute("totalUser", totalUserCount);
         request.setAttribute("totalQuantity", totalQuantity);
         request.setAttribute("categoryStats", categoryStats);
         request.setAttribute("bestSellers", bestSellers);
