@@ -310,6 +310,7 @@ footer {
 
 .admin-container {
   display: flex;
+  align-items: flex-start;
   min-height: 100vh;
   background-color: var(--light-color);
 }
@@ -326,6 +327,7 @@ footer {
   z-index: 1000;
   left: 0;
   top: 0;
+  flex-shrink: 0;
 }
 
 .sidebar-header {
@@ -467,6 +469,7 @@ footer {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-width: 0;
 }
 
 .admin-header {
@@ -592,8 +595,8 @@ footer {
 .admin-content {
   flex: 1;
   padding: 30px;
-  overflow-y: auto;
   background-color: #f8f9fa;
+  min-height: calc(100vh - 70px);
 }
 
 /* ===== PAGE HEADER ===== */
@@ -1131,9 +1134,11 @@ footer {
     top: 0;
     height: 100vh;
     left: auto;
+    flex-shrink: 0;
   }
   .admin-main {
     margin-left: 0;
+    min-width: 0;
   }
 }
 
