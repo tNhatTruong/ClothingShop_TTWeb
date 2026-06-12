@@ -80,7 +80,7 @@
                                     <h3 class="mb-0"><fmt:formatNumber value="${totalRevenue}" pattern="#,### VNĐ"/></h3>
                                 </div>
                                 <div class="stat-icon bg-warning text-white rounded-circle p-3">
-                                    <i class="fas fa-dollar-sign fa-lg"></i>
+                                    <i class="fas fa-coins fa-lg"></i>
                                 </div>
                             </div>
                         </div>
