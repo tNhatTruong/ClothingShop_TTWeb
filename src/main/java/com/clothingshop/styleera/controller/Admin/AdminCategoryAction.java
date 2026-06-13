@@ -12,7 +12,9 @@ import jakarta.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Properties;
 
 @WebServlet("/AdminCategoryAction")
@@ -60,40 +62,96 @@ public class AdminCategoryAction extends HttpServlet {
             int subId = Integer.parseInt(idStr);
             int parentId = Integer.parseInt(parentIdStr);
 
-            // 1. Lấy ảnh cũ từ DB để dự phòng nếu người dùng không upload ảnh mới
+            // Lấy ảnh cũ từ DB để dự phòng nếu người dùng không upload ảnh mới
             SubCategory oldSubCategory = categoryDAO.getSubCategoryById(subId);
             String finalImagePath = (oldSubCategory != null && oldSubCategory.getImage() != null)
                     ? oldSubCategory.getImage() : "";
 
-            // 2. Nếu người dùng bấm dấu X trên giao diện để xóa ảnh
+            // Nếu người dùng bấm dấu X trên giao diện để xóa ảnh
             if ("true".equals(isImageDeleted)) {
                 finalImagePath = "";
             }
 
-            // 3. Nếu người dùng upload file mới (đè lên ảnh cũ hoặc thêm ảnh mới)
+            // Nếu người dùng upload file mới (đè lên ảnh cũ hoặc thêm ảnh mới)
             Part filePart = request.getPart("imageFile");
             if (filePart != null && filePart.getSize() > 0) {
                 String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
                 String uniqueFileName = System.currentTimeMillis() + "_" + fileName;
 
-                File dir = new File(uploadDir);
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
+                // Lưu vào thư mục Tomcat đang chạy (Hiển thị ngay lập tức)
+                String serverPath = request.getServletContext().getRealPath("/images");
+                File serverDir = new File(serverPath);
+                if (!serverDir.exists()) serverDir.mkdirs();
 
-                String fileSavePath = uploadDir + File.separator + uniqueFileName;
-                filePart.write(fileSavePath);
+                String serverFilePath = serverPath + File.separator + uniqueFileName;
+                filePart.write(serverFilePath); // Ghi file thẳng vào server
+
+                // Copy từ Tomcat về thư mục Source Code (Để tắt server không mất ảnh)
+                File sourceDir = new File(uploadDir);
+                if (!sourceDir.exists()) sourceDir.mkdirs();
+
+                try {
+                    Files.copy(
+                            Paths.get(serverFilePath),
+                            Paths.get(uploadDir + File.separator + uniqueFileName),
+                            StandardCopyOption.REPLACE_EXISTING
+                    );
+                } catch (Exception e) {
+                    System.out.println("Lỗi backup ảnh update: " + e.getMessage());
+                }
 
                 finalImagePath = "/images/" + uniqueFileName;
             }
 
-            // 4. Gọi DAO để lưu vào Database
+            // Gọi DAO để lưu vào Database
             categoryDAO.updateSubCategory(subId, parentId, name, description, finalImagePath);
+
+            // Thông báo Toast thành công
             request.getSession().setAttribute("toastMessage", "Cập nhật danh mục thành công!");
-            // 5. Trở về trang danh sách
+
+            // Trở về trang danh sách
             response.sendRedirect(request.getContextPath() + "/admin-category");
 
         } else if ("add".equals(action)) {
+            int parentId = Integer.parseInt(parentIdStr);
+            String finalImagePath = "";
+
+            // Xử lý upload ảnh cho phần thêm mới
+            Part filePart = request.getPart("imageFile");
+            if (filePart != null && filePart.getSize() > 0) {
+                String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                String uniqueFileName = System.currentTimeMillis() + "_" + fileName;
+
+                // Lưu vào thư mục Tomcat đang chạy
+                String serverPath = request.getServletContext().getRealPath("/images");
+                File serverDir = new File(serverPath);
+                if (!serverDir.exists()) serverDir.mkdirs();
+
+                String serverFilePath = serverPath + File.separator + uniqueFileName;
+                filePart.write(serverFilePath);
+
+                // Copy về thư mục Source Code
+                File sourceDir = new File(uploadDir);
+                if (!sourceDir.exists()) sourceDir.mkdirs();
+
+                try {
+                    Files.copy(
+                            Paths.get(serverFilePath),
+                            Paths.get(uploadDir + File.separator + uniqueFileName),
+                            StandardCopyOption.REPLACE_EXISTING
+                    );
+                } catch (Exception e) {
+                    System.out.println("Lỗi backup ảnh add: " + e.getMessage());
+                }
+
+                finalImagePath = "/images/" + uniqueFileName;
+            }
+
+            // Gọi DAO để insert vào Database
+            categoryDAO.addSubCategory(parentId, name, description, finalImagePath);
+
+            // Thông báo Toast thành công cho phần Thêm Mới
+            request.getSession().setAttribute("toastMessage", "Thêm danh mục mới thành công!");
 
             response.sendRedirect(request.getContextPath() + "/admin-category");
         }

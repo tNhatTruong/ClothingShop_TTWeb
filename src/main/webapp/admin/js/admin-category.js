@@ -98,3 +98,25 @@ function openCategoryModal(button = null) {
     const myModal = bootstrap.Modal.getOrCreateInstance(modalElement);
     myModal.show();
 }
+document.getElementById('categoryImage').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const previewImage = document.getElementById('imagePreview');
+    const isDeletedInput = document.getElementById('isImageDeleted');
+
+    if (file) {
+        // Tạo một URL tạm thời cho bức ảnh vừa chọn từ máy tính
+        const objectUrl = URL.createObjectURL(file);
+
+        // Gắn URL đó vào thẻ img và hiển thị khung chứa lên
+        previewImage.src = objectUrl;
+        previewContainer.style.display = 'block';
+
+        // Đặt lại biến xóa ảnh về false vì người dùng vừa up ảnh mới
+        isDeletedInput.value = 'false';
+    } else {
+        // Nếu người dùng mở hộp thoại lên nhưng bấm Cancel (hủy chọn)
+        previewImage.src = '';
+        previewContainer.style.display = 'none';
+    }
+});
