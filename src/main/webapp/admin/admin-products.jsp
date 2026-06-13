@@ -158,14 +158,22 @@
                                     <td>#${p.product_id}</td>
                                     <td>
                                         <div class="product-img-wrapper">
-                                            <c:if test="${not empty p.thumbnail}">
-                                                <img src="${pageContext.request.contextPath}${p.thumbnail}"
-                                                     alt="${p.product_name}" width="60" height="60"
-                                                     style="object-fit: cover; border-radius: 4px">
-                                            </c:if>
-                                            <c:if test="${empty p.thumbnail}">
-                                                <img src="https://via.placeholder.com/60" alt="No image" width="60" height="60">
-                                            </c:if>
+                                            <c:choose>
+                                                <c:when test="${not empty p.thumbnail}">
+                                                    <img src="${p.thumbnail}"
+                                                         alt="${p.product_name}"
+                                                         width="60" height="60"
+                                                         style="object-fit: cover; border-radius: 4px;"
+                                                         onerror="this.onerror=null; this.src='${root}/uploads/no-image.png';">
+                                                </c:when>
+
+                                                <c:otherwise>
+                                                    <img src="${root}/uploads/no-image.png"
+                                                         alt="${p.product_name}"
+                                                         width="60" height="60"
+                                                         style="object-fit: cover; border-radius: 4px;">
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
                                     </td>
                                     <td><strong>${p.product_name}</strong></td>

@@ -111,7 +111,7 @@
                                             <c:when test="${not empty productImages}">
                                                 <c:forEach items="${productImages}" var="img">
                                                     <div class="img-wrapper" id="img-block-${img.imageId}">
-                                                        <img src="${root}${img.imagePath}" alt="Ảnh sản phẩm" style="width: 110px; height: 110px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;">
+                                                        <img src="${img.imagePath}" alt="Ảnh sản phẩm" style="width: 110px; height: 110px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;">
                                                         <span class="btn-remove-img" onclick="markImageAsDeleted(${img.imageId})" title="Xóa ảnh này">
                                 <i class="fas fa-times"></i>
                             </span>

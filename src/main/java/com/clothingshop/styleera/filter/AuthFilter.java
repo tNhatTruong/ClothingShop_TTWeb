@@ -22,9 +22,18 @@ public class AuthFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) response;
 
         String path = req.getRequestURI();
+        String lowerPath = path.toLowerCase();
 
-        // 1. Bỏ qua các tài nguyên tĩnh (CSS, JS, Ảnh) để web chạy nhanh
-        if (path.endsWith(".css") || path.endsWith(".js") || path.endsWith(".png") || path.endsWith(".jpg")) {
+        if (lowerPath.contains("/uploads/") ||
+                lowerPath.contains("/images/") ||
+                lowerPath.endsWith(".css") ||
+                lowerPath.endsWith(".js") ||
+                lowerPath.endsWith(".png") ||
+                lowerPath.endsWith(".jpg") ||
+                lowerPath.endsWith(".jpeg") ||
+                lowerPath.endsWith(".webp") ||
+                lowerPath.endsWith(".gif")) {
+
             chain.doFilter(request, response);
             return;
         }

@@ -583,23 +583,23 @@ public class ProductDAO {
         });
     }
 
-    //22. Thêm product  trong trang admin quan ly san pham
+    // 22. Thêm product trong trang admin quan ly san pham
     public void insertProductFull(
             String productName,
             int subCategoryId,
             double price,
             String shortDesc,
             String detailDesc,
-            String size,
-            String color,
-            int quantity,
-            String imageName,
-            String imagePath
+            String[] sizes,
+            String[] colors,
+            String[] quantities,
+            List<String> listImageNames,
+            List<String> listImagePaths
     ) {
 
         JDBIConnector.getJdbi().useTransaction(handle -> {
 
-            // thêm dl sản phẩm
+            // Thêm dữ liệu sản phẩm chung
             int productId = handle.createUpdate("  INSERT INTO products\n" +
                             "                (category_sub_id, product_name, average_rating,\n" +
                             "                 short_description, detail_description, price, created_at)\n" +
@@ -612,31 +612,48 @@ public class ProductDAO {
                     .executeAndReturnGeneratedKeys("id")
                     .mapTo(Integer.class)
                     .one();
-            // thêm dl biến thể
 
-            handle.createUpdate(" INSERT INTO variants\n" +
-                            "                (product_id, size, color, quantity)\n" +
-                            "                VALUES (?, ?, ?, ?)")
-                    .bind(0, productId)
-                    .bind(1, size)
-                    .bind(2, color)
-                    .bind(3, quantity)
-                    .execute();
+            if (sizes != null && colors != null && quantities != null) {
+                int safeLength = Math.min(sizes.length, Math.min(colors.length, quantities.length));
+                for (int i = 0; i < safeLength; i++) {
+                    handle.createUpdate(" INSERT INTO variants\n" +
+                                    "                (product_id, size, color, quantity)\n" +
+                                    "                VALUES (?, ?, ?, ?)")
+                            .bind(0, productId)
+                            .bind(1, sizes[i])
+                            .bind(2, colors[i])
+                            .bind(3, Integer.parseInt(quantities[i]))
+                            .execute();
+                }
+            }
 
-            // thêm dl ảnh và lấy ID ảnh vừa tạo
-            int imageId = handle.createUpdate(" INSERT INTO images (product_id, image_name, path, updated_at) VALUES (?, ?, ?, NOW())")
-                    .bind(0, productId)
-                    .bind(1, imageName)
-                    .bind(2, imagePath)
-                    .executeAndReturnGeneratedKeys("id")
-                    .mapTo(Integer.class)
-                    .one();
 
-            // Cập nhật ngược lại image_id cho product vừa thêm để hiển thị được ảnh thumbnail
-            handle.createUpdate("UPDATE products SET image_id = ? WHERE id = ?")
-                    .bind(0, imageId)
-                    .bind(1, productId)
-                    .execute();
+            int firstImageId = 0; // Biến giữ ID của ảnh đầu tiên làm ảnh đại diện (Thumbnail)
+
+            if (listImageNames != null && !listImageNames.isEmpty()) {
+                for (int i = 0; i < listImageNames.size(); i++) {
+                    int imgId = handle.createUpdate(" INSERT INTO images (product_id, image_name, path, updated_at) VALUES (?, ?, ?, NOW())")
+                            .bind(0, productId)
+                            .bind(1, listImageNames.get(i))
+                            .bind(2, listImagePaths.get(i))
+                            .executeAndReturnGeneratedKeys("id")
+                            .mapTo(Integer.class)
+                            .one();
+
+                    // Lấy ID của ảnh đầu tiên làm Thumbnail chính
+                    if (i == 0) {
+                        firstImageId = imgId;
+                    }
+                }
+            }
+
+            // Cập nhật ngược lại image_id cho product
+            if (firstImageId > 0) {
+                handle.createUpdate("UPDATE products SET image_id = ? WHERE id = ?")
+                        .bind(0, firstImageId)
+                        .bind(1, productId)
+                        .execute();
+            }
         });
     }
 
