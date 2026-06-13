@@ -8,8 +8,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>StyleEra - Quản Lý Danh Mục</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <link rel="stylesheet" href="${root}/admin/css/admin.css"/>
+    <link rel="stylesheet" href="${root}/admin/css/admin_category.css"/>
 </head>
 <body>
 <c:set var="currentPage" value="category" scope="request"/>
@@ -22,7 +24,7 @@
             <h1 class="page-title">Quản Lý Danh Mục</h1>
         </div>
         <div class="page-actions">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+            <button class="btn btn-primary" onclick="openCategoryModal()" >
                 <i class="fas fa-plus"></i> Thêm Danh Mục
             </button>
         </div>
@@ -129,17 +131,30 @@
                                         <td> <strong>${s.name}</strong> </td>
 
                                         <td>${empty s.description ? "—" : s.description}</td>
-                                        <td>
-                                            <form action="${root}/AdminDeleteCategory"
-                                                  method="post"
-                                                  onsubmit="return confirm('Bạn chắc chắn muốn xoá danh mục này?')">
-
-                                                <input type="hidden" name="id" value="${s.id}">
-
-                                                <button type="submit" class="btn btn-sm btn-danger" title="Xóa">
-                                                    <i class="fas fa-trash"></i>
+                                        <td class="text-center align-middle">
+                                            <div class="d-flex justify-content-center align-items-center gap-2">
+                                                <button type="button" class="btn btn-sm btn-warning" title="Sửa"
+                                                        data-id="${s.id}"
+                                                        data-parent-id="${p.id}"
+                                                        data-name="${s.name}"
+                                                        data-desc="${s.description}"
+                                                        data-img="${not empty s.image ? root.concat(s.image) : ''}"
+                                                        onclick="openCategoryModal(this)">
+                                                    <i class="fas fa-edit"></i>
                                                 </button>
-                                            </form>
+
+                                                <form action="${root}/AdminDeleteCategory"
+                                                      method="post"
+                                                      class="m-0"
+                                                      onsubmit="return confirm('Bạn chắc chắn muốn xoá danh mục này?')">
+
+                                                    <input type="hidden" name="id" value="${s.id}">
+
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Xóa">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -167,6 +182,63 @@
             </li>
         </ul>
     </nav>
+</div>
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="categoryForm" action="${root}/AdminCategoryAction" method="POST" enctype="multipart/form-data">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold" id="categoryModalLabel">Thêm Danh Mục Mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" name="action" id="formAction" value="add">
+                    <input type="hidden" name="subCategoryId" id="subCategoryId" value="">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Danh Mục Gốc <span class="text-danger">*</span></label>
+                        <select class="form-select" name="parentId" id="parentId" required>
+                            <option value="">-- Chọn danh mục gốc --</option>
+                            <c:forEach items="${parentCategoryList}" var="parent">
+                                <option value="${parent.id}">${parent.name}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tên Phân Loại <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="subCategoryName" id="subCategoryName"
+                               placeholder="VD: Áo Khoác, Quần Jean..." required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Mô Tả</label>
+                        <textarea class="form-control" name="description" id="categoryDesc" rows="3"
+                                  placeholder="Nhập mô tả ngắn gọn..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Ảnh Danh Mục</label>
+                        <input type="file" class="form-control" name="imageFile" id="categoryImage" accept="image/*">
+
+                        <div class="mt-2" id="imagePreviewContainer" style="display: none;">
+                            <p class="text-muted small mb-1">Ảnh hiện tại:</p>
+                            <img id="imagePreview" src="" alt="Preview" width="80" height="80"
+                                 style="border-radius: 4px; object-fit: cover; border: 1px solid #ddd;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy Bỏ</button>
+                    <button type="submit" class="btn btn-primary" id="btnSubmitCategory">
+                        <i class="fas fa-save"></i> <span>Lưu Danh Mục</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 <script src="${root}/admin/js/admin-category.js"></script>
 </body>
