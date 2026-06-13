@@ -98,7 +98,11 @@
                     List<Product> newArrivals = (List<Product>) request.getAttribute("newArrivals");
                     if (newArrivals != null) {
                         for (Product p : newArrivals) {
-                            String imgPath = request.getContextPath() + p.getSafeThumbnail();
+
+                            String imgPath = p.getSafeThumbnail();
+                            if (imgPath != null && !imgPath.startsWith(request.getContextPath())) {
+                                imgPath = request.getContextPath() + imgPath;
+                            }
                 %>
                 <div class="product-card">
                     <a href="${root}/product_detail?id=<%=p.getProduct_id()%>" class="product-card-link">

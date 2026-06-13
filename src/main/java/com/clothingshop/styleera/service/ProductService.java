@@ -81,17 +81,17 @@ public class ProductService {
             double price,
             String shortDesc,
             String detailDesc,
-            String size,
-            String color,
-            int quantity,
-            String imageName,
-            String imagePath
+            String[] sizes,
+            String[] colors,
+            String[] quantities,
+            List<String> listImageNames,
+            List<String> listImagePaths
     ) {
         productDAO.insertProductFull(
                 name, subCategoryId, price,
                 shortDesc, detailDesc,
-                size, color, quantity,
-                imageName, imagePath
+                sizes, colors, quantities,
+                listImageNames, listImagePaths
         );
     }
 }

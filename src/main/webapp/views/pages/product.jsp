@@ -178,7 +178,13 @@
                     <%
                         if (products != null && !products.isEmpty()) {
                             for (Product p : products) {
-                                String imgPath = request.getContextPath() + p.getSafeThumbnail();
+
+                                String imgPath = p.getSafeThumbnail();
+                                if (imgPath != null && !imgPath.startsWith(request.getContextPath())) {
+
+                                    imgPath = request.getContextPath() + imgPath;
+                                }
+
                                 String safeName = p.getProduct_name() != null ? p.getProduct_name().replace("'", "\\'") : "";
                     %>
                     <div class="col-lg-4 col-md-6 col-6">
