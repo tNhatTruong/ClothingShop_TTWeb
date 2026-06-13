@@ -17,7 +17,32 @@
 <c:set var="currentPage" value="category" scope="request"/>
 <!-- ===== HEADER ===== -->
 <%@ include file="/admin/layout/Layoutadmin.jsp" %>
+<c:if test="${not empty sessionScope.toastMessage}">
+    <div class="toast-container position-fixed top-0 end-0 p-4" style="z-index: 1055; margin-top: 60px;">
 
+        <div id="successToast" class="toast align-items-center text-white bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
+            <div class="d-flex">
+                <div class="toast-body fw-semibold" style="font-size: 0.95rem;">
+                    <i class="fas fa-check-circle me-2 fs-5 align-middle"></i>
+                        ${sessionScope.toastMessage}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-3 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <c:remove var="toastMessage" scope="session" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var toastEl = document.getElementById('successToast');
+            if(toastEl) {
+                var toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            }
+        });
+    </script>
+</c:if>
 <main class="admin-content">
     <div class="page-header mb-5">
         <div>
@@ -222,11 +247,21 @@
                         <label class="form-label fw-semibold">Ảnh Danh Mục</label>
                         <input type="file" class="form-control" name="imageFile" id="categoryImage" accept="image/*">
 
-                        <div class="mt-2" id="imagePreviewContainer" style="display: none;">
+                        <div class="mt-3" id="imagePreviewContainer" style="display: none;">
                             <p class="text-muted small mb-1">Ảnh hiện tại:</p>
-                            <img id="imagePreview" src="" alt="Preview" width="80" height="80"
-                                 style="border-radius: 4px; object-fit: cover; border: 1px solid #ddd;">
+                            <div class="position-relative d-inline-block">
+                                <img id="imagePreview" src="" alt="Preview" width="90" height="90"
+                                     style="border-radius: 8px; object-fit: cover; border: 1px solid #ddd;">
+
+                                <button type="button" id="btnDeletePreview"
+                                        class="btn btn-danger btn-sm position-absolute rounded-circle p-0 d-flex align-items-center justify-content-center"
+                                        style="top: -8px; right: -8px; width: 22px; height: 22px; font-size: 11px; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
                         </div>
+
+                        <input type="hidden" name="isImageDeleted" id="isImageDeleted" value="false">
                     </div>
                 </div>
 
