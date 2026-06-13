@@ -6,6 +6,7 @@
                 <%@ page import="com.clothingshop.styleera.model.Review" %>
                     <%@ page import="com.clothingshop.styleera.model.Product" %>
                         <%@ page import="java.text.SimpleDateFormat" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
                             <!DOCTYPE html>
                             <html lang="vi">
@@ -50,16 +51,34 @@
 
                                             <!-- LEFT: PRODUCT IMAGES -->
                                             <div class="product_images">
+                                                <%-- CODE THÔNG MINH: Tự động kiểm tra và chuẩn hóa đường dẫn ảnh chính --%>
+                                                <c:choose>
+                                                    <c:when test="${fn:startsWith(imageList[0], root)}">
+                                                        <c:set var="correctedMainImg" value="${imageList[0]}" />
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <c:set var="correctedMainImg" value="${root}${imageList[0]}" />
+                                                    </c:otherwise>
+                                                </c:choose>
+
                                                 <div class="product_main_image">
-                                                    <img id="mainImage" src="${root}${imageList[0]}"
-                                                        alt="${product.product_name}">
+                                                    <img id="mainImage" src="${correctedMainImg}" alt="${product.product_name}">
                                                 </div>
 
                                                 <div class="product_thumbs">
                                                     <c:forEach items="${imageList}" var="imgUrl" begin="0" end="1">
-                                                        <img src="${root}${imgUrl}" alt="Thumbnail"
-                                                            onclick="changeImage('${root}${imgUrl}')"
-                                                            style="cursor: pointer;">
+                                                        <c:choose>
+                                                            <c:when test="${fn:startsWith(imgUrl, root)}">
+                                                                <c:set var="thumbUrl" value="${imgUrl}" />
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <c:set var="thumbUrl" value="${root}${imgUrl}" />
+                                                            </c:otherwise>
+                                                        </c:choose>
+
+                                                        <img src="${thumbUrl}" alt="Thumbnail"
+                                                             onclick="changeImage('${thumbUrl}')"
+                                                             style="cursor: pointer;">
                                                     </c:forEach>
                                                 </div>
                                             </div>
