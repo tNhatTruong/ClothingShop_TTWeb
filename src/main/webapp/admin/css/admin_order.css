@@ -45,9 +45,9 @@ body {
 /* ===== NAVBAR ===== */
 .bg-gradient {
   background: linear-gradient(
-    135deg,
-    var(--primary-color) 0%,
-    var(--secondary-color) 100%
+          135deg,
+          var(--primary-color) 0%,
+          var(--secondary-color) 100%
   ) !important;
 }
 
@@ -85,7 +85,7 @@ body {
   background-color: var(--light-color);
 }
 
-/* ===== STAT CARD ===== */
+/* ===== STAT CARD (CŨ) ===== */
 .stat-card {
   transition: var(--transition);
   border: none;
@@ -110,6 +110,56 @@ body {
   transform: scale(1.1);
 }
 
+/* ===== THỐNG KÊ ĐƠN HÀNG (MỚI THÊM) ===== */
+.row.mb-4.g-3 .card {
+  border: none;
+  border-radius: 12px;
+  background-color: #ffffff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-bottom: 4px solid transparent;
+}
+
+.row.mb-4.g-3 .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+.row.mb-4.g-3 .card-body {
+  padding: 1.5rem 1rem;
+}
+
+.row.mb-4.g-3 h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.row.mb-4.g-3 p.text-muted {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===== BỘ LỌC ĐƠN HÀNG (MỚI THÊM) ===== */
+#searchOrderInput,
+#statusOrderFilter {
+  border-radius: 8px;
+  padding: 10px 15px;
+  border: 1px solid #ced4da;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  background-color: #f8f9fa;
+}
+
+#searchOrderInput:focus,
+#statusOrderFilter:focus {
+  background-color: #ffffff;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
+  outline: none;
+}
+
 /* ===== CARDS ===== */
 .card {
   border: none;
@@ -128,19 +178,20 @@ body {
 /* ===== TABLES ===== */
 .table {
   margin-bottom: 0;
+  font-size: 12px;
 }
 
 .table thead th {
   border-bottom: 2px solid #e0e0e0;
   font-weight: 600;
   color: var(--dark-color);
-  padding: 15px;
+  padding: 15px 5px; /* Updated padding */
   background-color: #f8f9fa;
   white-space: nowrap;
 }
 
 .table tbody td {
-  padding: 15px;
+  padding: 15px 5px; /* Updated padding */
   vertical-align: middle;
   border-bottom: 1px solid #e0e0e0;
 }
@@ -156,13 +207,14 @@ body {
 .table-responsive {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  font-size: 11px;
 }
 
 /* ===== BADGES ===== */
 .badge {
   padding: 6px 12px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 500;
   display: inline-block;
   white-space: nowrap;
@@ -174,13 +226,20 @@ body {
   transition: var(--transition);
   font-weight: 500;
   white-space: nowrap;
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+.btn-sm {
+  padding: 4px 8px;
+  font-size: 11px;
 }
 
 .btn-primary {
   background: linear-gradient(
-    135deg,
-    var(--primary-color) 0%,
-    var(--secondary-color) 100%
+          135deg,
+          var(--primary-color) 0%,
+          var(--secondary-color) 100%
   );
   border: none;
 }
@@ -230,9 +289,9 @@ body {
 
 .progress-bar {
   background: linear-gradient(
-    90deg,
-    var(--primary-color) 0%,
-    var(--secondary-color) 100%
+          90deg,
+          var(--primary-color) 0%,
+          var(--secondary-color) 100%
   );
 }
 
@@ -256,11 +315,12 @@ body {
 
 .page-item.active .page-link {
   background: linear-gradient(
-    135deg,
-    var(--primary-color) 0%,
-    var(--secondary-color) 100%
+          135deg,
+          var(--primary-color) 0%,
+          var(--secondary-color) 100%
   );
   border: none;
+  color: white; /* Đảm bảo chữ màu trắng khi active */
 }
 
 /* ===== FOOTER ===== */
@@ -269,95 +329,55 @@ footer {
   border-top: 1px solid #e0e0e0;
 }
 
+/* ===== OTHER TWEAKS ===== */
+.card-body {
+  padding: 12px;
+}
 
+h2 {
+  font-size: 18px;
+}
 
-  .table {
-    font-size: 12px;
-  }
+h3 {
+  font-size: 16px;
+}
 
-  .table thead th,
-  .table tbody td {
-    padding: 8px 5px;
-  }
+.card-header {
+  padding: 12px !important;
+}
 
-  .btn {
-    padding: 8px 12px;
-    font-size: 12px;
-  }
+.row {
+  --bs-gutter-x: 0.75rem;
+  --bs-gutter-y: 0.75rem;
+}
 
-  .btn-sm {
-    padding: 4px 8px;
-    font-size: 11px;
-  }
+.admin-profile {
+  border-left: none;
+  padding-left: 0;
+  gap: 8px;
+}
 
-  .card-body {
-    padding: 12px;
-  }
+.profile-img {
+  width: 35px;
+  height: 35px;
+}
 
-  h2 {
-    font-size: 18px;
-  }
+.icon-btn {
+  min-width: 40px;
+  font-size: 16px;
+}
 
-  h3 {
-    font-size: 16px;
-  }
+.nav-tabs {
+  flex-wrap: wrap;
+}
 
-  .badge {
-    font-size: 10px;
-    padding: 4px 8px;
-  }
+.nav-link {
+  padding: 8px 10px;
+  font-size: 12px;
+}
 
-  .card-header {
-    padding: 12px !important;
-  }
-
-  .row {
-    --bs-gutter-x: 0.75rem;
-    --bs-gutter-y: 0.75rem;
-  }
-
-  .col-md-3,
-  .col-lg-3,
-  .col-md-4,
-  .col-lg-4,
-  .col-lg-8,
-  .col-md-8 {
-    flex: 0 0 100%;
-    max-width: 100%;
-  }
-
-  .table-responsive {
-    font-size: 11px;
-  }
-
-  .admin-profile {
-    border-left: none;
-    padding-left: 0;
-    gap: 8px;
-  }
-
-  .profile-img {
-    width: 35px;
-    height: 35px;
-  }
-
-  .icon-btn {
-    min-width: 40px;
-    font-size: 16px;
-  }
-
-  .nav-tabs {
-    flex-wrap: wrap;
-  }
-
-  .nav-link {
-    padding: 8px 10px;
-    font-size: 12px;
-  }
-
-  .modal-dialog {
-    margin: 10px;
-  }
+.modal-dialog {
+  margin: 10px auto; /* Căn giữa modal */
 }
 
 /* Extra Small Devices (up to 576px) */
@@ -466,6 +486,7 @@ footer {
     --bs-gutter-y: 0.5rem;
   }
 
+  /* Trên mobile thì giữ nguyên xếp dọc 100% cho gọn */
   .col-md-3,
   .col-lg-3,
   .col-md-4,
@@ -478,7 +499,7 @@ footer {
   }
 
   .modal-dialog {
-    margin: 0;
+    margin: 10px;
     max-width: 100%;
   }
 

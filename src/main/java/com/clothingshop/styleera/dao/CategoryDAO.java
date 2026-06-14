@@ -162,4 +162,44 @@ public class CategoryDAO {
         });
     }
 
+    // Lấy thông tin 1 danh mục con theo ID (Dùng để lấy đường dẫn ảnh cũ khi Cập nhật)
+    public SubCategory getSubCategoryById(int id) {
+        return JDBIConnector.getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT id, sub_name AS name, category_parent_id AS parentCategoryId, image, description " +
+                                "FROM subcategories WHERE id = ?")
+                        .bind(0, id)
+                        .mapToBean(SubCategory.class)
+                        .findOne().orElse(null)
+        );
+    }
+
+    // Thêm mới danh mục con (SubCategory)
+    public void addSubCategory(int parentId, String name, String description, String imagePath) {
+        JDBIConnector.getJdbi().useHandle(handle -> {
+            String sql = "INSERT INTO subcategories (category_parent_id, sub_name, description, image) " +
+                    "VALUES (?, ?, ?, ?)";
+            handle.createUpdate(sql)
+                    .bind(0, parentId)
+                    .bind(1, name)
+                    .bind(2, description)
+                    .bind(3, imagePath)
+                    .execute();
+        });
+    }
+
+    // Cập nhật danh mục con (SubCategory)
+    public void updateSubCategory(int id, int parentId, String name, String description, String imagePath) {
+        JDBIConnector.getJdbi().useHandle(handle -> {
+            String sql = "UPDATE subcategories " +
+                    "SET category_parent_id = ?, sub_name = ?, description = ?, image = ? " +
+                    "WHERE id = ?";
+            handle.createUpdate(sql)
+                    .bind(0, parentId)
+                    .bind(1, name)
+                    .bind(2, description)
+                    .bind(3, imagePath)
+                    .bind(4, id)
+                    .execute();
+        });
+    }
 }
