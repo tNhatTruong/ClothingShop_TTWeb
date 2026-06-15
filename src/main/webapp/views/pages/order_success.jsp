@@ -48,7 +48,7 @@
             </div>
             <div class="order-actions">
                 <button class="btn" id="viewOrderBtn">
-                    <a href="${root}/order-status" style="color:white; text-decoration:none;">Xem lịch sử đơn</a>
+                    <a href="${root}/order-status?id=${order.id}" style="color:white; text-decoration:none;">Xem chi tiết đơn hàng</a>
                 </button>
             </div>
         </div>
