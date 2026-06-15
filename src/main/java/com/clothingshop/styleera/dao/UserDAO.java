@@ -136,6 +136,15 @@ public class UserDAO {
                         .list()
         );
     }
+
+    // 10b. Đếm tổng số User (nhanh, không load toàn bộ dữ liệu)
+    public int countTotalUsers() {
+        return JDBIConnector.getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT COUNT(*) FROM users")
+                        .mapTo(Integer.class)
+                        .one()
+        );
+    }
     // 11. Lấy Địa chỉ Address User
     public List<Address> findAllAddresses() {
         return JDBIConnector.getJdbi().withHandle(handle ->

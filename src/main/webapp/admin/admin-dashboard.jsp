@@ -14,7 +14,7 @@
     <title>StyleEra - Bảng Điều Khiển Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-    <link rel="stylesheet" href="${root}/admin/css/admin.css"/>
+    <link rel="stylesheet" href="${root}/admin/css/admin.css?v=1.2"/>
 
 </head>
 <body>
@@ -43,7 +43,7 @@
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div>
                                     <p class="text-muted small mb-1">Tổng số Người dùng</p>
-                                    <h3 class="mb-0">${totalUser.size()} người dùng</h3>
+                                    <h3 class="mb-0">${totalUser} người dùng</h3>
                                 </div>
                                 <div class="stat-icon bg-primary text-white rounded-circle p-3">
                                     <i class="fas fa-users fa-lg"></i>
@@ -80,7 +80,7 @@
                                     <h3 class="mb-0"><fmt:formatNumber value="${totalRevenue}" pattern="#,### VNĐ"/></h3>
                                 </div>
                                 <div class="stat-icon bg-warning text-white rounded-circle p-3">
-                                    <i class="fas fa-dollar-sign fa-lg"></i>
+                                    <i class="fas fa-coins fa-lg"></i>
                                 </div>
                             </div>
                         </div>
@@ -165,7 +165,7 @@
                                     <c:forEach var="order" items="${latestOrders}">
                                         <tr class="text-center align-middle">
                                             <td>#${order.id}</td>
-                                            <td> <strong>${order.createdAt.toString().replace('T', ' ')}</strong></td>
+                                            <td> <strong>${order.formattedCreatedAt}</strong></td>
                                             <td>
                                                 <fmt:formatNumber value="${order.totalPrice}" pattern="#,### VNĐ"/>
                                             </td>

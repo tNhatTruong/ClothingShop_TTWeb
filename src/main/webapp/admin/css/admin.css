@@ -486,6 +486,7 @@ footer {
   display: flex !important;
   flex-direction: column !important;
   min-height: 100vh;
+  min-width: 0;
 }
 
 .admin-header {
@@ -626,7 +627,6 @@ footer {
 .admin-content {
   flex: 1;
   padding: 30px;
-  overflow-y: auto;
   background-color: #f8f9fa;
   width: 100% !important;
 }

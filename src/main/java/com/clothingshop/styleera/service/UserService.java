@@ -24,6 +24,11 @@ public class UserService {
         return users;
     }
 
+    // Đếm tổng User nhanh bằng COUNT(*) thay vì load toàn bộ
+    public int countTotalUsers() {
+        return userDAO.countTotalUsers();
+    }
+
     public void banUser(int userId) {
         userDAO.banUser(userId);
     }

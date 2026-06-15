@@ -22,39 +22,64 @@
             <h2>Đơn Hàng của bạn</h2>
         </div>
         <div class="timeline">
-                <div class="timeline-item completed">
-                    <div class="timeline-icon">
-                        <i class="fas fa-check"></i>
-                    </div>
-                    <div class="timeline-content">
-                        <div class="timeline-title">Chờ Vận Chuyển</div>
-                        <div class="timeline-desc">Đơn hàng đã được xác nhận và đang chờ lấy hàng</div>
-                        <div class="timeline-time">14/11/2025 - 10:30</div>
-                    </div>
+            <%-- Bước 1: Chờ vận chuyển --%>
+            <c:set var="step1"
+                   value="${order.status eq 'Chờ vận chuyển' or order.status eq 'Đang vận chuyển' or order.status eq 'Đã Giao'
+                           ? (order.status eq 'Chờ vận chuyển' ? 'active' : 'completed')
+                           : (order.status eq 'Đã hủy' ? 'cancelled' : 'pending')}" />
+            <div class="timeline-item ${step1}">
+                <div class="timeline-icon">
+                    <i class="fas ${step1 eq 'completed' ? 'fa-check' : (step1 eq 'cancelled' ? 'fa-times' : 'fa-box')}"></i>
                 </div>
+                <div class="timeline-content">
+                    <div class="timeline-title">
+                        <c:choose>
+                            <c:when test="${order.status eq 'Đã hủy'}">Đơn Hàng Đã Hủy</c:when>
+                            <c:otherwise>Chờ Vận Chuyển</c:otherwise>
+                        </c:choose>
+                    </div>
+                    <div class="timeline-desc">
+                        <c:choose>
+                            <c:when test="${order.status eq 'Đã hủy'}">Đơn hàng đã bị hủy</c:when>
+                            <c:otherwise>Đơn hàng đã được xác nhận và đang chờ lấy hàng</c:otherwise>
+                        </c:choose>
+                    </div>
+                    <div class="timeline-time">${order.createdAt}</div>
+                </div>
+            </div>
 
-                <div class="timeline-item active">
+            <%-- Bước 2: Đang vận chuyển --%>
+            <c:if test="${order.status ne 'Đã hủy'}">
+                <c:set var="step2"
+                       value="${order.status eq 'Đang vận chuyển' ? 'active' : (order.status eq 'Đã Giao' ? 'completed' : 'pending')}" />
+                <div class="timeline-item ${step2}">
                     <div class="timeline-icon">
-                        <i class="fas fa-truck"></i>
+                        <i class="fas ${step2 eq 'completed' ? 'fa-check' : 'fa-truck'}"></i>
                     </div>
                     <div class="timeline-content">
                         <div class="timeline-title">Đang Vận Chuyển</div>
                         <div class="timeline-desc">Đơn hàng đang trên đường giao đến bạn</div>
-                        <div class="timeline-time">15/11/2025 - 09:15</div>
                     </div>
                 </div>
 
-                <div class="timeline-item pending">
+                <%-- Bước 3: Đã giao --%>
+                <c:set var="step3" value="${order.status eq 'Đã Giao' ? 'completed' : 'pending'}" />
+                <div class="timeline-item ${step3}">
                     <div class="timeline-icon">
-                        <i class="fas fa-home"></i>
+                        <i class="fas ${step3 eq 'completed' ? 'fa-check' : 'fa-home'}"></i>
                     </div>
                     <div class="timeline-content">
                         <div class="timeline-title">Đã Giao Hàng</div>
-                        <div class="timeline-desc">Đơn hàng sẽ được giao đến địa chỉ của bạn</div>
-                        <div class="timeline-time">Dự kiến: 17/11/2025</div>
+                        <div class="timeline-desc">
+                            <c:choose>
+                                <c:when test="${order.status eq 'Đã Giao'}">Đơn hàng đã được giao thành công đến địa chỉ của bạn</c:when>
+                                <c:otherwise>Đơn hàng sẽ được giao đến địa chỉ của bạn</c:otherwise>
+                            </c:choose>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </c:if>
+        </div>
         <c:choose>
             <c:when test="${order != null}">
                 <div class="box-header">
