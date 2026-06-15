@@ -1,4 +1,4 @@
-﻿@import url('variables.css');
+@import url('variables.css');
 /* ===== MAIN LAYOUT ===== */
 .orders-history {
     background: #f5f0e6;
@@ -38,12 +38,12 @@
     text-align: center;
 }
 .orders-table tr.order-row td {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
 .orders-table tr.order-row:hover td {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    background-color: #fafafa;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 /* ===== PRODUCT IMAGE ===== */

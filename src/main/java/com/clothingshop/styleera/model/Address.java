@@ -8,16 +8,18 @@ public class Address implements Serializable {
     private String street;   // Số nhà, tên đường
     private String province; // Tỉnh/Thành phố
     private String district; // Quận/Huyện
+    private String ward;     // Phường/Xã
     private int isDefault;   // 1 là mặc định, 0 là thường
 
     public Address() {
     }
 
-    public Address(int userId, String street, String province, String district) {
+    public Address(int userId, String street, String province, String district, String ward) {
         this.userId = userId;
         this.street = street;
         this.province = province;
         this.district = district;
+        this.ward = ward;
         this.isDefault = 1; // Mặc định là 1 khi tạo mới từ trang Account
     }
 
@@ -32,6 +34,8 @@ public class Address implements Serializable {
     public void setProvince(String province) { this.province = province; }
     public String getDistrict() { return district; }
     public void setDistrict(String district) { this.district = district; }
+    public String getWard() { return ward; }
+    public void setWard(String ward) { this.ward = ward; }
     public int getIsDefault() { return isDefault; }
     public void setIsDefault(int isDefault) { this.isDefault = isDefault; }
 }

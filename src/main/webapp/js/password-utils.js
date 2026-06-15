@@ -69,20 +69,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const pwdInput = document.getElementById("registerPassword");
     const confirmInput = document.getElementById("registerConfirmPassword");
 
-    form.addEventListener("submit", (e) => {
-        const pwd = pwdInput.value;
-        const confirm = confirmInput.value;
+    if (form) {
+        form.addEventListener("submit", (e) => {
+            const pwd = pwdInput ? pwdInput.value : "";
+            const confirm = confirmInput ? confirmInput.value : "";
 
-        if (!validatePassword(pwd)) {
-            e.preventDefault();
-            showAppToast("Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.", "error");
-            return;
-        }
+            if (!validatePassword(pwd)) {
+                e.preventDefault();
+                showAppToast("Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.", "error");
+                return;
+            }
 
-        if (!confirmPassword(pwd, confirm)) {
-            e.preventDefault();
-            showAppToast("Mật khẩu nhập lại không khớp.", "error");
-            return;
-        }
-    });
+            if (!confirmPassword(pwd, confirm)) {
+                e.preventDefault();
+                showAppToast("Mật khẩu nhập lại không khớp.", "error");
+                return;
+            }
+        });
+    }
 });

@@ -48,8 +48,9 @@ public class AccountController extends HttpServlet {
 
         // Lấy thông tin địa chỉ
         String street = request.getParameter("address"); // Địa chỉ cụ thể
-        String city = request.getParameter("city");      // Tỉnh/Thành (ID hoặc Tên)
-        String district = request.getParameter("district"); // Quận/Huyện
+        String province = request.getParameter("provinceName");
+        String district = request.getParameter("districtName");
+        String ward = request.getParameter("wardName");
 
 
         try {
@@ -58,9 +59,9 @@ public class AccountController extends HttpServlet {
             userDAO.updateProfile(currentUser.getId(), fullName, phone);
 
             // 2. Cập nhật Địa chỉ (Bảng addresses)
-            if (street != null || city != null) {
+            if (street != null || province != null) {
                 AddressDAO addressDAO = new AddressDAO();
-                addressDAO.saveOrUpdate(currentUser.getId(), street, city, district);
+                addressDAO.saveOrUpdate(currentUser.getId(), street, province, district, ward);
             }
 
             // 3. Update Session

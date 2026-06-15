@@ -52,7 +52,14 @@
                 <div class="sidebar">
                     <h4>TÀI KHOẢN</h4>
                     <a href="${root}/account" class="active">Thông tin tài khoản</a>
-                    <a href="${root}/change-password">Đổi mật khẩu</a>
+                    <c:choose>
+                        <c:when test="${empty sessionScope.auth.password_hash}">
+                            <a href="${root}/set-password">Thiết lập mật khẩu</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="${root}/change-password">Đổi mật khẩu</a>
+                        </c:otherwise>
+                    </c:choose>
                     <a href="${root}/order-history">Xem lịch sử mua hàng</a>
                     <a href="${root}/logout" id="logoutBtn">Đăng xuất</a>
                 </div>
@@ -94,22 +101,28 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Tỉnh / Thành phố</label>
-                                <select id="input-shipping-zone" class="form-select" data-selected="${userAddress.province}">
-                                    <option value="0">Vui lòng chọn tỉnh/thành phố</option>
-                                    <option value="43">TP.Hồ Chí Minh - Nội thành</option>
-                                    <option value="44">TP.Hồ Chí Minh - Ngoại thành</option>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" for="province">Tỉnh / Thành phố</label>
+                                <select id="province" class="form-select" data-selected-name="${userAddress.province}">
+                                    <option value="">-- Chọn Tỉnh / Thành phố --</option>
                                 </select>
-                                <input type="hidden" name="city" id="hidden-city-name" value="${userAddress.province}">
+                                <input type="hidden" name="provinceName" id="provinceName" value="${userAddress.province}">
                             </div>
 
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Quận / Huyện</label>
-                                <select id="input-shipping-custom-field-30" class="form-select" data-selected="${userAddress.district}">
-                                    <option value="0">Vui lòng chọn quận/huyện</option>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" for="district">Quận / Huyện</label>
+                                <select id="district" class="form-select" data-selected-name="${userAddress.district}" disabled>
+                                    <option value="">-- Chọn Quận / Huyện --</option>
                                 </select>
-                                <input type="hidden" name="district" id="hidden-district-name" value="${userAddress.district}">
+                                <input type="hidden" name="districtName" id="districtName" value="${userAddress.district}">
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" for="ward">Phường / Xã</label>
+                                <select id="ward" class="form-select" data-selected-name="${userAddress.ward}" disabled>
+                                    <option value="">-- Chọn Phường / Xã --</option>
+                                </select>
+                                <input type="hidden" name="wardName" id="wardName" value="${userAddress.ward}">
                             </div>
                         </div>
 
@@ -125,6 +138,7 @@
 
 <jsp:include page="/views/layout/footer.jsp" />
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>var contextPath = "${root}";</script>
 <script src="${root}/js/main.js"></script>
 <script src="${root}/js/checkout.js"></script>
 </body>

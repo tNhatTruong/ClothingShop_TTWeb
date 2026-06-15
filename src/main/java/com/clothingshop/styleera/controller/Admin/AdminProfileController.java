@@ -53,6 +53,7 @@ public class AdminProfileController extends HttpServlet {
         String street = request.getParameter("address"); // Địa chỉ cụ thể
         String city = request.getParameter("city");      // Tỉnh/Thành (Tên tiếng Việt)
         String district = request.getParameter("district"); // Quận/Huyện (Tên tiếng Việt)
+        String ward = request.getParameter("ward");         // Phường/Xã (Tên tiếng Việt)
 
         try {
             // 1. Cập nhật User (Tên, SĐT)
@@ -60,9 +61,9 @@ public class AdminProfileController extends HttpServlet {
             userDAO.updateProfile(currentUser.getId(), fullName, phone);
 
             // 2. Cập nhật Địa chỉ (Bảng addresses)
-            if (street != null || city != null || district != null) {
+            if (street != null || city != null || district != null || ward != null) {
                 AddressDAO addressDAO = new AddressDAO();
-                addressDAO.saveOrUpdate(currentUser.getId(), street != null ? street : "", city != null ? city : "", district != null ? district : "");
+                addressDAO.saveOrUpdate(currentUser.getId(), street != null ? street : "", city != null ? city : "", district != null ? district : "", ward != null ? ward : "");
             }
 
             // 3. Cập nhật Session

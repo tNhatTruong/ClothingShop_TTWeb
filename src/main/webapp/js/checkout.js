@@ -14,13 +14,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(response => response.json())
                 .then(data => {
                     if(data.code === 200) {
+                        let savedProvince = provinceSelect.getAttribute('data-selected-name');
                         data.data.forEach(province => {
                             let option = document.createElement('option');
                             option.value = province.ProvinceID;
                             option.text = province.ProvinceName;
                             provinceSelect.appendChild(option);
+                            if (savedProvince && province.ProvinceName === savedProvince) {
+                                provinceSelect.value = province.ProvinceID;
+                            }
                         });
                         console.log("2. Đã load xong danh sách Tỉnh/Thành!");
+                        if (provinceSelect.value) {
+                            provinceSelect.dispatchEvent(new Event('change'));
+                        }
                     } else {
                         console.error("Lỗi: ", data.message);
                     }
@@ -32,6 +39,17 @@ document.addEventListener('DOMContentLoaded', function () {
         // B. Sự kiện chọn Tỉnh -> Xổ Quận/Huyện
         provinceSelect.addEventListener('change', function() {
             let provinceId = this.value;
+            let provinceNameHidden = document.getElementById('provinceName');
+            let districtNameHidden = document.getElementById('districtName');
+            let wardNameHidden = document.getElementById('wardName');
+            
+            if(provinceNameHidden && this.selectedIndex > 0) {
+                provinceNameHidden.value = this.options[this.selectedIndex].text;
+            } else if (provinceNameHidden) {
+                provinceNameHidden.value = '';
+            }
+            if (districtNameHidden) districtNameHidden.value = '';
+            if (wardNameHidden) wardNameHidden.value = '';
 
             districtSelect.innerHTML = '<option value="">-- Chọn Quận / Huyện --</option>';
             wardSelect.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
@@ -47,12 +65,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(data => {
                     if(data.code === 200) {
                         districtSelect.disabled = false;
+                        let savedDistrict = districtSelect.getAttribute('data-selected-name');
                         data.data.forEach(district => {
                             let option = document.createElement('option');
                             option.value = district.DistrictID;
                             option.text = district.DistrictName;
                             districtSelect.appendChild(option);
+                            if (savedDistrict && district.DistrictName === savedDistrict) {
+                                districtSelect.value = district.DistrictID;
+                            }
                         });
+                        if (districtSelect.value) {
+                            districtSelect.dispatchEvent(new Event('change'));
+                        }
                     }
                 });
         });
@@ -60,6 +85,15 @@ document.addEventListener('DOMContentLoaded', function () {
         // C. Sự kiện chọn Quận -> Xổ Phường/Xã
         districtSelect.addEventListener('change', function() {
             let districtId = this.value;
+            let districtNameHidden = document.getElementById('districtName');
+            let wardNameHidden = document.getElementById('wardName');
+            
+            if(districtNameHidden && this.selectedIndex > 0) {
+                districtNameHidden.value = this.options[this.selectedIndex].text;
+            } else if (districtNameHidden) {
+                districtNameHidden.value = '';
+            }
+            if (wardNameHidden) wardNameHidden.value = '';
 
             wardSelect.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
             wardSelect.disabled = true;
@@ -73,12 +107,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(data => {
                     if(data.code === 200) {
                         wardSelect.disabled = false;
+                        let savedWard = wardSelect.getAttribute('data-selected-name');
                         data.data.forEach(ward => {
                             let option = document.createElement('option');
                             option.value = ward.WardCode;
                             option.text = ward.WardName;
                             wardSelect.appendChild(option);
+                            if (savedWard && ward.WardName === savedWard) {
+                                wardSelect.value = ward.WardCode;
+                            }
                         });
+                        if (wardSelect.value) {
+                            wardSelect.dispatchEvent(new Event('change'));
+                        }
                     }
                 });
         });
@@ -87,6 +128,16 @@ document.addEventListener('DOMContentLoaded', function () {
         wardSelect.addEventListener('change', function() {
             let toDistrictId = districtSelect.value;
             let toWardCode = this.value;
+            let wardNameHidden = document.getElementById('wardName');
+            if(wardNameHidden && this.selectedIndex > 0) {
+                wardNameHidden.value = this.options[this.selectedIndex].text;
+            } else if (wardNameHidden) {
+                wardNameHidden.value = '';
+            }
+
+            // Chỉ tính phí ship nếu đang ở trang checkout (có hiển thị phí ship)
+            let shippingFeeSpan = document.getElementById('shipping-fee-display');
+            if (!shippingFeeSpan) return;
 
             if(toDistrictId && toWardCode) {
                 fetch(contextPath + '/api/calculate-shipping', {

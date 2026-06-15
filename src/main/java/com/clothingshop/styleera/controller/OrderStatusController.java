@@ -42,7 +42,25 @@ public class OrderStatusController extends HttpServlet {
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Bạn không có quyền truy cập đơn hàng này!");
                         return;
                     }
+
+                    com.clothingshop.styleera.dao.OrderDetailsDAO orderDetailsDAO = new com.clothingshop.styleera.dao.OrderDetailsDAO();
+                    com.clothingshop.styleera.dao.VariantDAO variantDAO = new com.clothingshop.styleera.dao.VariantDAO();
+
+                    java.util.List<com.clothingshop.styleera.model.OrderDetail> details = orderDetailsDAO.findByOrderId(order.getId());
+                    java.util.Map<Integer, com.clothingshop.styleera.model.Variants> variantMap = new java.util.HashMap<>();
+
+                    if (details != null) {
+                        for (com.clothingshop.styleera.model.OrderDetail detail : details) {
+                            if (!variantMap.containsKey(detail.getVariant_id())) {
+                                com.clothingshop.styleera.model.Variants variant = variantDAO.getById(detail.getVariant_id());
+                                variantMap.put(detail.getVariant_id(), variant);
+                            }
+                        }
+                    }
+
                     request.setAttribute("order", order);
+                    request.setAttribute("orderDetails", details);
+                    request.setAttribute("variantMap", variantMap);
                 } else {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "Đơn hàng không tồn tại!");
                     return;

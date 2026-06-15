@@ -1,17 +1,17 @@
 /*
  Navicat Premium Dump SQL
 
- Source Server         : clothing
- Source Server Type    : MariaDB
- Source Server Version : 100432 (10.4.32-MariaDB)
+ Source Server         : ClothingShop_Docker
+ Source Server Type    : MySQL
+ Source Server Version : 80409 (8.4.9)
  Source Host           : localhost:3306
  Source Schema         : clothing_shop
 
- Target Server Type    : MariaDB
- Target Server Version : 100432 (10.4.32-MariaDB)
+ Target Server Type    : MySQL
+ Target Server Version : 80409 (8.4.9)
  File Encoding         : 65001
 
- Date: 27/01/2026 01:02:19
+ Date: 11/06/2026 15:44:30
 */
 
 SET NAMES utf8mb4;
@@ -22,17 +22,17 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `addresses`;
 CREATE TABLE `addresses`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
   `street` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `province` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `district` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `is_default` tinyint(1) NULL DEFAULT 0,
-  `updated_at` datetime NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `fk_address_user`(`user_id`) USING BTREE,
+  INDEX `fk_address_user`(`user_id` ASC) USING BTREE,
   CONSTRAINT `fk_address_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of addresses
@@ -50,18 +50,18 @@ INSERT INTO `addresses` VALUES (7, 15, 'Linh Tây, Thủ Đức, TP. Hồ Chí M
 -- ----------------------------
 DROP TABLE IF EXISTS `cartitem`;
 CREATE TABLE `cartitem`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `variant_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL DEFAULT 1,
-  `created_at` datetime NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `variant_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `quantity` int NOT NULL DEFAULT 1,
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `fk_cart_variant`(`variant_id`) USING BTREE,
-  INDEX `fk_cart_user`(`user_id`) USING BTREE,
+  INDEX `fk_cart_variant`(`variant_id` ASC) USING BTREE,
+  INDEX `fk_cart_user`(`user_id` ASC) USING BTREE,
   CONSTRAINT `fk_cart_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `fk_cart_variant` FOREIGN KEY (`variant_id`) REFERENCES `variants` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 31 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 48 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of cartitem
@@ -102,16 +102,16 @@ INSERT INTO `cartitem` VALUES (30, 10, 10, 1, '2025-12-16 00:40:16', '2025-12-16
 -- ----------------------------
 DROP TABLE IF EXISTS `contacts`;
 CREATE TABLE `contacts`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
   `send_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `send_email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `send_at` datetime NULL DEFAULT current_timestamp(),
+  `send_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `fk_contact_user`(`user_id`) USING BTREE,
+  INDEX `fk_contact_user`(`user_id` ASC) USING BTREE,
   CONSTRAINT `fk_contact_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of contacts
@@ -128,14 +128,14 @@ INSERT INTO `contacts` VALUES (6, 7, 'Tran Ngoc Linh', 'Linhbeauty544@gmail.com'
 -- ----------------------------
 DROP TABLE IF EXISTS `delivery`;
 CREATE TABLE `delivery`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `order_id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `order_id` int NOT NULL,
   `tracking_number` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `updated_at` datetime NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `fk_delivery_order`(`order_id`) USING BTREE,
+  INDEX `fk_delivery_order`(`order_id` ASC) USING BTREE,
   CONSTRAINT `fk_delivery_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of delivery
@@ -161,13 +161,13 @@ INSERT INTO `delivery` VALUES (15, 15, 'DEL2025062015', '2025-06-20 17:20:00');
 -- ----------------------------
 DROP TABLE IF EXISTS `images`;
 CREATE TABLE `images`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `image_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `updated_at` datetime NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
-  `product_id` int(11) NULL DEFAULT NULL,
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `product_id` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 291 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 297 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of images
@@ -462,23 +462,29 @@ INSERT INTO `images` VALUES (287, 'Áo Khoác Bomber Couple', '/images/product_i
 INSERT INTO `images` VALUES (288, 'Áo Thun Đôi Trái Tim', '/images/product_item_couple/2/heart_tee.png', '2026-01-26 23:39:22', 17);
 INSERT INTO `images` VALUES (289, 'Pijama Đôi Lụa', '/images/product_item_couple/3/pijama.png', '2026-01-26 23:39:22', 18);
 INSERT INTO `images` VALUES (290, 'Áo Hoodie Đôi Basic', '/images/product_item_couple/1/hoodie.png', '2026-01-26 23:39:22', 19);
+INSERT INTO `images` VALUES (291, 'Áo Khoác Da Biker', '/images/no-image.png', '2026-06-06 07:40:22', 20);
+INSERT INTO `images` VALUES (292, 'Sơ Mi Lụa Hàn Quốc', '/images/no-image.png', '2026-06-06 07:40:22', 21);
+INSERT INTO `images` VALUES (293, 'Quần Jean Ống Rộng', '/images/no-image.png', '2026-06-06 07:40:22', 22);
+INSERT INTO `images` VALUES (294, 'Áo Polo Thể Thao', '/images/no-image.png', '2026-06-06 07:40:22', 23);
+INSERT INTO `images` VALUES (295, 'Váy Chữ A', '/images/no-image.png', '2026-06-06 07:40:22', 24);
+INSERT INTO `images` VALUES (296, 'Áo Len Đôi', '/images/no-image.png', '2026-06-06 07:40:22', 25);
 
 -- ----------------------------
 -- Table structure for orderdetails
 -- ----------------------------
 DROP TABLE IF EXISTS `orderdetails`;
 CREATE TABLE `orderdetails`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `order_id` int(11) NOT NULL,
-  `variant_id` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `order_id` int NOT NULL,
+  `variant_id` int NOT NULL,
+  `quantity` int NOT NULL,
   `price` decimal(10, 2) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `fk_orderdetail_order`(`order_id`) USING BTREE,
-  INDEX `fk_orderdetail_variant`(`variant_id`) USING BTREE,
+  INDEX `fk_orderdetail_order`(`order_id` ASC) USING BTREE,
+  INDEX `fk_orderdetail_variant`(`variant_id` ASC) USING BTREE,
   CONSTRAINT `fk_orderdetail_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `fk_orderdetail_variant` FOREIGN KEY (`variant_id`) REFERENCES `variants` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 31 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of orderdetails
@@ -503,64 +509,82 @@ INSERT INTO `orderdetails` VALUES (17, 16, 2, 1, 320000.00);
 INSERT INTO `orderdetails` VALUES (18, 17, 8, 2, 230000.00);
 INSERT INTO `orderdetails` VALUES (19, 18, 1, 1, 160000.00);
 INSERT INTO `orderdetails` VALUES (20, 19, 3, 3, 240000.00);
+INSERT INTO `orderdetails` VALUES (21, 20, 31, 1, 240000.00);
+INSERT INTO `orderdetails` VALUES (22, 21, 34, 1, 260000.00);
+INSERT INTO `orderdetails` VALUES (23, 21, 36, 1, 290000.00);
+INSERT INTO `orderdetails` VALUES (24, 21, 29, 1, 210000.00);
+INSERT INTO `orderdetails` VALUES (25, 22, 49, 1, 180000.00);
+INSERT INTO `orderdetails` VALUES (26, 23, 53, 1, 320000.00);
+INSERT INTO `orderdetails` VALUES (27, 24, 57, 1, 290000.00);
+INSERT INTO `orderdetails` VALUES (28, 25, 49, 1, 180000.00);
+INSERT INTO `orderdetails` VALUES (29, 26, 57, 1, 290000.00);
+INSERT INTO `orderdetails` VALUES (30, 27, 53, 1, 320000.00);
 
 -- ----------------------------
 -- Table structure for orders
 -- ----------------------------
 DROP TABLE IF EXISTS `orders`;
 CREATE TABLE `orders`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `address_id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `address_id` int NOT NULL,
   `shipping_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `shipping_phone` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `shipping_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT 'PENDING',
-  `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
   `price` decimal(10, 2) NOT NULL,
   `fee_delivery` decimal(10, 2) NOT NULL DEFAULT 0.00,
   `total_price` decimal(10, 2) NOT NULL,
-  `created_at` datetime NULL DEFAULT current_timestamp(),
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `fk_order_user`(`user_id`) USING BTREE,
-  INDEX `fk_order_address`(`address_id`) USING BTREE,
+  INDEX `fk_order_user`(`user_id` ASC) USING BTREE,
+  INDEX `fk_order_address`(`address_id` ASC) USING BTREE,
   CONSTRAINT `fk_order_address` FOREIGN KEY (`address_id`) REFERENCES `addresses` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_order_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of orders
 -- ----------------------------
-INSERT INTO `orders` VALUES (1, 1, 6, 'Đang vận chuyển', NULL, 350000.00, 0.00, 350000.00, '2024-12-28 10:15:00');
-INSERT INTO `orders` VALUES (2, 2, 1, 'Chờ vận chuyển', NULL, 587000.00, 3000.00, 590000.00, '2024-07-25 09:00:00');
-INSERT INTO `orders` VALUES (3, 2, 1, 'Đang vận chuyển', NULL, 300000.00, 0.00, 300000.00, '2024-03-29 11:40:00');
-INSERT INTO `orders` VALUES (4, 5, 5, 'Đã huỷ', 'Khách hủy', 497000.00, 3000.00, 500000.00, '2025-07-07 10:12:00');
-INSERT INTO `orders` VALUES (5, 5, 5, 'Chờ vận chuyển', NULL, 760000.00, 0.00, 760000.00, '2025-08-21 13:30:00');
-INSERT INTO `orders` VALUES (6, 6, 2, 'Chờ vận chuyển', NULL, 577000.00, 3000.00, 580000.00, '2024-12-14 07:55:00');
-INSERT INTO `orders` VALUES (7, 6, 2, 'Đã huỷ', 'Khách hủy', 310000.00, 0.00, 310000.00, '2024-09-14 16:30:00');
-INSERT INTO `orders` VALUES (8, 7, 1, 'Chờ vận chuyển', NULL, 650000.00, 0.00, 650000.00, '2025-12-16 00:40:16');
-INSERT INTO `orders` VALUES (9, 7, 1, 'Đã huỷ', 'Không nhận máy', 200000.00, 0.00, 200000.00, '2025-09-19 17:40:00');
-INSERT INTO `orders` VALUES (10, 8, 6, 'Đang vận chuyển', NULL, 940000.00, 0.00, 940000.00, '2025-12-16 00:40:16');
-INSERT INTO `orders` VALUES (11, 2, 1, 'Đã huỷ', 'Không nhận máy', 287000.00, 3000.00, 290000.00, '2025-01-14 14:00:00');
-INSERT INTO `orders` VALUES (12, 8, 6, 'Đã Giao', NULL, 400000.00, 0.00, 400000.00, '2025-02-03 18:45:00');
-INSERT INTO `orders` VALUES (13, 8, 6, 'Đã huỷ', 'Khách hủy', 450000.00, 0.00, 450000.00, '2025-02-28 09:22:00');
-INSERT INTO `orders` VALUES (14, 9, 8, 'Đang vận chuyển', NULL, 850000.00, 0.00, 850000.00, '2025-12-16 00:40:16');
-INSERT INTO `orders` VALUES (15, 10, 4, 'Đã Giao', NULL, 730000.00, 30000.00, 760000.00, '2025-06-20 16:30:00');
-INSERT INTO `orders` VALUES (16, 1, 6, 'Đã Giao', NULL, 337000.00, 3000.00, 340000.00, '2025-03-12 08:20:00');
-INSERT INTO `orders` VALUES (17, 5, 5, 'Đang vận chuyển', NULL, 487000.00, 3000.00, 490000.00, '2025-12-16 00:40:16');
-INSERT INTO `orders` VALUES (18, 8, 6, 'Đang vận chuyển', NULL, 187000.00, 3000.00, 190000.00, '2025-04-05 15:00:00');
-INSERT INTO `orders` VALUES (19, 7, 1, 'Đã Giao', NULL, 750000.00, 0.00, 750000.00, '2025-12-16 00:40:16');
+INSERT INTO `orders` VALUES (1, 1, 6, NULL, NULL, NULL, 'Đang vận chuyển', NULL, 350000.00, 0.00, 350000.00, '2024-12-28 10:15:00');
+INSERT INTO `orders` VALUES (2, 2, 1, NULL, NULL, NULL, 'Chờ vận chuyển', NULL, 587000.00, 3000.00, 590000.00, '2024-07-25 09:00:00');
+INSERT INTO `orders` VALUES (3, 2, 1, NULL, NULL, NULL, 'Đang vận chuyển', NULL, 300000.00, 0.00, 300000.00, '2024-03-29 11:40:00');
+INSERT INTO `orders` VALUES (4, 5, 5, NULL, NULL, NULL, 'Đã huỷ', 'Khách hủy', 497000.00, 3000.00, 500000.00, '2025-07-07 10:12:00');
+INSERT INTO `orders` VALUES (5, 5, 5, NULL, NULL, NULL, 'Chờ vận chuyển', NULL, 760000.00, 0.00, 760000.00, '2025-08-21 13:30:00');
+INSERT INTO `orders` VALUES (6, 6, 2, NULL, NULL, NULL, 'Chờ vận chuyển', NULL, 577000.00, 3000.00, 580000.00, '2024-12-14 07:55:00');
+INSERT INTO `orders` VALUES (7, 6, 2, NULL, NULL, NULL, 'Đã huỷ', 'Khách hủy', 310000.00, 0.00, 310000.00, '2024-09-14 16:30:00');
+INSERT INTO `orders` VALUES (8, 7, 1, NULL, NULL, NULL, 'Chờ vận chuyển', NULL, 650000.00, 0.00, 650000.00, '2025-12-16 00:40:16');
+INSERT INTO `orders` VALUES (9, 7, 1, NULL, NULL, NULL, 'Đã huỷ', 'Không nhận máy', 200000.00, 0.00, 200000.00, '2025-09-19 17:40:00');
+INSERT INTO `orders` VALUES (10, 8, 6, NULL, NULL, NULL, 'Đang vận chuyển', NULL, 940000.00, 0.00, 940000.00, '2025-12-16 00:40:16');
+INSERT INTO `orders` VALUES (11, 2, 1, NULL, NULL, NULL, 'Đã huỷ', 'Không nhận máy', 287000.00, 3000.00, 290000.00, '2025-01-14 14:00:00');
+INSERT INTO `orders` VALUES (12, 8, 6, NULL, NULL, NULL, 'Đã Giao', NULL, 400000.00, 0.00, 400000.00, '2025-02-03 18:45:00');
+INSERT INTO `orders` VALUES (13, 8, 6, NULL, NULL, NULL, 'Đã huỷ', 'Khách hủy', 450000.00, 0.00, 450000.00, '2025-02-28 09:22:00');
+INSERT INTO `orders` VALUES (14, 9, 8, NULL, NULL, NULL, 'Đang vận chuyển', NULL, 850000.00, 0.00, 850000.00, '2025-12-16 00:40:16');
+INSERT INTO `orders` VALUES (15, 10, 4, NULL, NULL, NULL, 'Đã Giao', NULL, 730000.00, 30000.00, 760000.00, '2025-06-20 16:30:00');
+INSERT INTO `orders` VALUES (16, 1, 6, NULL, NULL, NULL, 'Đã Giao', NULL, 337000.00, 3000.00, 340000.00, '2025-03-12 08:20:00');
+INSERT INTO `orders` VALUES (17, 5, 5, NULL, NULL, NULL, 'Đang vận chuyển', NULL, 487000.00, 3000.00, 490000.00, '2025-12-16 00:40:16');
+INSERT INTO `orders` VALUES (18, 8, 6, NULL, NULL, NULL, 'Đang vận chuyển', NULL, 187000.00, 3000.00, 190000.00, '2025-04-05 15:00:00');
+INSERT INTO `orders` VALUES (19, 7, 1, NULL, NULL, NULL, 'Đã Giao', NULL, 750000.00, 0.00, 750000.00, '2025-12-16 00:40:16');
+INSERT INTO `orders` VALUES (20, 15, 7, NULL, NULL, NULL, 'Hủy (Quá hạn thanh toán)', '', 240000.00, 30000.00, 270000.00, '2026-06-01 09:01:05');
+INSERT INTO `orders` VALUES (21, 15, 7, NULL, NULL, NULL, 'Hủy (Quá hạn thanh toán)', '', 760000.00, 30000.00, 790000.00, '2026-06-01 09:27:30');
+INSERT INTO `orders` VALUES (22, 15, 7, NULL, NULL, NULL, 'Hủy (Quá hạn thanh toán)', '', 180000.00, 30000.00, 210000.00, '2026-06-01 09:32:44');
+INSERT INTO `orders` VALUES (23, 15, 7, NULL, NULL, NULL, 'Đã Thanh Toán', '', 320000.00, 30000.00, 350000.00, '2026-06-01 09:36:50');
+INSERT INTO `orders` VALUES (24, 15, 7, NULL, NULL, NULL, 'Hủy (Quá hạn thanh toán)', '', 290000.00, 30000.00, 320000.00, '2026-06-02 06:48:42');
+INSERT INTO `orders` VALUES (25, 15, 7, 'Trần Nhật Trường', '0949844246', 'Linh Tây, Thủ Đức, TP. Hồ Chí Minh', 'Đã Thanh Toán', '', 180000.00, 30000.00, 210000.00, '2026-06-02 07:16:25');
+INSERT INTO `orders` VALUES (26, 15, 7, 'Trần Nhật Trường', '0949844246', 'Linh Tây, Thủ Đức, TP. Hồ Chí Minh', 'Hủy (Quá hạn thanh toán)', '', 290000.00, 30000.00, 320000.00, '2026-06-02 07:18:44');
+INSERT INTO `orders` VALUES (27, 15, 7, 'Trần Nhật Trường', '0949844246', 'Linh Tây, Thủ Đức, TP. Hồ Chí Minh', 'Hủy (Quá hạn thanh toán)', '', 320000.00, 30000.00, 350000.00, '2026-06-02 07:25:24');
 
 -- ----------------------------
 -- Table structure for parentcategories
 -- ----------------------------
 DROP TABLE IF EXISTS `parentcategories`;
 CREATE TABLE `parentcategories`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `parent_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `updated_at` datetime NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of parentcategories
@@ -574,16 +598,16 @@ INSERT INTO `parentcategories` VALUES (3, 'Đồ Đôi', '2025-12-08 02:34:47');
 -- ----------------------------
 DROP TABLE IF EXISTS `payments`;
 CREATE TABLE `payments`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `order_id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `order_id` int NOT NULL,
   `total_amount` decimal(10, 2) NOT NULL,
   `payment_method` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payment_date` datetime NULL DEFAULT current_timestamp(),
+  `payment_date` datetime NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `fk_payment_order`(`order_id`) USING BTREE,
+  INDEX `fk_payment_order`(`order_id` ASC) USING BTREE,
   CONSTRAINT `fk_payment_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of payments
@@ -613,66 +637,74 @@ INSERT INTO `payments` VALUES (19, 19, 720000.00, 'Thanh toán khi giao hàng', 
 -- ----------------------------
 DROP TABLE IF EXISTS `products`;
 CREATE TABLE `products`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `image_id` int(11) NULL DEFAULT NULL,
-  `category_sub_id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `image_id` int NULL DEFAULT NULL,
+  `category_sub_id` int NOT NULL,
   `product_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `average_rating` decimal(3, 2) NULL DEFAULT 0.00,
   `short_description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `detail_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `price` decimal(10, 2) NOT NULL,
-  `created_at` datetime NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `sold_quantity` int NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `fk_product_subcategory`(`category_sub_id`) USING BTREE,
-  INDEX `fk_product_image`(`image_id`) USING BTREE,
+  INDEX `fk_product_subcategory`(`category_sub_id` ASC) USING BTREE,
+  INDEX `fk_product_image`(`image_id` ASC) USING BTREE,
   CONSTRAINT `fk_product_image` FOREIGN KEY (`image_id`) REFERENCES `images` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_product_subcategory` FOREIGN KEY (`category_sub_id`) REFERENCES `subcategories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of products
 -- ----------------------------
-INSERT INTO `products` VALUES (1, 1, 1, 'Áo khoác gió nam', 4.70, 'Áo khoác gió nhẹ', 'Chất liệu chống nước nhẹ, thích hợp đi làm và đi chơi.', 350000.00, '2025-12-16 00:40:16', '2025-12-16 00:43:22');
-INSERT INTO `products` VALUES (2, 21, 2, 'Áo thun nam basic', 4.60, 'Áo thun cotton', 'Vải cotton 100%, thoáng mát, form regular.', 160000.00, '2025-12-16 00:40:16', '2025-12-16 00:43:22');
-INSERT INTO `products` VALUES (3, 41, 3, 'Áo polo nam basic', 4.70, 'Polo cổ bẻ', 'Vải cá sấu cao cấp, thoáng khí.', 220000.00, '2025-12-16 00:40:16', '2025-12-16 00:43:22');
-INSERT INTO `products` VALUES (4, 61, 4, 'Sơ mi nam tay dài', 4.70, 'Sơ mi công sở', 'Chất liệu cotton mềm, ít nhăn.', 260000.00, '2025-12-16 00:40:16', '2025-12-16 00:43:22');
-INSERT INTO `products` VALUES (5, 81, 5, 'Quần short kaki nam', 4.50, 'Short kaki thoải mái', 'Dày dặn, đứng form, dễ phối đồ.', 190000.00, '2025-12-16 00:40:16', '2025-12-16 00:43:22');
-INSERT INTO `products` VALUES (6, 101, 6, 'Quần tây nam công sở', 4.70, 'Quần tây lịch sự', 'Vải mềm, đứng form, sang trọng.', 290000.00, '2025-12-16 00:40:16', '2025-12-16 00:43:22');
-INSERT INTO `products` VALUES (7, 121, 7, 'Jean slimfit nam', 4.70, 'Quần jean co giãn', 'Vải jean cao cấp, co giãn 4 chiều.', 300000.00, '2025-12-16 00:40:16', '2025-12-16 00:43:22');
-INSERT INTO `products` VALUES (8, 141, 8, 'Áo khoác gió nữ', 4.70, 'Chống gió tốt', 'Vải dù mỏng nhẹ, chống nước nhẹ.', 340000.00, '2025-12-16 00:40:16', '2025-12-16 00:43:22');
-INSERT INTO `products` VALUES (9, 161, 9, 'Áo thun nữ basic', 4.60, 'Áo thun cotton', 'Co giãn tốt, mỏng nhẹ.', 150000.00, '2025-12-16 00:40:16', '2025-12-16 00:43:22');
-INSERT INTO `products` VALUES (10, 177, 10, 'Áo polo nữ cổ bẻ', 4.70, 'Lịch sự, thanh lịch', 'Vải cá sấu mềm, thoát khí tốt.', 210000.00, '2025-12-16 00:40:16', '2025-12-16 00:43:22');
-INSERT INTO `products` VALUES (11, 195, 11, 'Sơ mi trắng nữ', 4.70, 'Sơ mi công sở', 'Vải lụa mềm, mát.', 240000.00, '2025-12-16 00:40:16', '2025-12-16 00:43:22');
-INSERT INTO `products` VALUES (12, 215, 12, 'Váy xòe hoa', 4.70, 'Nữ tính', 'Voan hoa nhẹ nhàng.', 260000.00, '2025-12-16 00:40:16', '2025-12-16 00:43:22');
-INSERT INTO `products` VALUES (13, 235, 13, 'Đầm body nữ', 4.80, 'Tôn dáng', 'Vải thun cao cấp, co giãn tốt.', 290000.00, '2025-12-16 00:40:16', '2025-12-16 00:43:22');
-INSERT INTO `products` VALUES (14, 251, 14, 'Quần short nữ jean', 4.60, 'Năng động', 'Jean co giãn nhẹ.', 180000.00, '2025-12-16 00:40:16', '2025-12-16 00:43:22');
-INSERT INTO `products` VALUES (15, 267, 15, 'Quần tây nữ công sở', 4.70, 'Thanh lịch', 'Vải tây cao cấp.', 270000.00, '2025-12-16 00:40:16', '2025-12-16 00:43:22');
-INSERT INTO `products` VALUES (16, 287, 16, 'Áo Khoác Bomber Couple', 4.80, 'Phong cách đường phố', 'Áo khoác bomber chất liệu kaki 2 lớp, phù hợp cho các cặp đôi năng động.', 450000.00, '2026-01-26 23:39:22', '2026-01-26 23:39:22');
-INSERT INTO `products` VALUES (17, 288, 17, 'Áo Thun Đôi In Tim', 4.50, 'Ngọt ngào lãng mạn', 'Áo thun cotton 100% in hình trái tim minimal, vải mát mịn.', 180000.00, '2026-01-26 23:39:22', '2026-01-26 23:39:22');
-INSERT INTO `products` VALUES (18, 289, 18, 'Set Pijama Lụa Satin', 4.90, 'Sang trọng mặc nhà', 'Đồ bộ ngủ lụa satin cao cấp, mềm mại, thoáng mát cho giấc ngủ ngon.', 320000.00, '2026-01-26 23:39:22', '2026-01-26 23:39:22');
-INSERT INTO `products` VALUES (19, 290, 16, 'Áo Hoodie Couple Basic', 4.70, 'Ấm áp mùa đông', 'Hoodie nỉ bông dày dặn, form rộng unisex dễ mặc.', 290000.00, '2026-01-26 23:39:22', '2026-01-26 23:39:22');
+INSERT INTO `products` VALUES (1, 1, 1, 'Áo khoác gió nam', 4.70, 'Áo khoác gió nam 2 lớp chống thấm nước, cản gió cực tốt.', 'Người bạn đồng hành lý tưởng trên những chuyến đi xa. Gọn nhẹ, dễ dàng gấp gọn mang theo mọi lúc mọi nơi.\n\n**THÔNG TIN SẢN PHẨM**\n- Thiết kế tay dài có mũ trùm đầu tiện lợi.\n- Bo chun tay áo và gấu áo giúp cản gió tối đa.\n- Hệ thống túi zip an toàn 2 bên hông và túi trong ngực áo để giữ đồ cá nhân.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Lớp ngoài là Polyester công nghệ Nano chống thấm nước, chống xước.\n- Lớp trong lót lưới dệt kim thoáng khí, ngăn cảm giác hầm bí khi mặc liên tục.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Giặt máy ở chế độ nhẹ nhàng.\n- Không sử dụng hóa chất tẩy rửa mạnh.', 350000.00, '2025-12-16 00:40:16', '2026-06-06 07:11:51', 15);
+INSERT INTO `products` VALUES (2, 21, 2, 'Áo thun nam basic', 4.60, 'Áo thun nam dáng basic 100% cotton thoáng mát, form chuẩn dễ phối đồ.', 'Chiếc áo quốc dân cho mọi chàng trai, dễ dàng kết hợp với mọi loại quần từ jeans đến kaki.\n\n**THÔNG TIN SẢN PHẨM**\n- Form Regular Fit ôm vừa phải tôn dáng.\n- Cổ tròn bo gân không bai dão.\n- Mũi chỉ may tỉ mỉ, chắc chắn.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Cotton 100% tự nhiên siêu thoáng mát.\n- Thấm hút mồ hôi tốt, lý tưởng cho những ngày hè nắng nóng.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Không giặt chung với quần áo dễ phai màu.\n- Tránh phơi trực tiếp dưới ánh nắng mặt trời gắt.', 160000.00, '2025-12-16 00:40:16', '2026-06-06 07:11:51', 12);
+INSERT INTO `products` VALUES (3, 41, 3, 'Áo polo nam basic', 4.70, 'Áo polo nam chất liệu cá sấu cotton, bề mặt mềm mịn, thanh lịch.', 'Áo polo nam mang phong cách tối giản, thanh lịch, phù hợp cho cả đi làm và đi chơi. Đây là mẫu áo luôn nằm trong top best-seller.\n\n**THÔNG TIN SẢN PHẨM**\n- Form áo Regular Fit vừa vặn, không quá ôm sát.\n- Cổ áo dệt gân chắc chắn, phối nút cài tinh tế, giữ form tốt.\n- Logo thương hiệu được thêu tỉ mỉ trước ngực tạo điểm nhấn sang trọng.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải cá sấu cotton interlock 100% tự nhiên cao cấp, mềm mịn.\n- Sợi vải đã qua xử lý công nghệ cao giúp chống co rút và chống nhăn hiệu quả.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Lộn trái áo khi giặt và phơi.', 220000.00, '2025-12-16 00:40:16', '2026-06-06 07:11:51', 8);
+INSERT INTO `products` VALUES (4, 61, 4, 'Sơ mi nam tay dài', 4.70, 'Áo sơ mi nam tay dài, form Slim Fit tôn dáng, chất liệu lụa nến cao cấp.', 'Biểu tượng của sự trưởng thành và quyến rũ. Áo sơ mi tay dài giúp phái mạnh luôn tự tin và nổi bật trong các buổi tiệc hay nơi công sở.\n\n**THÔNG TIN SẢN PHẨM**\n- Form Slim Fit ôm khéo léo đường nét cơ thể.\n- Cổ bẻ cứng cáp với lớp lót đệm tinh tế.\n- Cúc áo đính kèm viền ngọc trai sang trọng, tay áo măng sét.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Lụa nến nhập khẩu cao cấp, bề mặt trơn nhẵn.\n- Chống nhăn tự nhiên, tiết kiệm thời gian ủi đồ.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Treo áo bằng móc gỗ hoặc móc bản to để giữ form vai.', 260000.00, '2025-12-16 00:40:16', '2026-06-02 17:37:10', 0);
+INSERT INTO `products` VALUES (5, 81, 5, 'Quần short kaki nam', 4.50, 'Quần short Kaki nam trên gối, trẻ trung năng động, co giãn thoải mái.', 'Giải nhiệt mùa hè với chiếc quần short Kaki đa năng, lựa chọn số 1 cho các hoạt động dã ngoại hay dạo phố cuối tuần.\n\n**THÔNG TIN SẢN PHẨM**\n- Độ dài quần vừa vặn trên đầu gối, ống rộng rãi.\n- Túi xéo hai bên sâu rộng, túi mổ phía sau cài cúc thanh lịch.\n- Thiết kế cạp quần vừa vặn, chuẩn số đo.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Kaki thun pha Spandex độ co giãn 4 chiều linh hoạt.\n- Vải đã qua xử lý enzyme giúp bề mặt mềm mại, không thô cứng.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Không dùng chất tẩy rửa mạnh.', 190000.00, '2025-12-16 00:40:16', '2026-06-02 17:37:10', 0);
+INSERT INTO `products` VALUES (6, 101, 6, 'Quần tây nam công sở', 4.70, 'Quần tây nam dáng đứng chuẩn công sở, vải tuyết mưa lên form cực chuẩn.', 'Mảnh ghép hoàn hảo cho một diện mạo quý ông lịch lãm. Kết hợp cùng sơ mi hoặc áo polo để có ngay một bộ trang phục chuẩn mực.\n\n**THÔNG TIN SẢN PHẨM**\n- Dáng quần Regular Fit suông đứng, tạo cảm giác kéo dài chân.\n- Xếp ly tỉ mỉ trước quần giữ nếp phẳng phiu.\n- Đai quần lót cao su chống tuột áo khi sơ vin.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải tuyết mưa (Vitex) nhập khẩu, có độ rũ tự nhiên, lên form đứng dáng.\n- Chất vải không nhăn, không bám bụi và hoàn toàn không xù lông.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Ưu tiên giặt khô hoặc giặt tay để giữ form lâu dài.', 290000.00, '2025-12-16 00:40:16', '2026-06-02 17:37:10', 0);
+INSERT INTO `products` VALUES (7, 121, 7, 'Jean slimfit nam', 4.70, 'Quần Jeans nam dáng Slim Fit, chất bò denim co giãn nhẹ, thời trang.', 'Chiếc quần Jeans quốc dân dễ dàng phối với mọi loại áo, từ T-shirt năng động đến sơ mi lịch lãm.\n\n**THÔNG TIN SẢN PHẨM**\n- Dáng quần Slim Fit ôm vừa phải, tôn dáng nhưng không gò bó.\n- Ống quần may viền chắc chắn, túi xéo tiện lợi rộng rãi.\n- Khóa kéo đồng chống gỉ sét trơn tru.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải Denim pha Spandex mang lại độ co giãn tuyệt vời.\n- Công nghệ wash màu hiện đại giúp quần giữ được màu xanh tự nhiên.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Hạn chế giặt bằng máy giặt ở nhiệt độ cao.', 300000.00, '2025-12-16 00:40:16', '2026-06-02 17:37:10', 0);
+INSERT INTO `products` VALUES (8, 141, 8, 'Áo khoác gió nữ', 4.70, 'Áo khoác gió nữ siêu nhẹ, chống gió và chống thấm nước tiện lợi.', 'Lựa chọn hoàn hảo cho những ngày se lạnh hoặc có mưa phùn nhỏ, thiết kế trẻ trung nữ tính.\n\n**THÔNG TIN SẢN PHẨM**\n- Kiểu dáng ôm nhẹ eo tạo đường cong.\n- Có mũ trùm và túi hai bên tiện ích.\n- Gấp gọn siêu nhanh bỏ vừa túi xách.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải Polyester tráng màng Nano siêu nhẹ.\n- Chống thấm, cản gió cực đỉnh nhưng vẫn thoáng khí.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Chỉ cần giặt nhẹ bằng tay hoặc lau bằng khăn ẩm.', 340000.00, '2025-12-16 00:40:16', '2026-06-02 17:37:10', 0);
+INSERT INTO `products` VALUES (9, 161, 9, 'Áo thun nữ basic', 4.60, 'Áo thun nữ cơ bản tôn dáng, dễ phối đồ hàng ngày.', 'Mẫu áo không thể thiếu trong tủ đồ mọi cô gái, đa năng và cực kỳ dễ chịu khi mặc.\n\n**THÔNG TIN SẢN PHẨM**\n- Dáng áo ôm nhẹ, cổ tròn thanh lịch.\n- Đường may viền tỉ mỉ, độ bền cao.\n- Phù hợp mặc trong áo khoác hoặc mặc đơn lẻ.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Cotton 100% tự nhiên co giãn nhẹ.\n- Mềm mại và an toàn cho làn da nhạy cảm.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Tránh ủi trực tiếp ở nhiệt độ cao.', 150000.00, '2025-12-16 00:40:16', '2026-06-02 17:37:10', 0);
+INSERT INTO `products` VALUES (10, 177, 10, 'Áo polo nữ cổ bẻ', 4.70, 'Áo polo nữ cổ bẻ trang nhã, dáng suông vừa vặn thoải mái.', 'Sự kết hợp giữa vẻ đẹp thanh lịch của áo sơ mi và sự năng động của áo thun.\n\n**THÔNG TIN SẢN PHẨM**\n- Thiết kế cổ bẻ đính cúc ngọc trai nữ tính.\n- Tay áo bo nhẹ gọn gàng.\n- Phom dáng thanh lịch, phù hợp môi trường văn phòng lẫn đi chơi.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải cá sấu Cotton cao cấp, thoáng mát.\n- Không đổ lông, không nhăn nhúm sau nhiều lần giặt.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Không ngâm áo quá lâu trong bột giặt.', 210000.00, '2025-12-16 00:40:16', '2026-06-06 07:11:51', 1);
+INSERT INTO `products` VALUES (11, 195, 11, 'Sơ mi trắng nữ', 4.70, 'Sơ mi trắng nữ form chuẩn, biểu tượng của sự thanh lịch vượt thời gian.', 'Vẻ đẹp thuần khiết và chuyên nghiệp. Sơ mi trắng là món đồ \"must-have\" của các quý cô văn phòng.\n\n**THÔNG TIN SẢN PHẨM**\n- Thiết kế cổ đức truyền thống, phom dáng chiết eo nhẹ tôn dáng.\n- Cúc áo ẩn tinh tế, tay áo măng sét thanh lịch.\n- Dễ dàng kết hợp với chân váy chữ A hoặc quần tây.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Lụa tơ tằm pha Cotton chống nhăn tuyệt vời.\n- Bề mặt mịn màng, thân thiện với làn da.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- ủi ở nhiệt độ thấp để giữ độ bóng của vải.', 240000.00, '2025-12-16 00:40:16', '2026-06-06 07:11:51', 1);
+INSERT INTO `products` VALUES (12, 215, 12, 'Váy xòe hoa', 4.70, 'Váy xòe hoa nhí phong cách vintage ngọt ngào, dịu dàng.', 'Làn gió mát mẻ mùa hè mang đến sự nữ tính và ngọt ngào qua họa tiết hoa nhí xinh xắn.\n\n**THÔNG TIN SẢN PHẨM**\n- Dáng chữ A xòe bồng bềnh, che khuyết điểm vùng hông.\n- Cổ vuông cổ điển khoe xương quai xanh.\n- Dây kéo chìm phía sau tinh tế.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải Voan lụa 2 lớp siêu nhẹ, không lo lộ nội y.\n- Thoáng mát và rũ mềm mại.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Giặt tay với nước lạnh để giữ nếp bồng bềnh.', 260000.00, '2025-12-16 00:40:16', '2026-06-06 07:11:51', 1);
+INSERT INTO `products` VALUES (13, 235, 13, 'Đầm body nữ', 4.80, 'Đầm body nữ quyến rũ, chất thun ôm sát tôn đường cong hoàn hảo.', 'Nữ hoàng của những buổi tiệc tối. Thiết kế ôm trọn cơ thể, phô diễn trọn vẹn nét quyến rũ.\n\n**THÔNG TIN SẢN PHẨM**\n- Phom dáng Bodycon ôm sát đường cong.\n- Chiều dài qua gối thanh lịch, xẻ tà quyến rũ.\n- Cổ chữ V khoét sâu gợi cảm.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Thun lụa co giãn 4 chiều định hình cơ thể xuất sắc.\n- Chất vải dày dặn, không lộ viền nội y.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Giặt khô hoặc giặt nhẹ bằng tay, phơi ngang mặt phẳng.', 290000.00, '2025-12-16 00:40:16', '2026-06-06 07:11:51', 1);
+INSERT INTO `products` VALUES (14, 251, 14, 'Quần short nữ jean', 4.60, 'Quần short jean nữ cạp cao, rách gấu tua rua cá tính.', 'Đại diện cho sự trẻ trung, phá cách và gợi cảm. Quần short jean cạp cao giúp các nàng hack dáng tuyệt đối.\n\n**THÔNG TIN SẢN PHẨM**\n- Cạp cao qua rốn che bụng hoàn hảo.\n- Ống quần rách gấu tua rua cực cool ngầu.\n- Dáng A-line tạo cảm giác đùi thon gọn.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải Jean Cotton tinh khiết không co giãn, giữ form tuyệt đối.\n- Công nghệ nhuộm Denim bền màu.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Lộn trái trước khi giặt máy.', 180000.00, '2025-12-16 00:40:16', '2026-06-02 17:37:10', 0);
+INSERT INTO `products` VALUES (15, 267, 15, 'Quần tây nữ công sở', 4.70, 'Quần tây ống đứng nữ lưng cao, thanh lịch chốn văn phòng.', 'Khẳng định sự chuyên nghiệp và khí chất tự tin nơi công sở với quần tây chuẩn form.\n\n**THÔNG TIN SẢN PHẨM**\n- Cạp cao bản to định hình vòng eo.\n- Ống suông đứng kéo dài đôi chân.\n- Ly nổi ép nhiệt phía trước dọc ống quần tạo đường nét sắc sảo.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải Tuyết Mưa dệt thoi nhập khẩu.\n- Dày dặn, không nhăn, không xước chỉ.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Treo quần bằng kẹp để giữ nếp ly.', 270000.00, '2025-12-16 00:40:16', '2026-06-02 17:37:10', 0);
+INSERT INTO `products` VALUES (16, 287, 16, 'Áo Khoác Bomber Couple', 4.80, 'Áo khoác bomber bóng chày đôi, chất nỉ da cá năng động.', 'Mang đậm phong cách High-school Mỹ. Áo bomber đôi giúp cặp đôi đánh dấu chủ quyền một cách thể thao, đáng yêu.\n\n**THÔNG TIN SẢN PHẨM**\n- Cổ bẻ bóng chày, bo chun kẻ sọc tay áo và gấu áo.\n- Nút bấm kim loại siêu bền.\n- Logo chữ thêu nổi bật ngực áo.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Nỉ da cá dày dặn, giữ ấm vừa phải, phù hợp thời tiết se lạnh.\n- Phối tay da PU tạo cảm giác hiện đại.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Giặt tay hoặc giặt máy với chế độ cho đồ nỉ.', 450000.00, '2026-06-06 07:33:55', '2026-06-06 07:33:55', 0);
+INSERT INTO `products` VALUES (17, 288, 17, 'Áo Thun Đôi In Tim', 4.50, 'Áo thun cặp đôi in họa tiết trái tim, đơn giản mà lãng mạn.', 'Thông điệp tình yêu không cần nói thành lời. Cùng diện chiếc áo đôi nhỏ xinh này trong những chuyến du lịch để ghi lại khoảnh khắc đẹp nhất.\n\n**THÔNG TIN SẢN PHẨM**\n- Thiết kế unisex phù hợp nam nữ.\n- Họa tiết trái tim in chuyển nhiệt sắc nét giữa ngực.\n- Form áo rộng vừa phải.\n\n**CHẤT LIỆU SỬ DỤNG**\n- 100% Cotton chải kỹ (Combed Cotton) siêu láng mịn.\n- Bề mặt mát tay, hình in không bong tróc.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- ủi mặt trái của hình in.', 180000.00, '2026-06-06 07:33:55', '2026-06-06 07:33:55', 2);
+INSERT INTO `products` VALUES (18, 289, 18, 'Set Pijama Lụa Satin', 4.90, 'Set Pijama lụa satin cao cấp, thiết kế thanh lịch mang lại cảm giác thư giãn tuyệt đối.', 'Khám phá sự nuông chiều bản thân sau một ngày dài mệt mỏi. Không chỉ là đồ mặc nhà, đây còn là tuyên ngôn về phong cách sống tinh tế.\n\n**THÔNG TIN SẢN PHẨM**\n- Thiết kế tay dài, quần dài lịch sự.\n- Cổ áo pijama viền lé nổi bật.\n- Cúc ngọc trai nhân tạo sang trọng.\n- Quần chun mềm không hằn bụng.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Lụa Satin nhân tạo (Satin Silk) bóng mượt bắt sáng nhẹ.\n- Siêu mềm mịn, lướt trên da mát mẻ.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Giặt tay với dầu gội đầu hoặc xà phòng loãng.\n- Phơi trong bóng râm.', 320000.00, '2026-06-06 07:33:55', '2026-06-06 07:33:55', 2);
+INSERT INTO `products` VALUES (19, 290, 16, 'Áo Hoodie Couple Basic', 4.70, 'Áo hoodie đôi dáng rộng, có mũ trùm ấm áp cho mùa đông.', 'Cái ôm ấm áp nhất vào những ngày gió lùa. Hoodie đôi nỉ bông là món đồ minh chứng cho tình yêu bền chặt, rộng rãi để cùng chui vào một chiếc áo!\n\n**THÔNG TIN SẢN PHẨM**\n- Dáng Oversize form rộng thùng thình chuẩn Hàn Quốc.\n- Túi bụng Kangaroo to bản, mũ trùm sâu.\n- Dây rút dệt đôi chắc chắn.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Nỉ lót bông (Fleece Heavyweight) dệt từ sợi CVC cực kỳ dày dặn.\n- Giữ nhiệt độ cơ thể xuất sắc trong mùa đại hàn.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Lộn trái áo trước khi giặt máy.\n- Dùng nước xả vải để giữ độ tơi xốp cho lớp lông.', 290000.00, '2026-06-06 07:33:55', '2026-06-06 07:33:55', 2);
+INSERT INTO `products` VALUES (20, 291, 1, 'Áo Khoác Da Biker Nam', 4.30, 'Áo khoác da thật phong cách bụi bặm', 'Chi tiết áo khoác da biker với khóa kéo chéo...', 850000.00, '2026-06-06 14:00:00', '2026-06-06 14:00:00', 2);
+INSERT INTO `products` VALUES (21, 292, 11, 'Áo Sơ Mi Lụa Hàn Quốc Nữ', 4.60, 'Sơ mi lụa mềm mịn, thoáng mát', 'Thiết kế thanh lịch phù hợp cho dân công sở...', 320000.00, '2026-06-06 14:00:00', '2026-06-06 14:00:00', 1);
+INSERT INTO `products` VALUES (22, 293, 15, 'Quần Jean Ống Rộng Nữ', 4.90, 'Quần jean form rộng hack dáng', 'Chất liệu denim cao cấp, không bai dão...', 450000.00, '2026-06-06 14:00:00', '2026-06-06 14:00:00', 8);
+INSERT INTO `products` VALUES (23, 294, 3, 'Áo Polo Thể Thao Nam', 4.50, 'Polo thoáng khí thấm hút mồ hôi', 'Thích hợp cho vận động và dạo phố...', 250000.00, '2026-06-06 14:00:00', '2026-06-06 14:00:00', 4);
+INSERT INTO `products` VALUES (24, 295, 12, 'Váy Chữ A Công Sở', 4.80, 'Váy thiết kế đơn giản, tôn dáng', 'Váy form chữ A che khuyết điểm cực tốt...', 380000.00, '2026-06-06 14:00:00', '2026-06-06 14:00:00', 6);
+INSERT INTO `products` VALUES (25, 296, 16, 'Áo Len Đôi Mùa Đông', 4.20, 'Áo len giữ ấm, họa tiết dễ thương', 'Món quà tuyệt vời cho các cặp đôi...', 550000.00, '2026-06-06 14:00:00', '2026-06-06 14:00:00', 0);
 
 -- ----------------------------
 -- Table structure for review
 -- ----------------------------
 DROP TABLE IF EXISTS `review`;
 CREATE TABLE `review`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `variant_id` int(11) NULL DEFAULT NULL,
-  `product_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `rating` int(11) NOT NULL CHECK (`rating` >= 1 and `rating` <= 5),
-  `comment` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `created_at` datetime NULL DEFAULT current_timestamp(),
+  `id` int NOT NULL AUTO_INCREMENT,
+  `variant_id` int NULL DEFAULT NULL,
+  `product_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `rating` int NOT NULL,
+  `comment` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `fk_review_product`(`product_id`) USING BTREE,
-  INDEX `fk_review_variant`(`variant_id`) USING BTREE,
-  INDEX `fk_review_user`(`user_id`) USING BTREE,
+  INDEX `fk_review_product`(`product_id` ASC) USING BTREE,
+  INDEX `fk_review_variant`(`variant_id` ASC) USING BTREE,
+  INDEX `fk_review_user`(`user_id` ASC) USING BTREE,
   CONSTRAINT `fk_review_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_review_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `fk_review_variant` FOREIGN KEY (`variant_id`) REFERENCES `variants` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+  CONSTRAINT `fk_review_variant` FOREIGN KEY (`variant_id`) REFERENCES `variants` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `review_chk_1` CHECK ((`rating` >= 1) and (`rating` <= 5))
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of review
@@ -693,13 +725,13 @@ INSERT INTO `review` VALUES (10, NULL, 1, 9, 2, 'Giao chậm, sản phẩm khôn
 -- ----------------------------
 DROP TABLE IF EXISTS `reviewimages`;
 CREATE TABLE `reviewimages`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `review_id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `review_id` int NOT NULL,
   `image_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `fk_reviewimage_review`(`review_id`) USING BTREE,
+  INDEX `fk_reviewimage_review`(`review_id` ASC) USING BTREE,
   CONSTRAINT `fk_reviewimage_review` FOREIGN KEY (`review_id`) REFERENCES `review` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of reviewimages
@@ -715,16 +747,16 @@ INSERT INTO `reviewimages` VALUES (5, 7, '/images/category-banner/category/man/q
 -- ----------------------------
 DROP TABLE IF EXISTS `subcategories`;
 CREATE TABLE `subcategories`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `category_parent_id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `category_parent_id` int NOT NULL,
   `sub_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `updated_at` datetime NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `fk_subcategory_parent`(`category_parent_id`) USING BTREE,
+  INDEX `fk_subcategory_parent`(`category_parent_id` ASC) USING BTREE,
   CONSTRAINT `fk_subcategory_parent` FOREIGN KEY (`category_parent_id`) REFERENCES `parentcategories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of subcategories
@@ -749,24 +781,44 @@ INSERT INTO `subcategories` VALUES (17, 3, 'Áo thun đôi', '2025-12-24 23:27:5
 INSERT INTO `subcategories` VALUES (18, 3, 'Đồ bộ đôi', '2025-12-24 23:27:53', '/images/category-banner/category/couple/do-bo-doi.png', 'Hoàn hảo & hài hòa');
 
 -- ----------------------------
+-- Table structure for user_tokens
+-- ----------------------------
+DROP TABLE IF EXISTS `user_tokens`;
+CREATE TABLE `user_tokens`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expiry_date` timestamp NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `token`(`token` ASC) USING BTREE,
+  INDEX `user_id`(`user_id` ASC) USING BTREE,
+  CONSTRAINT `user_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of user_tokens
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for users
 -- ----------------------------
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `user_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `password_hash` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `phone` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT 'ACTIVE',
   `role` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT 'CUSTOMER',
-  `created_at` datetime NULL DEFAULT current_timestamp(),
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
   `verification_code` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `enabled` tinyint(1) NULL DEFAULT 0 COMMENT '0: Chưa kích hoạt, 1: Đã kích hoạt',
   `google_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `email`(`email`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+  UNIQUE INDEX `email`(`email` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users
@@ -784,21 +836,22 @@ INSERT INTO `users` VALUES (10, 'Phan Hai Long', 'solong356@gmail.com', '$2a$12$
 INSERT INTO `users` VALUES (13, 'Trần Nhật Trường', 'tkun2k@gmail.com', '$2a$12$iO2CAYtpHi0OMrPacIjEs.TH6C8znaPmIYAzCErUfZgFLFWE8T2Bu', '0949844246', 'Hoạt Động', 'User', '2026-01-05 14:09:25', NULL, 1, NULL);
 INSERT INTO `users` VALUES (14, 'Trần Nhật Trường', 'trannhattruong257@gmail.com', NULL, NULL, 'Hoạt Động', 'User', '2026-01-05 23:29:46', NULL, 1, '113854648859296000907');
 INSERT INTO `users` VALUES (15, 'Trần Nhật Trường', '22130306@st.hcmuaf.edu.vn', '$2a$12$nj3Ex458lmZqmEnq2Iqoye9TkwVAT9h1yvM/t9u9c7knbnCykFPG2', '0949844246', 'Hoạt Động', 'User', '2026-01-21 03:24:05', NULL, 1, '111049883126427327377');
+INSERT INTO `users` VALUES (16, 'Test User', 'testuser@gmail.com', '$2a$12$d3mIVq/seJM14ZZwXi3YEO.UoFLd5YLnSx5JB3WmN4rIDy5rtfv/G', '0987654321', 'Hoạt Động', 'User', '2026-05-17 18:43:00', '977262', 0, NULL);
 
 -- ----------------------------
 -- Table structure for variants
 -- ----------------------------
 DROP TABLE IF EXISTS `variants`;
 CREATE TABLE `variants`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `product_id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `product_id` int NOT NULL,
   `size` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `color` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `quantity` int(11) NOT NULL DEFAULT 0,
+  `quantity` int NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `fk_variant_product`(`product_id`) USING BTREE,
+  INDEX `fk_variant_product`(`product_id` ASC) USING BTREE,
   CONSTRAINT `fk_variant_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 61 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 61 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of variants
@@ -851,11 +904,11 @@ INSERT INTO `variants` VALUES (45, 16, 'XL', 'Đen', 10);
 INSERT INTO `variants` VALUES (46, 16, 'M', 'Xanh Rêu', 20);
 INSERT INTO `variants` VALUES (47, 16, 'L', 'Xanh Rêu', 15);
 INSERT INTO `variants` VALUES (48, 17, 'S', 'Trắng', 30);
-INSERT INTO `variants` VALUES (49, 17, 'M', 'Trắng', 40);
+INSERT INTO `variants` VALUES (49, 17, 'M', 'Trắng', 39);
 INSERT INTO `variants` VALUES (50, 17, 'L', 'Trắng', 35);
 INSERT INTO `variants` VALUES (51, 17, 'S', 'Hồng', 25);
 INSERT INTO `variants` VALUES (52, 17, 'M', 'Hồng', 25);
-INSERT INTO `variants` VALUES (53, 18, 'M', 'Đỏ', 15);
+INSERT INTO `variants` VALUES (53, 18, 'M', 'Đỏ', 14);
 INSERT INTO `variants` VALUES (54, 18, 'L', 'Đỏ', 15);
 INSERT INTO `variants` VALUES (55, 18, 'M', 'Xanh Than', 20);
 INSERT INTO `variants` VALUES (56, 18, 'L', 'Xanh Than', 20);
@@ -865,140 +918,3 @@ INSERT INTO `variants` VALUES (59, 19, 'L', 'Be', 30);
 INSERT INTO `variants` VALUES (60, 19, 'XL', 'Be', 20);
 
 SET FOREIGN_KEY_CHECKS = 1;
-
-SET NAMES utf8mb4;
-SET NAMES utf8mb4;
-
-UPDATE products SET 
-  short_description = 'Áo khoác gió nam 2 lớp chống thấm nước, cản gió cực tốt.',
-  detail_description = 'Người bạn đồng hành lý tưởng trên những chuyến đi xa. Gọn nhẹ, dễ dàng gấp gọn mang theo mọi lúc mọi nơi.\n\n**THÔNG TIN SẢN PHẨM**\n- Thiết kế tay dài có mũ trùm đầu tiện lợi.\n- Bo chun tay áo và gấu áo giúp cản gió tối đa.\n- Hệ thống túi zip an toàn 2 bên hông và túi trong ngực áo để giữ đồ cá nhân.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Lớp ngoài là Polyester công nghệ Nano chống thấm nước, chống xước.\n- Lớp trong lót lưới dệt kim thoáng khí, ngăn cảm giác hầm bí khi mặc liên tục.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Giặt máy ở chế độ nhẹ nhàng.\n- Không sử dụng hóa chất tẩy rửa mạnh.'
-WHERE id = 1;
-
-UPDATE products SET 
-  short_description = 'Áo thun nam dáng basic 100% cotton thoáng mát, form chuẩn dễ phối đồ.',
-  detail_description = 'Chiếc áo quốc dân cho mọi chàng trai, dễ dàng kết hợp với mọi loại quần từ jeans đến kaki.\n\n**THÔNG TIN SẢN PHẨM**\n- Form Regular Fit ôm vừa phải tôn dáng.\n- Cổ tròn bo gân không bai dão.\n- Mũi chỉ may tỉ mỉ, chắc chắn.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Cotton 100% tự nhiên siêu thoáng mát.\n- Thấm hút mồ hôi tốt, lý tưởng cho những ngày hè nắng nóng.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Không giặt chung với quần áo dễ phai màu.\n- Tránh phơi trực tiếp dưới ánh nắng mặt trời gắt.'
-WHERE id = 2;
-
-UPDATE products SET 
-  short_description = 'Áo polo nam chất liệu cá sấu cotton, bề mặt mềm mịn, thanh lịch.',
-  detail_description = 'Áo polo nam mang phong cách tối giản, thanh lịch, phù hợp cho cả đi làm và đi chơi. Đây là mẫu áo luôn nằm trong top best-seller.\n\n**THÔNG TIN SẢN PHẨM**\n- Form áo Regular Fit vừa vặn, không quá ôm sát.\n- Cổ áo dệt gân chắc chắn, phối nút cài tinh tế, giữ form tốt.\n- Logo thương hiệu được thêu tỉ mỉ trước ngực tạo điểm nhấn sang trọng.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải cá sấu cotton interlock 100% tự nhiên cao cấp, mềm mịn.\n- Sợi vải đã qua xử lý công nghệ cao giúp chống co rút và chống nhăn hiệu quả.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Lộn trái áo khi giặt và phơi.'
-WHERE id = 3;
-
-UPDATE products SET 
-  short_description = 'Áo sơ mi nam tay dài, form Slim Fit tôn dáng, chất liệu lụa nến cao cấp.',
-  detail_description = 'Biểu tượng của sự trưởng thành và quyến rũ. Áo sơ mi tay dài giúp phái mạnh luôn tự tin và nổi bật trong các buổi tiệc hay nơi công sở.\n\n**THÔNG TIN SẢN PHẨM**\n- Form Slim Fit ôm khéo léo đường nét cơ thể.\n- Cổ bẻ cứng cáp với lớp lót đệm tinh tế.\n- Cúc áo đính kèm viền ngọc trai sang trọng, tay áo măng sét.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Lụa nến nhập khẩu cao cấp, bề mặt trơn nhẵn.\n- Chống nhăn tự nhiên, tiết kiệm thời gian ủi đồ.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Treo áo bằng móc gỗ hoặc móc bản to để giữ form vai.'
-WHERE id = 4;
-
-UPDATE products SET 
-  short_description = 'Quần short Kaki nam trên gối, trẻ trung năng động, co giãn thoải mái.',
-  detail_description = 'Giải nhiệt mùa hè với chiếc quần short Kaki đa năng, lựa chọn số 1 cho các hoạt động dã ngoại hay dạo phố cuối tuần.\n\n**THÔNG TIN SẢN PHẨM**\n- Độ dài quần vừa vặn trên đầu gối, ống rộng rãi.\n- Túi xéo hai bên sâu rộng, túi mổ phía sau cài cúc thanh lịch.\n- Thiết kế cạp quần vừa vặn, chuẩn số đo.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Kaki thun pha Spandex độ co giãn 4 chiều linh hoạt.\n- Vải đã qua xử lý enzyme giúp bề mặt mềm mại, không thô cứng.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Không dùng chất tẩy rửa mạnh.'
-WHERE id = 5;
-
-UPDATE products SET 
-  short_description = 'Quần tây nam dáng đứng chuẩn công sở, vải tuyết mưa lên form cực chuẩn.',
-  detail_description = 'Mảnh ghép hoàn hảo cho một diện mạo quý ông lịch lãm. Kết hợp cùng sơ mi hoặc áo polo để có ngay một bộ trang phục chuẩn mực.\n\n**THÔNG TIN SẢN PHẨM**\n- Dáng quần Regular Fit suông đứng, tạo cảm giác kéo dài chân.\n- Xếp ly tỉ mỉ trước quần giữ nếp phẳng phiu.\n- Đai quần lót cao su chống tuột áo khi sơ vin.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải tuyết mưa (Vitex) nhập khẩu, có độ rũ tự nhiên, lên form đứng dáng.\n- Chất vải không nhăn, không bám bụi và hoàn toàn không xù lông.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Ưu tiên giặt khô hoặc giặt tay để giữ form lâu dài.'
-WHERE id = 6;
-
-UPDATE products SET 
-  short_description = 'Quần Jeans nam dáng Slim Fit, chất bò denim co giãn nhẹ, thời trang.',
-  detail_description = 'Chiếc quần Jeans quốc dân dễ dàng phối với mọi loại áo, từ T-shirt năng động đến sơ mi lịch lãm.\n\n**THÔNG TIN SẢN PHẨM**\n- Dáng quần Slim Fit ôm vừa phải, tôn dáng nhưng không gò bó.\n- Ống quần may viền chắc chắn, túi xéo tiện lợi rộng rãi.\n- Khóa kéo đồng chống gỉ sét trơn tru.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải Denim pha Spandex mang lại độ co giãn tuyệt vời.\n- Công nghệ wash màu hiện đại giúp quần giữ được màu xanh tự nhiên.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Hạn chế giặt bằng máy giặt ở nhiệt độ cao.'
-WHERE id = 7;
-
-UPDATE products SET 
-  short_description = 'Áo khoác gió nữ siêu nhẹ, chống gió và chống thấm nước tiện lợi.',
-  detail_description = 'Lựa chọn hoàn hảo cho những ngày se lạnh hoặc có mưa phùn nhỏ, thiết kế trẻ trung nữ tính.\n\n**THÔNG TIN SẢN PHẨM**\n- Kiểu dáng ôm nhẹ eo tạo đường cong.\n- Có mũ trùm và túi hai bên tiện ích.\n- Gấp gọn siêu nhanh bỏ vừa túi xách.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải Polyester tráng màng Nano siêu nhẹ.\n- Chống thấm, cản gió cực đỉnh nhưng vẫn thoáng khí.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Chỉ cần giặt nhẹ bằng tay hoặc lau bằng khăn ẩm.'
-WHERE id = 8;
-
-UPDATE products SET 
-  short_description = 'Áo thun nữ cơ bản tôn dáng, dễ phối đồ hàng ngày.',
-  detail_description = 'Mẫu áo không thể thiếu trong tủ đồ mọi cô gái, đa năng và cực kỳ dễ chịu khi mặc.\n\n**THÔNG TIN SẢN PHẨM**\n- Dáng áo ôm nhẹ, cổ tròn thanh lịch.\n- Đường may viền tỉ mỉ, độ bền cao.\n- Phù hợp mặc trong áo khoác hoặc mặc đơn lẻ.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Cotton 100% tự nhiên co giãn nhẹ.\n- Mềm mại và an toàn cho làn da nhạy cảm.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Tránh ủi trực tiếp ở nhiệt độ cao.'
-WHERE id = 9;
-
-UPDATE products SET 
-  short_description = 'Áo polo nữ cổ bẻ trang nhã, dáng suông vừa vặn thoải mái.',
-  detail_description = 'Sự kết hợp giữa vẻ đẹp thanh lịch của áo sơ mi và sự năng động của áo thun.\n\n**THÔNG TIN SẢN PHẨM**\n- Thiết kế cổ bẻ đính cúc ngọc trai nữ tính.\n- Tay áo bo nhẹ gọn gàng.\n- Phom dáng thanh lịch, phù hợp môi trường văn phòng lẫn đi chơi.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải cá sấu Cotton cao cấp, thoáng mát.\n- Không đổ lông, không nhăn nhúm sau nhiều lần giặt.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Không ngâm áo quá lâu trong bột giặt.'
-WHERE id = 10;
-
-UPDATE products SET 
-  short_description = 'Sơ mi trắng nữ form chuẩn, biểu tượng của sự thanh lịch vượt thời gian.',
-  detail_description = 'Vẻ đẹp thuần khiết và chuyên nghiệp. Sơ mi trắng là món đồ "must-have" của các quý cô văn phòng.\n\n**THÔNG TIN SẢN PHẨM**\n- Thiết kế cổ đức truyền thống, phom dáng chiết eo nhẹ tôn dáng.\n- Cúc áo ẩn tinh tế, tay áo măng sét thanh lịch.\n- Dễ dàng kết hợp với chân váy chữ A hoặc quần tây.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Lụa tơ tằm pha Cotton chống nhăn tuyệt vời.\n- Bề mặt mịn màng, thân thiện với làn da.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- ủi ở nhiệt độ thấp để giữ độ bóng của vải.'
-WHERE id = 11;
-
-UPDATE products SET 
-  short_description = 'Váy xòe hoa nhí phong cách vintage ngọt ngào, dịu dàng.',
-  detail_description = 'Làn gió mát mẻ mùa hè mang đến sự nữ tính và ngọt ngào qua họa tiết hoa nhí xinh xắn.\n\n**THÔNG TIN SẢN PHẨM**\n- Dáng chữ A xòe bồng bềnh, che khuyết điểm vùng hông.\n- Cổ vuông cổ điển khoe xương quai xanh.\n- Dây kéo chìm phía sau tinh tế.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải Voan lụa 2 lớp siêu nhẹ, không lo lộ nội y.\n- Thoáng mát và rũ mềm mại.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Giặt tay với nước lạnh để giữ nếp bồng bềnh.'
-WHERE id = 12;
-
-UPDATE products SET 
-  short_description = 'Đầm body nữ quyến rũ, chất thun ôm sát tôn đường cong hoàn hảo.',
-  detail_description = 'Nữ hoàng của những buổi tiệc tối. Thiết kế ôm trọn cơ thể, phô diễn trọn vẹn nét quyến rũ.\n\n**THÔNG TIN SẢN PHẨM**\n- Phom dáng Bodycon ôm sát đường cong.\n- Chiều dài qua gối thanh lịch, xẻ tà quyến rũ.\n- Cổ chữ V khoét sâu gợi cảm.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Thun lụa co giãn 4 chiều định hình cơ thể xuất sắc.\n- Chất vải dày dặn, không lộ viền nội y.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Giặt khô hoặc giặt nhẹ bằng tay, phơi ngang mặt phẳng.'
-WHERE id = 13;
-
-UPDATE products SET 
-  short_description = 'Quần short jean nữ cạp cao, rách gấu tua rua cá tính.',
-  detail_description = 'Đại diện cho sự trẻ trung, phá cách và gợi cảm. Quần short jean cạp cao giúp các nàng hack dáng tuyệt đối.\n\n**THÔNG TIN SẢN PHẨM**\n- Cạp cao qua rốn che bụng hoàn hảo.\n- Ống quần rách gấu tua rua cực cool ngầu.\n- Dáng A-line tạo cảm giác đùi thon gọn.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải Jean Cotton tinh khiết không co giãn, giữ form tuyệt đối.\n- Công nghệ nhuộm Denim bền màu.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Lộn trái trước khi giặt máy.'
-WHERE id = 14;
-
-UPDATE products SET 
-  short_description = 'Quần tây ống đứng nữ lưng cao, thanh lịch chốn văn phòng.',
-  detail_description = 'Khẳng định sự chuyên nghiệp và khí chất tự tin nơi công sở với quần tây chuẩn form.\n\n**THÔNG TIN SẢN PHẨM**\n- Cạp cao bản to định hình vòng eo.\n- Ống suông đứng kéo dài đôi chân.\n- Ly nổi ép nhiệt phía trước dọc ống quần tạo đường nét sắc sảo.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Vải Tuyết Mưa dệt thoi nhập khẩu.\n- Dày dặn, không nhăn, không xước chỉ.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Treo quần bằng kẹp để giữ nếp ly.'
-WHERE id = 15;
-
-UPDATE products SET 
-  short_description = 'Áo khoác bomber bóng chày đôi, chất nỉ da cá năng động.',
-  detail_description = 'Mang đậm phong cách High-school Mỹ. Áo bomber đôi giúp cặp đôi đánh dấu chủ quyền một cách thể thao, đáng yêu.\n\n**THÔNG TIN SẢN PHẨM**\n- Cổ bẻ bóng chày, bo chun kẻ sọc tay áo và gấu áo.\n- Nút bấm kim loại siêu bền.\n- Logo chữ thêu nổi bật ngực áo.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Nỉ da cá dày dặn, giữ ấm vừa phải, phù hợp thời tiết se lạnh.\n- Phối tay da PU tạo cảm giác hiện đại.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Giặt tay hoặc giặt máy với chế độ cho đồ nỉ.'
-WHERE id = 16;
-
-UPDATE products SET 
-  short_description = 'Áo thun cặp đôi in họa tiết trái tim, đơn giản mà lãng mạn.',
-  detail_description = 'Thông điệp tình yêu không cần nói thành lời. Cùng diện chiếc áo đôi nhỏ xinh này trong những chuyến du lịch để ghi lại khoảnh khắc đẹp nhất.\n\n**THÔNG TIN SẢN PHẨM**\n- Thiết kế unisex phù hợp nam nữ.\n- Họa tiết trái tim in chuyển nhiệt sắc nét giữa ngực.\n- Form áo rộng vừa phải.\n\n**CHẤT LIỆU SỬ DỤNG**\n- 100% Cotton chải kỹ (Combed Cotton) siêu láng mịn.\n- Bề mặt mát tay, hình in không bong tróc.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- ủi mặt trái của hình in.'
-WHERE id = 17;
-
-UPDATE products SET 
-  short_description = 'Set Pijama lụa satin cao cấp, thiết kế thanh lịch mang lại cảm giác thư giãn tuyệt đối.',
-  detail_description = 'Khám phá sự nuông chiều bản thân sau một ngày dài mệt mỏi. Không chỉ là đồ mặc nhà, đây còn là tuyên ngôn về phong cách sống tinh tế.\n\n**THÔNG TIN SẢN PHẨM**\n- Thiết kế tay dài, quần dài lịch sự.\n- Cổ áo pijama viền lé nổi bật.\n- Cúc ngọc trai nhân tạo sang trọng.\n- Quần chun mềm không hằn bụng.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Lụa Satin nhân tạo (Satin Silk) bóng mượt bắt sáng nhẹ.\n- Siêu mềm mịn, lướt trên da mát mẻ.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Giặt tay với dầu gội đầu hoặc xà phòng loãng.\n- Phơi trong bóng râm.'
-WHERE id = 18;
-
-UPDATE products SET 
-  short_description = 'Áo hoodie đôi dáng rộng, có mũ trùm ấm áp cho mùa đông.',
-  detail_description = 'Cái ôm ấm áp nhất vào những ngày gió lùa. Hoodie đôi nỉ bông là món đồ minh chứng cho tình yêu bền chặt, rộng rãi để cùng chui vào một chiếc áo!\n\n**THÔNG TIN SẢN PHẨM**\n- Dáng Oversize form rộng thùng thình chuẩn Hàn Quốc.\n- Túi bụng Kangaroo to bản, mũ trùm sâu.\n- Dây rút dệt đôi chắc chắn.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Nỉ lót bông (Fleece Heavyweight) dệt từ sợi CVC cực kỳ dày dặn.\n- Giữ nhiệt độ cơ thể xuất sắc trong mùa đại hàn.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Lộn trái áo trước khi giặt máy.\n- Dùng nước xả vải để giữ độ tơi xốp cho lớp lông.'
-WHERE id = 19;
-
-
--- Thêm cột sold_quantity vào products
-ALTER TABLE products ADD COLUMN IF NOT EXISTS sold_quantity INT DEFAULT 0;
-
--- Cập nhật sold_quantity dựa trên dữ liệu orderdetails
-UPDATE products p
-LEFT JOIN (
-    SELECT variant_id, SUM(quantity) as total_sold
-    FROM orderdetails
-    GROUP BY variant_id
-) od ON p.id = (SELECT product_id FROM variants v WHERE v.id = od.variant_id)
-SET p.sold_quantity = COALESCE(od.total_sold, 0);
-
--- Chèn ảnh giả cho 6 sản phẩm mới
-INSERT INTO images (id, image_name, path, product_id) VALUES 
-(291, 'Áo Khoác Da Biker', '/images/no-image.png', NULL),
-(292, 'Sơ Mi Lụa Hàn Quốc', '/images/no-image.png', NULL),
-(293, 'Quần Jean Ống Rộng', '/images/no-image.png', NULL),
-(294, 'Áo Polo Thể Thao', '/images/no-image.png', NULL),
-(295, 'Váy Chữ A', '/images/no-image.png', NULL),
-(296, 'Áo Len Đôi', '/images/no-image.png', NULL);
-
--- Chèn 6 sản phẩm mới với đầy đủ ảnh và utf8
-INSERT INTO products (id, image_id, category_sub_id, product_name, short_description, detail_description, price, average_rating, created_at, updated_at, sold_quantity) VALUES 
-(20, 291, 1, 'Áo Khoác Da Biker Nam', 'Áo khoác da thật phong cách bụi bặm', 'Chi tiết áo khoác da biker với khóa kéo chéo...', 850000, 4.3, NOW(), NOW(), 2), 
-(21, 292, 11, 'Áo Sơ Mi Lụa Hàn Quốc Nữ', 'Sơ mi lụa mềm mịn, thoáng mát', 'Thiết kế thanh lịch phù hợp cho dân công sở...', 320000, 4.6, NOW(), NOW(), 1), 
-(22, 293, 15, 'Quần Jean Ống Rộng Nữ', 'Quần jean form rộng hack dáng', 'Chất liệu denim cao cấp, không bai dão...', 450000, 4.9, NOW(), NOW(), 8), 
-(23, 294, 3, 'Áo Polo Thể Thao Nam', 'Polo thoáng khí thấm hút mồ hôi', 'Thích hợp cho vận động và dạo phố...', 250000, 4.5, NOW(), NOW(), 4), 
-(24, 295, 12, 'Váy Chữ A Công Sở', 'Váy thiết kế đơn giản, tôn dáng', 'Váy form chữ A che khuyết điểm cực tốt...', 380000, 4.8, NOW(), NOW(), 6), 
-(25, 296, 16, 'Áo Len Đôi Mùa Đông', 'Áo len giữ ấm, họa tiết dễ thương', 'Món quà tuyệt vời cho các cặp đôi...', 550000, 4.2, NOW(), NOW(), 0);
-
--- Liên kết ảnh về lại sản phẩm
-UPDATE images SET product_id = 20 WHERE id = 291;
-UPDATE images SET product_id = 21 WHERE id = 292;
-UPDATE images SET product_id = 22 WHERE id = 293;
-UPDATE images SET product_id = 23 WHERE id = 294;
-UPDATE images SET product_id = 24 WHERE id = 295;
-UPDATE images SET product_id = 25 WHERE id = 296;

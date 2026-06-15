@@ -1,5 +1,5 @@
 function addToCart(variantId, optionalQuantity = null) {
-    if (!variantId || variantId === "null" || variantId.trim() === "") {
+    if (!variantId || String(variantId) === "null" || String(variantId).trim() === "") {
         showAppToast("Vui lòng chọn Size và Màu!", "warning");
         return;
     }

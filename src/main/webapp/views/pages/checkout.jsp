@@ -86,8 +86,8 @@
                                                        value="${not empty phone ? phone : sessionScope.auth.phone}"
                                                        placeholder="Điện thoại" id="input-shipping-custom-field-29"
                                                        class="form-control"
-                                                       required
-                                                       pattern="^(0|\+?84)[3|5|7|8|9][0-9]{8}$"
+                                                       required=""
+                                                       pattern="^(0|\+84)[35789][0-9]{8}$"
                                                        oninput="this.value = this.value.replace(/[^0-9+]/g, '');"/>
                                                 <div id="error-shipping-custom-field-29" class="invalid-feedback">Số điện thoại không hợp lệ (Bắt đầu bằng 0 hoặc 84, theo sau là 9 chữ số).</div>
                                             </div>
@@ -95,7 +95,7 @@
                                             <div class="col col-md-12 mb-3 order-4"> <div class="row">
                                                 <div class="col mb-3 required">
                                                     <label class="form-label" for="province">Tỉnh / thành phố</label>
-                                                    <select id="province" name="city" class="form-select">
+                                                    <select id="province" name="city" class="form-select" data-selected-name="${not empty userAddress ? userAddress.province : ''}">
                                                         <option value="">-- Chọn Tỉnh / Thành phố --</option>
                                                     </select>
                                                     <div id="error-shipping-zone" class="invalid-feedback"></div>
@@ -103,7 +103,7 @@
 
                                                 <div class="col mb-3 custom-field custom-field-30 required">
                                                     <label class="form-label" for="district">Quận / Huyện</label>
-                                                    <select id="district" name="district" class="form-select" disabled>
+                                                    <select id="district" name="district" class="form-select" data-selected-name="${not empty userAddress ? userAddress.district : ''}" disabled>
                                                         <option value="">-- Chọn Quận / Huyện --</option>
                                                     </select>
                                                     <div id="error-shipping-custom-field-30" class="invalid-feedback"></div>
@@ -111,10 +111,15 @@
 
                                                 <div class="col mb-3 custom-field required">
                                                     <label class="form-label" for="ward">Phường / Xã</label>
-                                                    <select id="ward" name="ward" class="form-select" disabled>
+                                                    <select id="ward" name="ward" class="form-select" data-selected-name="${not empty userAddress ? userAddress.ward : ''}" disabled>
                                                         <option value="">-- Chọn Phường / Xã --</option>
                                                     </select>
                                                 </div>
+                                                
+                                                <!-- Hidden fields to submit text names instead of GHN IDs -->
+                                                <input type="hidden" name="provinceName" id="provinceName" value="${not empty userAddress ? userAddress.province : ''}" />
+                                                <input type="hidden" name="districtName" id="districtName" value="${not empty userAddress ? userAddress.district : ''}" />
+                                                <input type="hidden" name="wardName" id="wardName" value="${not empty userAddress ? userAddress.ward : ''}" />
                                             </div>
                                             </div>
 

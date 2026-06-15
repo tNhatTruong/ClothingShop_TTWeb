@@ -6,7 +6,6 @@
                 <%@ page import="com.clothingshop.styleera.model.Review" %>
                     <%@ page import="com.clothingshop.styleera.model.Product" %>
                         <%@ page import="java.text.SimpleDateFormat" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
                             <!DOCTYPE html>
                             <html lang="vi">
@@ -49,38 +48,113 @@
                                     <div class="product_detail_container">
                                         <div class="product_detail_wrapper">
 
-                                            <!-- LEFT: PRODUCT IMAGES -->
                                             <div class="product_images">
-                                                <%-- CODE THÔNG MINH: Tự động kiểm tra và chuẩn hóa đường dẫn ảnh chính --%>
                                                 <c:choose>
-                                                    <c:when test="${fn:startsWith(imageList[0], root)}">
-                                                        <c:set var="correctedMainImg" value="${imageList[0]}" />
+                                                    <c:when test="${fn:startsWith(product.safeThumbnail, root)}">
+                                                        <c:set var="correctedMainImg" value="${product.safeThumbnail}" />
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <c:set var="correctedMainImg" value="${root}${imageList[0]}" />
+                                                        <c:set var="correctedMainImg" value="${root}${product.safeThumbnail}" />
                                                     </c:otherwise>
                                                 </c:choose>
-
                                                 <div class="product_main_image">
-                                                    <img id="mainImage" src="${correctedMainImg}" alt="${product.product_name}">
+                                                    <img id="mainImage" src="${correctedMainImg}"
+                                                        alt="${product.product_name}">
                                                 </div>
 
+                                                <style>
+                                                    .product_thumbs {
+                                                        display: flex;
+                                                        gap: 10px;
+                                                        margin-top: 15px;
+                                                    }
+                                                    .thumb-item {
+                                                        width: 80px;
+                                                        height: 80px;
+                                                        cursor: pointer;
+                                                        border: 2px solid transparent;
+                                                        border-radius: 4px;
+                                                        overflow: hidden;
+                                                        position: relative;
+                                                    }
+                                                    .thumb-item img {
+                                                        width: 100%;
+                                                        height: 100%;
+                                                        object-fit: cover;
+                                                    }
+                                                    .thumb-item:hover, .thumb-item.active {
+                                                        border-color: #000;
+                                                    }
+                                                    .overlay-thumb {
+                                                        background-color: #000;
+                                                    }
+                                                    .overlay-text {
+                                                        position: absolute;
+                                                        top: 50%;
+                                                        left: 50%;
+                                                        transform: translate(-50%, -50%);
+                                                        color: white;
+                                                        font-size: 20px;
+                                                        font-weight: bold;
+                                                        pointer-events: none;
+                                                    }
+                                                </style>
                                                 <div class="product_thumbs">
-                                                    <c:forEach items="${imageList}" var="imgUrl" begin="0" end="1">
-                                                        <c:choose>
-                                                            <c:when test="${fn:startsWith(imgUrl, root)}">
-                                                                <c:set var="thumbUrl" value="${imgUrl}" />
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <c:set var="thumbUrl" value="${root}${imgUrl}" />
-                                                            </c:otherwise>
-                                                        </c:choose>
+                                                    <c:set var="totalUnique" value="1" />
+                                                    <c:forEach items="${imageList}" var="imgUrl">
+                                                        <c:if test="${imgUrl ne product.safeThumbnail}">
+                                                            <c:set var="totalUnique" value="${totalUnique + 1}" />
+                                                        </c:if>
+                                                    </c:forEach>
 
-                                                        <img src="${thumbUrl}" alt="Thumbnail"
-                                                             onclick="changeImage('${thumbUrl}')"
-                                                             style="cursor: pointer;">
+                                                    <div class="thumb-item active" onclick="changeImage('${correctedMainImg}'); updateActiveThumb(this);">
+                                                        <img src="${correctedMainImg}" alt="Thumbnail">
+                                                    </div>
+
+                                                    <c:set var="thumbCount" value="1" />
+                                                    <c:forEach items="${imageList}" var="imgUrl">
+                                                        <c:if test="${imgUrl ne product.safeThumbnail}">
+                                                            <c:choose>
+                                                                <c:when test="${fn:startsWith(imgUrl, root)}">
+                                                                    <c:set var="correctedThumb" value="${imgUrl}" />
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <c:set var="correctedThumb" value="${root}${imgUrl}" />
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                            <c:choose>
+                                                                <c:when test="${thumbCount < 3}">
+                                                                    <div class="thumb-item" onclick="changeImage('${correctedThumb}'); updateActiveThumb(this);">
+                                                                        <img src="${correctedThumb}" alt="Thumbnail">
+                                                                    </div>
+                                                                    <c:set var="thumbCount" value="${thumbCount + 1}" />
+                                                                </c:when>
+                                                                <c:when test="${thumbCount == 3}">
+                                                                    <c:choose>
+                                                                        <c:when test="${totalUnique > 4}">
+                                                                            <div class="thumb-item overlay-thumb" onclick="openImageModal()">
+                                                                                <img src="${correctedThumb}" alt="Thumbnail" style="opacity: 0.4;">
+                                                                                <span class="overlay-text">+${totalUnique - 3}</span>
+                                                                            </div>
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            <div class="thumb-item" onclick="changeImage('${correctedThumb}'); updateActiveThumb(this);">
+                                                                                <img src="${correctedThumb}" alt="Thumbnail">
+                                                                            </div>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+                                                                    <c:set var="thumbCount" value="${thumbCount + 1}" />
+                                                                </c:when>
+                                                            </c:choose>
+                                                        </c:if>
                                                     </c:forEach>
                                                 </div>
+                                                <script>
+                                                    function updateActiveThumb(element) {
+                                                        document.querySelectorAll('.thumb-item').forEach(el => el.classList.remove('active'));
+                                                        element.classList.add('active');
+                                                    }
+                                                </script>
                                             </div>
 
                                             <!-- RIGHT: PRODUCT INFO -->
@@ -515,5 +589,41 @@
     const variantsDataTemplate = document.getElementById('variantsDataTemplate');
     const variantsData = variantsDataTemplate ? JSON.parse(variantsDataTemplate.textContent) : [];
 </script>
+
+<!-- Full Image Gallery Modal -->
+<div class="modal fade" id="imageGalleryModal" tabindex="-1" aria-labelledby="imageGalleryModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="imageGalleryModalLabel">Tất cả hình ảnh (${totalUnique})</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body bg-light">
+        <div class="row g-3">
+          <!-- Main Image -->
+          <div class="col-6 col-md-4 col-lg-3">
+            <img src="${root}${product.safeThumbnail}" class="img-fluid rounded shadow-sm w-100" style="aspect-ratio: 1/1; object-fit: cover;">
+          </div>
+          <!-- Other Images -->
+          <c:forEach items="${imageList}" var="imgUrl">
+            <c:if test="${imgUrl ne product.safeThumbnail}">
+              <div class="col-6 col-md-4 col-lg-3">
+                <img src="${root}${imgUrl}" class="img-fluid rounded shadow-sm w-100" style="aspect-ratio: 1/1; object-fit: cover;">
+              </div>
+            </c:if>
+          </c:forEach>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    function openImageModal() {
+        var myModal = new bootstrap.Modal(document.getElementById('imageGalleryModal'));
+        myModal.show();
+    }
+</script>
+
 </body>
 </html>

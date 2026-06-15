@@ -1,9 +1,6 @@
 package com.clothingshop.styleera.controller;
 
 import com.clothingshop.styleera.dao.OrdersDAO;
-import com.clothingshop.styleera.dao.OrderDetailsDAO;
-import com.clothingshop.styleera.dao.VariantDAO;
-import com.clothingshop.styleera.model.OrderDetail;
 import com.clothingshop.styleera.util.VnPayConfig;
 import com.clothingshop.styleera.util.VnPayUtils;
 import jakarta.servlet.ServletException;
@@ -65,13 +62,15 @@ public class VnPayReturnController extends HttpServlet {
         String signValue = VnPayUtils.hmacSHA512(VnPayConfig.vnp_HashSecret, hashData.toString());
         
         OrdersDAO ordersDAO = new OrdersDAO();
-        OrderDetailsDAO orderDetailsDAO = new OrderDetailsDAO();
-        VariantDAO variantDAO = new VariantDAO();
 
         String txnRef = request.getParameter("vnp_TxnRef");
         int orderId = 0;
         try {
-            orderId = Integer.parseInt(txnRef);
+            if (txnRef != null && txnRef.contains("_")) {
+                orderId = Integer.parseInt(txnRef.split("_")[0]);
+            } else {
+                orderId = Integer.parseInt(txnRef);
+            }
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
@@ -84,33 +83,12 @@ public class VnPayReturnController extends HttpServlet {
                 }
                 response.sendRedirect(request.getContextPath() + "/order-success?id=" + orderId);
             } else {
-                // Thanh toán thất bại hoặc bị hủy
-                if (orderId > 0) {
-                    ordersDAO.updateStatus(orderId, "Hủy (Lỗi Thanh Toán)");
-                    // Hoàn trả số lượng tồn kho
-                    List<OrderDetail> details = orderDetailsDAO.findByOrderId(orderId);
-                    if (details != null) {
-                        for (OrderDetail detail : details) {
-                            variantDAO.restoreStock(detail.getVariant_id(), detail.getQuantity());
-                        }
-                    }
-                }
-                request.setAttribute("errorMessage", "Thanh toán không thành công hoặc đã bị hủy.");
-                request.getRequestDispatcher("/views/pages/cart.jsp").forward(request, response);
+                // Thanh toán thất bại hoặc bị hủy (Giữ nguyên trạng thái Chờ thanh toán)
+                response.sendRedirect(request.getContextPath() + "/order-status?id=" + orderId + "&error=payment_failed");
             }
         } else {
             // Chữ ký không hợp lệ
-            if (orderId > 0) {
-                ordersDAO.updateStatus(orderId, "Hủy (Lỗi Thanh Toán)");
-                List<OrderDetail> details = orderDetailsDAO.findByOrderId(orderId);
-                if (details != null) {
-                    for (OrderDetail detail : details) {
-                        variantDAO.restoreStock(detail.getVariant_id(), detail.getQuantity());
-                    }
-                }
-            }
-            request.setAttribute("errorMessage", "Lỗi bảo mật: Chữ ký thanh toán không hợp lệ!");
-            request.getRequestDispatcher("/views/pages/cart.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/order-status?id=" + orderId + "&error=invalid_signature");
         }
     }
 }

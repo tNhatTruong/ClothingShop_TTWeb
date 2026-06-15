@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <c:set var="root" value="${pageContext.request.contextPath}" scope="request" />
 
 <!DOCTYPE html>
@@ -12,7 +13,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="${root}/css/header-footer.css">
-    <link rel="stylesheet" href="${root}/css/order-history.css">
+    <link rel="stylesheet" href="${root}/css/account.css">
 </head>
 
 <body>
@@ -20,152 +21,114 @@
 <jsp:include page="/views/layout/header.jsp" />
 
 <!-- ===== MAIN CONTENT ===== -->
-<main class="orders-history py-5" style="background: #f5f0e6;">
+<main>
     <div class="container">
-        <!-- Page Header -->
-        <div class="text-center mb-5">
-            <h1 class="fw-bold" style="color: #212121;">Lịch sử đơn hàng</h1>
-            <p class="text-muted">Xem lại các đơn hàng bạn đã đặt trước đây</p>
-        </div>
+        <div class="row mt-4">
+            <!-- Sidebar Navigation -->
+            <div class="col-md-3">
+                <div class="sidebar">
+                    <h4>TÀI KHOẢN</h4>
+                    <a href="${root}/account">Thông tin tài khoản</a>
+                    <c:choose>
+                        <c:when test="${empty sessionScope.auth.password_hash}">
+                            <a href="${root}/set-password">Thiết lập mật khẩu</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="${root}/change-password">Đổi mật khẩu</a>
+                        </c:otherwise>
+                    </c:choose>
+                    <a href="${root}/order-history" class="active">Xem lịch sử mua hàng</a>
+                    <a href="${root}/logout" id="logoutBtn">Đăng xuất</a>
+                </div>
+            </div>
 
-        <!-- Orders Table -->
-        <div class="table-responsive">
-            <table class="orders-table">
-                <thead>
-                <tr>
-                    <th>Mã đơn</th>
-                    <th>Ngày đặt</th>
-                    <th>Hình ảnh</th>
-                    <th>Trạng thái</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <!-- Đơn hàng 1 -->
-                <tr class="order-row">
-                    <td>ORD12345</td>
-                    <td>16/11/2025</td>
-                    <td><img src="../../images/category-banner/category/man/ao-thun-nam.png" alt="Áo thun nam"
-                             class="order-product-img"></td>
-                    <td>Hoàn tất</td>
-                    <td>
-                        <button class="btn-primary btn-view-details">Xem chi tiết</button>
-                        <button class="btn-secondary btn-reorder">Mua lại</button>
-                        <button class="btn-secondary btn-reorder" onclick="location.href='${root}/review'">Đánh giá</button>
-                    </td>
-                </tr>
-                <tr class="order-details" style="display: none;">
-                    <td colspan="5">
-                        <div class="details-content">
-                            <p>Sản phẩm: Áo thun nam</p>
-                            <p>Số lượng: 2</p>
-                            <p>Tổng tiền: 500.000đ</p>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- Đơn hàng 2 -->
-                <tr class="order-row">
-                    <td>ORD12346</td>
-                    <td>15/11/2025</td>
-                    <td><img src="../../images/category-banner/category/man/quan-jean-nam.png" alt="Quần Jean nam"
-                             class="order-product-img"></td>
-                    <td>Đang giao</td>
-                    <td>
-                        <button class="btn-primary btn-view-details">Xem chi tiết</button>
-                        <button class="btn-secondary btn-reorder">Mua lại</button>
-                        <button class="btn-secondary btn-reorder" onclick="location.href='${root}/review'">Đánh giá</button>
-                    </td>
-                </tr>
-                <tr class="order-details" style="display: none;">
-                    <td colspan="5">
-                        <div class="details-content">
-                            <p>Sản phẩm: Quần Jean nam</p>
-                            <p>Số lượng: 1</p>
-                            <p>Tổng tiền: 350.000đ</p>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- Đơn hàng 3 -->
-                <tr class="order-row">
-                    <td>ORD12347</td>
-                    <td>12/11/2025</td>
-                    <td><img src="../../images/category-banner/category/woman/vay-nu.png" alt="Váy nữ"
-                             class="order-product-img"></td>
-                    <td>Hoàn tất</td>
-                    <td>
-                        <button class="btn-primary btn-view-details">Xem chi tiết</button>
-                        <button class="btn-secondary btn-reorder">Mua lại</button>
-                        <button class="btn-secondary btn-reorder" onclick="location.href='${root}/review'">Đánh giá</button>
-                    </td>
-                </tr>
-                <tr class="order-details" style="display: none;">
-                    <td colspan="5">
-                        <div class="details-content">
-                            <p>Sản phẩm: Váy nữ</p>
-                            <p>Số lượng: 1</p>
-                            <p>Tổng tiền: 450.000đ</p>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- Đơn hàng 4 -->
-                <tr class="order-row">
-                    <td>ORD12348</td>
-                    <td>10/11/2025</td>
-                    <td><img src="../../images/category-banner/category/man/ao-khoac-nam.png" alt="Áo khoác nam"
-                             class="order-product-img"></td>
-                    <td>Đang xử lý</td>
-                    <td>
-                        <button class="btn-primary btn-view-details">Xem chi tiết</button>
-                        <button class="btn-secondary btn-reorder">Mua lại</button>
-                        <button class="btn-secondary btn-reorder" onclick="location.href='${root}/review'">Đánh giá</button>
-                    </td>
-                </tr>
-                <tr class="order-details" style="display: none;">
-                    <td colspan="5">
-                        <div class="details-content">
-                            <p>Sản phẩm: Áo khoác nam</p>
-                            <p>Số lượng: 1</p>
-                            <p>Tổng tiền: 600.000đ</p>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- Đơn hàng 5 -->
-                <tr class="order-row">
-                    <td>ORD12349</td>
-                    <td>08/11/2025</td>
-                    <td><img src="../../images/category-banner/category/woman/ao-polo-nu.png" alt="Áo Polo nữ"
-                             class="order-product-img"></td>
-                    <td>Hoàn tất</td>
-                    <td>
-                        <button class="btn-primary btn-view-details">Xem chi tiết</button>
-                        <button class="btn-secondary btn-reorder">Mua lại</button>
-                        <button class="btn-secondary btn-reorder" onclick="location.href='${root}/review'">Đánh giá</button>
-                    </td>
-                </tr>
-                <tr class="order-details" style="display: none;">
-                    <td colspan="5">
-                        <div class="details-content">
-                            <p>Sản phẩm: Áo Polo nữ</p>
-                            <p>Số lượng: 2</p>
-                            <p>Tổng tiền: 700.000đ</p>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- No Orders Message (if empty) -->
-        <div class="text-center mt-5 d-none" id="no-orders-msg">
-            <p class="text-muted fs-5">Bạn chưa có đơn hàng nào.</p>
+            <!-- Orders Content -->
+            <div class="col-md-9">
+                <div class="content">
+                    <h4 class="mb-4" style="border-bottom: 2px solid #D4AF37; padding-bottom: 10px;">LỊCH SỬ ĐƠN HÀNG</h4>
+                    
+                    <c:choose>
+                        <c:when test="${not empty ordersList}">
+                            <div class="order-list">
+                                <c:forEach var="order" items="${ordersList}">
+                                    <c:set var="firstDetail" value="${firstDetailMap[order.id]}" />
+                                    <c:set var="variant" value="${variantMap[firstDetail.variant_id]}" />
+                                    <c:set var="detailCount" value="${detailCountMap[order.id]}" />
+                                    
+                                    <div class="card mb-4 border-0 shadow-sm order-card">
+                                        <div class="card-header bg-light d-flex justify-content-between align-items-center border-bottom-0 pt-3 pb-3">
+                                            <div>
+                                                <span class="fw-bold me-3">Mã đơn: #${order.id}</span>
+                                                <span class="text-muted" style="font-size: 0.9rem;">
+                                                    <fmt:parseDate value="${order.createdAt}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDate" type="both" />
+                                                    <i class="far fa-clock me-1"></i><fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${parsedDate}" />
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <c:choose>
+                                                    <c:when test="${order.status == 'Đang xử lý' || order.status == 'Chờ xác nhận'}">
+                                                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class="fas fa-spinner fa-spin me-1"></i>${order.status}</span>
+                                                    </c:when>
+                                                    <c:when test="${order.status == 'Đang giao hàng'}">
+                                                        <span class="badge bg-info text-dark px-3 py-2 rounded-pill"><i class="fas fa-truck me-1"></i>${order.status}</span>
+                                                    </c:when>
+                                                    <c:when test="${order.status == 'Đã giao' || order.status == 'Hoàn thành'}">
+                                                        <span class="badge bg-success px-3 py-2 rounded-pill"><i class="fas fa-check-circle me-1"></i>${order.status}</span>
+                                                    </c:when>
+                                                    <c:when test="${order.status == 'Đã hủy'}">
+                                                        <span class="badge bg-danger px-3 py-2 rounded-pill"><i class="fas fa-times-circle me-1"></i>${order.status}</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="badge bg-secondary px-3 py-2 rounded-pill">${order.status}</span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center">
+                                                <div class="product-img-wrapper me-4 border rounded p-1" style="width: 100px; height: 100px; flex-shrink: 0;">
+                                                    <c:if test="${not empty variant}">
+                                                        <img src="${root}${variant.product.safeThumbnail}" alt="${variant.product.product_name}" class="img-fluid w-100 h-100" style="object-fit: cover;">
+                                                    </c:if>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <h6 class="fw-bold mb-1" style="font-size: 1.1rem;">${variant.product.product_name}</h6>
+                                                    <p class="text-muted mb-2 mb-0" style="font-size: 0.95rem;">Phân loại: ${variant.color}, Size ${variant.size}</p>
+                                                    <p class="mb-0 fw-medium">x${firstDetail.quantity}</p>
+                                                </div>
+                                            </div>
+                                            <c:if test="${detailCount > 1}">
+                                                <div class="mt-3 text-center py-2" style="background-color: #f8f9fa; border-radius: 8px; border: 1px dashed #dee2e6;">
+                                                    <span class="text-muted" style="font-size: 0.9rem;"><i class="fas fa-box-open me-2"></i>...và ${detailCount - 1} sản phẩm khác</span>
+                                                </div>
+                                            </c:if>
+                                        </div>
+                                        <div class="card-footer bg-white border-top-0 pt-0 pb-3 d-flex justify-content-between align-items-end">
+                                            <div>
+                                                <span class="text-muted d-block" style="font-size: 0.9rem;">Tổng thanh toán</span>
+                                                <span class="fw-bold text-danger" style="font-size: 1.25rem;"><fmt:formatNumber value="${order.totalPrice}" type="number" maxFractionDigits="0"/>đ</span>
+                                            </div>
+                                            <div>
+                                                <a href="${root}/order-status?orderId=${order.id}" class="btn px-4 py-2 text-white fw-medium shadow-sm" style="background-color: #D4AF37; border-radius: 6px;">Xem chi tiết</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <div class="text-center py-5">
+                                <img src="${root}/images/empty-cart.png" alt="No orders" class="img-fluid mb-3" style="max-width: 150px; opacity: 0.5;">
+                                <p class="text-muted fs-5">Bạn chưa có đơn hàng nào.</p>
+                                <a href="${root}/home" class="btn btn-dark mt-3 px-4 py-2">Tiếp tục mua sắm</a>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </div>
         </div>
     </div>
 </main>
-
 
 <!-- ===== FOOTER ===== -->
 <jsp:include page="/views/layout/footer.jsp" />
@@ -175,6 +138,5 @@
 
 <!-- Custom JavaScript -->
 <script src="../../js/main.js"></script>
-<script src="../../js/order-history.js"></script>
 </body>
 </html>
