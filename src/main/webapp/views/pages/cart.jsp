@@ -35,11 +35,11 @@
                                 <li class="breadcrumb-item active" id="breadcrumb-category">Giỏ hàng</li>
                             </ol>
                         </nav>
-                        <div class="container-md text-center mt-3 mb-3">
+                        <div class="mt-3 mb-3">
                             <div class="header">
                                 <div class="row">
-                                    <div class="col-lg-8 form-left">
-                                        <div class="table_shopping_cart">
+                                    <div class="col-12 col-lg-8 form-left">
+                                        <div class="table_shopping_cart table-responsive">
                                             <table class="table">
                                                 <thead>
                                                     <tr class="table-dark">
@@ -160,7 +160,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-12 col-lg-4 col-sm-6 form-right">
+                                    <div class="col-12 col-lg-4 form-right">
                                         <div class="cart_total">
                                             <h5>ĐƠN HÀNG CỦA BẠN</h5>
                                             <ul>

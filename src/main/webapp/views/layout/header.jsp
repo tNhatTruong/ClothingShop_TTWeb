@@ -22,9 +22,7 @@
 
         <nav class="main-navigation" id="mainNavigation">
         <div class="mobile-nav-actions">
-        <button class="search-trigger-btn" aria-label="Search">
-        <i class="fas fa-search"></i>
-        </button>
+        <span class="mobile-menu-title">MENU</span>
         <button class="mobile-close-btn" aria-label="Close" onclick="toggleMobileMenu()">
         <i class="fas fa-times"></i>
         </button>
@@ -32,12 +30,12 @@
 
         <ul class="primary-nav-list">
         <li class="nav-item">
-        <a class="nav-link-primary" href="${root}/home" style="color: #000; font-weight: 500;">TRANG CHỦ</a>
+        <a class="nav-link-primary" href="${root}/home">TRANG CHỦ</a>
         </li>
 
         <c:forEach items="${parents}" var="p">
             <li class="nav-item">
-            <a class="nav-link-primary" href="${root}/product?parentId=${p.id}">
+            <a class="nav-link-primary ${not empty p.subCategories ? 'has-submenu' : ''}" href="${root}/product?parentId=${p.id}">
             ${p.name.toUpperCase()}
             </a>
 
@@ -99,8 +97,7 @@
         </c:forEach>
 
         <li class="nav-item">
-        <a class="nav-link-primary" href="${root}/contact"
-        style=" color: #000; font-weight: 500;">LIÊN HỆ</a>
+        <a class="nav-link-primary" href="${root}/contact">LIÊN HỆ</a>
         </li>
         </ul>
         </nav>
