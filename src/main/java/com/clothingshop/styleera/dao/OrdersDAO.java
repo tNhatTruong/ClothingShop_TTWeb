@@ -116,8 +116,24 @@ public class OrdersDAO {
         return JDBIConnector.getJdbi().withHandle(handle ->
                 handle.createQuery("SELECT id, user_id, address_id, shipping_name, shipping_phone, shipping_address, status, note, price, fee_delivery, total_price, created_at " +
                                 "FROM orders " +
-                                "WHERE status = 'PENDING' AND TIMESTAMPDIFF(MINUTE, created_at, NOW()) >= :timeout")
+                                "WHERE status = 'Chờ thanh toán' AND TIMESTAMPDIFF(MINUTE, created_at, NOW()) >= :timeout")
                         .bind("timeout", timeoutMinutes)
+                        .mapToBean(Orders.class)
+                        .list()
+        );
+    }
+
+    // Lấy tất cả đơn hàng của một user
+    public List<Orders> findByUserId(int userId) {
+        return JDBIConnector.getJdbi().withHandle(handle ->
+                handle.createQuery(
+                                "SELECT id, user_id, address_id, shipping_name, shipping_phone, shipping_address, status, note, price, " +
+                                        "fee_delivery, total_price, created_at " +
+                                        "FROM orders " +
+                                        "WHERE user_id = :userId " +
+                                        "ORDER BY created_at DESC"
+                        )
+                        .bind("userId", userId)
                         .mapToBean(Orders.class)
                         .list()
         );

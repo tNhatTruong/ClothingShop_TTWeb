@@ -45,7 +45,7 @@ public class OrderCleanupListener implements ServletContextListener {
             OrderDetailsDAO orderDetailsDAO = new OrderDetailsDAO();
             VariantDAO variantDAO = new VariantDAO();
 
-            // Tìm đơn hàng PENDING quá 30 phút
+            // Tìm đơn hàng "Chờ thanh toán" quá 30 phút
             List<Orders> expiredOrders = ordersDAO.findExpiredPendingOrders(30);
 
             if (expiredOrders != null && !expiredOrders.isEmpty()) {
