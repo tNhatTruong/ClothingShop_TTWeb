@@ -154,18 +154,33 @@ public class PlaceOrderController extends HttpServlet {
             // Xử lý tạo Order
             com.clothingshop.styleera.model.Orders order = new com.clothingshop.styleera.model.Orders();
             order.setUserId(user.getId());
-            // Tạm thời lấy default address ID, có thể sửa nếu form cho chọn Address
+            // Không lưu đè địa chỉ người dùng nhập vào bảng addresses để bảo vệ địa chỉ mặc định
+            String provinceName = request.getParameter("provinceName");
+            String districtName = request.getParameter("districtName");
+            String wardName = request.getParameter("wardName");
             AddressDAO addressDAO = new AddressDAO();
+            
             Address userAddress = addressDAO.findAddressByUserId(user.getId());
             order.setAddressId(userAddress != null ? userAddress.getId() : 0);
             
             // Lưu Snapshot thông tin giao hàng từ Form UI thay vì vứt bỏ
             // Các biến fullname, address, phone đã được khai báo và validate ở trên
             order.setShippingName(fullname);
-            order.setShippingAddress(address);
+            
+            // Tạo chuỗi địa chỉ đầy đủ (Số nhà, Phường/Xã, Quận/Huyện, Tỉnh/Thành phố)
+            String fullAddress = address;
+            if (wardName != null && !wardName.isEmpty()) fullAddress += ", " + wardName;
+            if (districtName != null && !districtName.isEmpty()) fullAddress += ", " + districtName;
+            if (provinceName != null && !provinceName.isEmpty()) fullAddress += ", " + provinceName;
+            
+            order.setShippingAddress(fullAddress);
             order.setShippingPhone(phone);
             
-            order.setStatus("PENDING");
+            if ("vnpay".equalsIgnoreCase(paymentMethod)) {
+                order.setStatus("Chờ thanh toán");
+            } else {
+                order.setStatus("Chờ duyệt");
+            }
             order.setNote("");
             
             double shipping = 30000.0;
@@ -240,7 +255,7 @@ public class PlaceOrderController extends HttpServlet {
                 String vnp_Command = "pay";
                 String orderType = "other";
                 long amount = (long) (order.getTotalPrice() * 100);
-                String vnp_TxnRef = String.valueOf(currentOrderId);
+                String vnp_TxnRef = currentOrderId + "_" + System.currentTimeMillis();
                 String vnp_IpAddr = com.clothingshop.styleera.util.VnPayUtils.getIpAddress(request);
 
                 java.util.Map<String, String> vnp_Params = new java.util.HashMap<>();
@@ -250,7 +265,7 @@ public class PlaceOrderController extends HttpServlet {
                 vnp_Params.put("vnp_Amount", String.valueOf(amount));
                 vnp_Params.put("vnp_CurrCode", "VND");
                 vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-                vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang " + vnp_TxnRef);
+                vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang " + currentOrderId);
                 vnp_Params.put("vnp_OrderType", orderType);
                 vnp_Params.put("vnp_Locale", "vn");
                 

@@ -36,7 +36,53 @@ public class ShippingService {
         }
     }
 
+    private int getAvailableServiceId(int toDistrictId) throws Exception {
+        URL url = java.net.URI.create("https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services").toURL();
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+        conn.setRequestProperty("Token", this.token);
+        conn.setDoOutput(true);
+
+        String jsonInputString = String.format("{\"shop_id\": %s, \"from_district\": 1454, \"to_district\": %d}", this.shopId, toDistrictId);
+
+        try (OutputStream os = conn.getOutputStream()) {
+            byte[] inputBytes = jsonInputString.getBytes("utf-8");
+            os.write(inputBytes, 0, inputBytes.length);
+        }
+
+        int responseCode = conn.getResponseCode();
+        BufferedReader br;
+        if (responseCode >= 200 && responseCode <= 299) {
+            br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+        } else {
+            br = new BufferedReader(new InputStreamReader(conn.getErrorStream(), "utf-8"));
+        }
+
+        StringBuilder response = new StringBuilder();
+        String responseLine;
+        while ((responseLine = br.readLine()) != null) {
+            response.append(responseLine.trim());
+        }
+
+        JsonObject jsonObject = JsonParser.parseString(response.toString()).getAsJsonObject();
+
+        if (jsonObject.get("code").getAsInt() == 200) {
+            com.google.gson.JsonArray dataArray = jsonObject.getAsJsonArray("data");
+            if (dataArray != null && dataArray.size() > 0) {
+                return dataArray.get(0).getAsJsonObject().get("service_id").getAsInt();
+            } else {
+                throw new Exception("Không có dịch vụ giao hàng nào khả dụng cho khu vực này.");
+            }
+        } else {
+            throw new Exception(jsonObject.get("message").getAsString());
+        }
+    }
+
     public long calculateShippingFee(int toDistrictId, String toWardCode, int weightInGrams) throws Exception {
+
+        // Lấy service_id khả dụng cho tuyến đường này
+        int serviceId = getAvailableServiceId(toDistrictId);
 
         // Khởi tạo URL và Connection sử dụng biến đã đọc từ file
         URL url = java.net.URI.create(this.apiUrl).toURL();
@@ -49,8 +95,8 @@ public class ShippingService {
 
         // Tạo body JSON gửi lên GHN
         String jsonInputString = String.format(
-                "{\"service_type_id\": 2, \"to_district_id\": %d, \"to_ward_code\": \"%s\", \"weight\": %d}",
-                toDistrictId, toWardCode, weightInGrams
+                "{\"service_id\": %d, \"to_district_id\": %d, \"to_ward_code\": \"%s\", \"weight\": %d}",
+                serviceId, toDistrictId, toWardCode, weightInGrams
         );
 
         // Gửi Request
