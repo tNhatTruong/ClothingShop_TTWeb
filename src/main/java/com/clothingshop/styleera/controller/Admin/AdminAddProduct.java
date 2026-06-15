@@ -31,21 +31,27 @@ public class AdminAddProduct extends HttpServlet {
         String color = request.getParameter("color");
         int quantity = Integer.parseInt(request.getParameter("quantity"));
 
-        Part filePart = request.getPart("image");
-        String imageName = "";
-        String imagePath = "";
-
-        if (filePart != null && filePart.getSize() > 0) {
-            imageName = filePart.getSubmittedFileName();
-            if (imageName != null && !imageName.isEmpty()) {
-                String uploadPath = request.getServletContext().getRealPath("/images");
-                java.io.File uploadDir = new java.io.File(uploadPath);
-                if (!uploadDir.exists()) {
-                    uploadDir.mkdirs();
+        java.util.List<String> imageNames = new java.util.ArrayList<>();
+        java.util.List<String> imagePaths = new java.util.ArrayList<>();
+        
+        for (Part part : request.getParts()) {
+            if ("images".equals(part.getName()) && part.getSize() > 0) {
+                if (imageNames.size() >= 15) {
+                    break; // limit to 15 images max
                 }
-                String filePath = uploadPath + java.io.File.separator + imageName;
-                filePart.write(filePath);
-                imagePath = "/images/" + imageName;
+                String imgName = part.getSubmittedFileName();
+                if (imgName != null && !imgName.isEmpty()) {
+                    String uploadPath = request.getServletContext().getRealPath("/images");
+                    java.io.File uploadDir = new java.io.File(uploadPath);
+                    if (!uploadDir.exists()) {
+                        uploadDir.mkdirs();
+                    }
+                    String filePath = uploadPath + java.io.File.separator + imgName;
+                    part.write(filePath);
+                    
+                    imageNames.add(imgName);
+                    imagePaths.add("/images/" + imgName);
+                }
             }
         }
 
@@ -54,7 +60,7 @@ public class AdminAddProduct extends HttpServlet {
                 name, subId, price,
                 shortDesc, detailDesc,
                 size, color, quantity,
-                imageName, imagePath
+                imageNames, imagePaths
         );
 
         response.sendRedirect(request.getContextPath() + "/admin-products");

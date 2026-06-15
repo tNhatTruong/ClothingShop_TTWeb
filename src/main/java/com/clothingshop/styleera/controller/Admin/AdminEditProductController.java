@@ -72,20 +72,32 @@ public class AdminEditProductController extends HttpServlet {
 
             productDAO.editProduct(product, quantity, variantId);
 
-            Part filePart = request.getPart("image");
-            if (filePart != null && filePart.getSize() > 0) {
-                String imageName = filePart.getSubmittedFileName();
-                if (imageName != null && !imageName.isEmpty()) {
-                    String uploadPath = request.getServletContext().getRealPath("/images");
-                    java.io.File uploadDir = new java.io.File(uploadPath);
-                    if (!uploadDir.exists()) {
-                        uploadDir.mkdirs();
+            java.util.List<String> imageNames = new java.util.ArrayList<>();
+            java.util.List<String> imagePaths = new java.util.ArrayList<>();
+            
+            for (Part part : request.getParts()) {
+                if ("images".equals(part.getName()) && part.getSize() > 0) {
+                    if (imageNames.size() >= 15) {
+                        break;
                     }
-                    String filePath = uploadPath + java.io.File.separator + imageName;
-                    filePart.write(filePath);
-                    String imagePath = "/images/" + imageName;
-                    productDAO.updateProductImage(productId, imageName, imagePath);
+                    String imageName = part.getSubmittedFileName();
+                    if (imageName != null && !imageName.isEmpty()) {
+                        String uploadPath = request.getServletContext().getRealPath("/images");
+                        java.io.File uploadDir = new java.io.File(uploadPath);
+                        if (!uploadDir.exists()) {
+                            uploadDir.mkdirs();
+                        }
+                        String filePath = uploadPath + java.io.File.separator + imageName;
+                        part.write(filePath);
+                        
+                        imageNames.add(imageName);
+                        imagePaths.add("/images/" + imageName);
+                    }
                 }
+            }
+
+            if (!imageNames.isEmpty()) {
+                productDAO.updateProductImage(productId, imageNames, imagePaths);
             }
 
             response.sendRedirect(request.getContextPath() + "/admin-products");

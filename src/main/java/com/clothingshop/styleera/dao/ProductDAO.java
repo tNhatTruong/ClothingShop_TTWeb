@@ -422,35 +422,42 @@ public class ProductDAO {
     }
 
     // Cập nhật ảnh sản phẩm (edit)
-    public void updateProductImage(int productId, String imageName, String imagePath) {
-        JDBIConnector.getJdbi().useTransaction(handle -> {
-            // 1. Kiểm tra xem sản phẩm đã có image_id chưa
-            Integer imageId = handle.createQuery("SELECT image_id FROM products WHERE id = ?")
-                    .bind(0, productId)
-                    .mapTo(Integer.class)
-                    .findOne()
-                    .orElse(null);
+    public void updateProductImage(int productId, java.util.List<String> imageNames, java.util.List<String> imagePaths) {
+        if (imageNames == null || imageNames.isEmpty() || imageNames.size() != imagePaths.size()) {
+            return;
+        }
 
-            if (imageId != null) {
-                // 2. Đã có ảnh -> update dòng ảnh cũ trong table images
-                handle.createUpdate("UPDATE images SET image_name = ?, path = ?, updated_at = NOW() WHERE id = ?")
-                        .bind(0, imageName)
-                        .bind(1, imagePath)
-                        .bind(2, imageId)
-                        .execute();
-            } else {
-                // 3. Chưa có ảnh -> insert ảnh mới vào table images
+        JDBIConnector.getJdbi().useTransaction(handle -> {
+            // 1. Gỡ image_id cũ
+            handle.createUpdate("UPDATE products SET image_id = NULL WHERE id = ?")
+                    .bind(0, productId)
+                    .execute();
+
+            // 2. Xóa các ảnh cũ của sản phẩm này
+            handle.createUpdate("DELETE FROM images WHERE product_id = ?")
+                    .bind(0, productId)
+                    .execute();
+
+            // 3. Thêm các ảnh mới
+            int firstImageId = -1;
+            for (int i = 0; i < imageNames.size(); i++) {
                 int newImageId = handle.createUpdate("INSERT INTO images (product_id, image_name, path, updated_at) VALUES (?, ?, ?, NOW())")
                         .bind(0, productId)
-                        .bind(1, imageName)
-                        .bind(2, imagePath)
+                        .bind(1, imageNames.get(i))
+                        .bind(2, imagePaths.get(i))
                         .executeAndReturnGeneratedKeys("id")
                         .mapTo(Integer.class)
                         .one();
+                
+                if (firstImageId == -1) {
+                    firstImageId = newImageId;
+                }
+            }
 
-                // Cập nhật ngược lại image_id cho product
+            // 4. Cập nhật image_id cho product bằng ảnh đầu tiên
+            if (firstImageId != -1) {
                 handle.createUpdate("UPDATE products SET image_id = ? WHERE id = ?")
-                        .bind(0, newImageId)
+                        .bind(0, firstImageId)
                         .bind(1, productId)
                         .execute();
             }
@@ -548,8 +555,8 @@ public class ProductDAO {
             String size,
             String color,
             int quantity,
-            String imageName,
-            String imagePath
+            java.util.List<String> imageNames,
+            java.util.List<String> imagePaths
     ) {
 
         JDBIConnector.getJdbi().useTransaction(handle -> {
@@ -578,20 +585,30 @@ public class ProductDAO {
                     .bind(3, quantity)
                     .execute();
 
-            // thêm dl ảnh và lấy ID ảnh vừa tạo
-            int imageId = handle.createUpdate(" INSERT INTO images (product_id, image_name, path, updated_at) VALUES (?, ?, ?, NOW())")
-                    .bind(0, productId)
-                    .bind(1, imageName)
-                    .bind(2, imagePath)
-                    .executeAndReturnGeneratedKeys("id")
-                    .mapTo(Integer.class)
-                    .one();
+            if (imageNames != null && !imageNames.isEmpty() && imageNames.size() == imagePaths.size()) {
+                int firstImageId = -1;
+                for (int i = 0; i < imageNames.size(); i++) {
+                    int imageId = handle.createUpdate(" INSERT INTO images (product_id, image_name, path, updated_at) VALUES (?, ?, ?, NOW())")
+                            .bind(0, productId)
+                            .bind(1, imageNames.get(i))
+                            .bind(2, imagePaths.get(i))
+                            .executeAndReturnGeneratedKeys("id")
+                            .mapTo(Integer.class)
+                            .one();
+                    
+                    if (firstImageId == -1) {
+                        firstImageId = imageId;
+                    }
+                }
 
-            // Cập nhật ngược lại image_id cho product vừa thêm để hiển thị được ảnh thumbnail
-            handle.createUpdate("UPDATE products SET image_id = ? WHERE id = ?")
-                    .bind(0, imageId)
-                    .bind(1, productId)
-                    .execute();
+                if (firstImageId != -1) {
+                    // Cập nhật ngược lại image_id cho product vừa thêm để hiển thị được ảnh thumbnail
+                    handle.createUpdate("UPDATE products SET image_id = ? WHERE id = ?")
+                            .bind(0, firstImageId)
+                            .bind(1, productId)
+                            .execute();
+                }
+            }
         });
     }
 

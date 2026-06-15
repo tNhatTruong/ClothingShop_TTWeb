@@ -177,16 +177,17 @@
                         </div>
                         <div class="card-body">
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Chọn Ảnh</label>
+                                <label class="form-label fw-bold">Chọn Ảnh (Tối đa 15)</label>
                                 <input type="file"
                                        class="form-control"
                                        id="productImages"
-                                       name="image"
+                                       name="images"
+                                       multiple
                                        accept="image/*"
                                        form="productForm"
                                 ${!isEdit ? 'required' : ''}/>
                                 <div class="form-text">
-                                    Chọn 1 hoặc nhiều ảnh (JPG, PNG) ${isEdit ? '(để trống nếu không thay đổi)' : ''}
+                                    Chọn từ 1 đến 15 ảnh (JPG, PNG) ${isEdit ? '(để trống nếu không thay đổi)' : ''}
                                 </div>
                                 <c:if test="${isEdit && not empty product.thumbnail}">
                                     <div class="mt-3">
@@ -232,29 +233,47 @@
     });
 
     // Xử lý sự kiện change ảnh và live preview
-    document.getElementById('productImages').addEventListener('change', function() {
-        const file = this.files[0];
-        if (file) {
-            document.querySelector('input[name="image_name"]').value = file.name;
-            document.querySelector('input[name="image_path"]').value = "/images/" + file.name;
-            
-            const previewContainer = document.getElementById('imgPreview');
-            previewContainer.innerHTML = '';
-            
+    document.getElementById('productImages').addEventListener('change', function(e) {
+        const files = this.files;
+        
+        if (files.length > 15) {
+            alert('Bạn chỉ được phép upload tối đa 15 ảnh.');
+            this.value = ''; // Reset input
+            document.getElementById('imgPreview').innerHTML = '';
+            return;
+        }
+
+        const previewContainer = document.getElementById('imgPreview');
+        previewContainer.innerHTML = '';
+        
+        if (files.length > 0) {
             const previewTitle = document.createElement('p');
             previewTitle.className = 'fw-bold mb-2 text-primary';
             previewTitle.innerHTML = '<i class="fas fa-eye me-1"></i> Ảnh xem trước:';
-            
-            const img = document.createElement('img');
-            img.src = URL.createObjectURL(file);
-            img.style.maxWidth = '100%';
-            img.style.maxHeight = '250px';
-            img.style.borderRadius = '8px';
-            img.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-            img.className = 'border border-light';
-            
             previewContainer.appendChild(previewTitle);
-            previewContainer.appendChild(img);
+            
+            const gridContainer = document.createElement('div');
+            gridContainer.style.display = 'grid';
+            gridContainer.style.gridTemplateColumns = 'repeat(auto-fill, minmax(80px, 1fr))';
+            gridContainer.style.gap = '10px';
+            
+            Array.from(files).forEach((file, index) => {
+                if (index === 0) {
+                    document.querySelector('input[name="image_name"]').value = file.name;
+                    document.querySelector('input[name="image_path"]').value = "/images/" + file.name;
+                }
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.style.width = '100%';
+                img.style.aspectRatio = '1/1';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '8px';
+                img.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
+                img.className = 'border border-light';
+                gridContainer.appendChild(img);
+            });
+            
+            previewContainer.appendChild(gridContainer);
         }
     });
 </script>

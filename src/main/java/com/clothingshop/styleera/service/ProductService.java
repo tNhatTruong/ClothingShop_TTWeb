@@ -84,14 +84,14 @@ public class ProductService {
             String size,
             String color,
             int quantity,
-            String imageName,
-            String imagePath
+            java.util.List<String> imageNames,
+            java.util.List<String> imagePaths
     ) {
         productDAO.insertProductFull(
                 name, subCategoryId, price,
                 shortDesc, detailDesc,
                 size, color, quantity,
-                imageName, imagePath
+                imageNames, imagePaths
         );
     }
 }
