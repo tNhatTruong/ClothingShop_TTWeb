@@ -43,10 +43,26 @@ public class LoginController extends HttpServlet {
         UserDAO userDAO = new UserDAO();
         User user = userDAO.findByEmail(email);
 
-        // 1. Kiểm tra đăng nhập
-        if (user != null && PasswordUtils.checkPassword(pass, user.getPassword_hash())) {
+        // 1. Kiểm tra tài khoản có tồn tại không
+        if (user == null) {
+            request.setAttribute("errorMsg", "Email hoặc mật khẩu không đúng!");
+            request.setAttribute("email", email);
+            request.getRequestDispatcher("/views/pages/login.jsp").forward(request, response);
+            return;
+        }
 
-            // 2. Nếu đúng pass, kiểm tra kích hoạt
+        // 1.5 Kiểm tra xem tài khoản có phải tạo từ Google và chưa có mật khẩu hay không
+        if (user.getPassword_hash() == null || user.getPassword_hash().trim().isEmpty()) {
+            request.setAttribute("errorMsg", "Tài khoản của bạn được tạo qua Google và chưa thiết lập mật khẩu. Vui lòng đăng nhập bằng Google hoặc sử dụng chức năng 'Quên mật khẩu' để tạo mật khẩu mới.");
+            request.setAttribute("email", email);
+            request.getRequestDispatcher("/views/pages/login.jsp").forward(request, response);
+            return;
+        }
+
+        // 2. Kiểm tra đăng nhập
+        if (PasswordUtils.checkPassword(pass, user.getPassword_hash())) {
+
+            // 3. Nếu đúng pass, kiểm tra kích hoạt
             if (user.getEnabled() == 0) {
                 request.setAttribute("error", "Tài khoản chưa được kích hoạt! Vui lòng nhập mã xác thực.");
                 request.setAttribute("email", email);
@@ -55,7 +71,7 @@ public class LoginController extends HttpServlet {
                 return;
             }
 
-            // 2.5 Kiểm tra tài khoản bị khóa
+            // 3.5 Kiểm tra tài khoản bị khóa
             if ("BANNED".equalsIgnoreCase(user.getStatus())) {
                 request.setAttribute("errorMsg", "Tài khoản của bạn đã bị khóa do vi phạm chính sách.");
                 request.setAttribute("email", email);
