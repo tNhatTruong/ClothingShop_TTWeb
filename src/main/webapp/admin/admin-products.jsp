@@ -8,11 +8,11 @@
 <html lang="vi">
 <head>
     <meta charset="utf-8"/>
-    <meta name="viewport" content="width=d  evice-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>StyleEra - Quản Lý Sản Phẩm</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-    <link rel="stylesheet" href="${root}/admin/css/admin.css"/>
+    <link rel="stylesheet" href="${root}/admin/css/admin.css?v=1.2"/>
 </head>
 
 <body>
@@ -20,6 +20,31 @@
 <!-- ===== HEADER ===== -->
 <%@ include file="/admin/layout/Layoutadmin.jsp" %>
 <!-- ===== CONTENT ===== -->
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+    <c:if test="${not empty sessionScope.successMessage}">
+        <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-check-circle me-2"></i> ${sessionScope.successMessage}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+        <c:remove var="successMessage" scope="session" />
+    </c:if>
+
+    <c:if test="${not empty sessionScope.errorMessage}">
+        <div id="errorToast" class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-exclamation-circle me-2"></i> ${sessionScope.errorMessage}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+        <c:remove var="errorMessage" scope="session" />
+    </c:if>
+</div>
 <main class="admin-content">
     <!-- Page Header -->
     <div class="page-header mb-5">
@@ -133,14 +158,22 @@
                                     <td>#${p.product_id}</td>
                                     <td>
                                         <div class="product-img-wrapper">
-                                            <c:if test="${not empty p.thumbnail}">
-                                                <img src="${pageContext.request.contextPath}${p.thumbnail}"
-                                                     alt="${p.product_name}" width="60" height="60"
-                                                     style="object-fit: cover; border-radius: 4px">
-                                            </c:if>
-                                            <c:if test="${empty p.thumbnail}">
-                                                <img src="https://via.placeholder.com/60" alt="No image" width="60" height="60">
-                                            </c:if>
+                                            <c:choose>
+                                                <c:when test="${not empty p.thumbnail}">
+                                                    <img src="${p.thumbnail}"
+                                                         alt="${p.product_name}"
+                                                         width="60" height="60"
+                                                         style="object-fit: cover; border-radius: 4px;"
+                                                         onerror="this.onerror=null; this.src='${root}/uploads/no-image.png';">
+                                                </c:when>
+
+                                                <c:otherwise>
+                                                    <img src="${root}/uploads/no-image.png"
+                                                         alt="${p.product_name}"
+                                                         width="60" height="60"
+                                                         style="object-fit: cover; border-radius: 4px;">
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
                                     </td>
                                     <td><strong>${p.product_name}</strong></td>
@@ -348,5 +381,19 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="${root}/admin/js/admin_Product.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var successEl = document.getElementById('successToast');
+        if (successEl) {
+            var toast = new bootstrap.Toast(successEl, { delay: 3000 });
+            toast.show();
+        }
+        var errorEl = document.getElementById('errorToast');
+        if (errorEl) {
+            var toast = new bootstrap.Toast(errorEl, { delay: 3000 });
+            toast.show();
+        }
+    });
+</script>
 </body>
 </html>

@@ -49,8 +49,16 @@
                                         <div class="product_detail_wrapper">
 
                                             <div class="product_images">
+                                                <c:choose>
+                                                    <c:when test="${fn:startsWith(product.safeThumbnail, root)}">
+                                                        <c:set var="correctedMainImg" value="${product.safeThumbnail}" />
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <c:set var="correctedMainImg" value="${root}${product.safeThumbnail}" />
+                                                    </c:otherwise>
+                                                </c:choose>
                                                 <div class="product_main_image">
-                                                    <img id="mainImage" src="${root}${product.safeThumbnail}"
+                                                    <img id="mainImage" src="${correctedMainImg}"
                                                         alt="${product.product_name}">
                                                 </div>
 
@@ -99,17 +107,25 @@
                                                         </c:if>
                                                     </c:forEach>
 
-                                                    <div class="thumb-item active" onclick="changeImage('${root}${product.safeThumbnail}'); updateActiveThumb(this);">
-                                                        <img src="${root}${product.safeThumbnail}" alt="Thumbnail">
+                                                    <div class="thumb-item active" onclick="changeImage('${correctedMainImg}'); updateActiveThumb(this);">
+                                                        <img src="${correctedMainImg}" alt="Thumbnail">
                                                     </div>
 
                                                     <c:set var="thumbCount" value="1" />
                                                     <c:forEach items="${imageList}" var="imgUrl">
                                                         <c:if test="${imgUrl ne product.safeThumbnail}">
                                                             <c:choose>
+                                                                <c:when test="${fn:startsWith(imgUrl, root)}">
+                                                                    <c:set var="correctedThumb" value="${imgUrl}" />
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <c:set var="correctedThumb" value="${root}${imgUrl}" />
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                            <c:choose>
                                                                 <c:when test="${thumbCount < 3}">
-                                                                    <div class="thumb-item" onclick="changeImage('${root}${imgUrl}'); updateActiveThumb(this);">
-                                                                        <img src="${root}${imgUrl}" alt="Thumbnail">
+                                                                    <div class="thumb-item" onclick="changeImage('${correctedThumb}'); updateActiveThumb(this);">
+                                                                        <img src="${correctedThumb}" alt="Thumbnail">
                                                                     </div>
                                                                     <c:set var="thumbCount" value="${thumbCount + 1}" />
                                                                 </c:when>
@@ -117,13 +133,13 @@
                                                                     <c:choose>
                                                                         <c:when test="${totalUnique > 4}">
                                                                             <div class="thumb-item overlay-thumb" onclick="openImageModal()">
-                                                                                <img src="${root}${imgUrl}" alt="Thumbnail" style="opacity: 0.4;">
+                                                                                <img src="${correctedThumb}" alt="Thumbnail" style="opacity: 0.4;">
                                                                                 <span class="overlay-text">+${totalUnique - 3}</span>
                                                                             </div>
                                                                         </c:when>
                                                                         <c:otherwise>
-                                                                            <div class="thumb-item" onclick="changeImage('${root}${imgUrl}'); updateActiveThumb(this);">
-                                                                                <img src="${root}${imgUrl}" alt="Thumbnail">
+                                                                            <div class="thumb-item" onclick="changeImage('${correctedThumb}'); updateActiveThumb(this);">
+                                                                                <img src="${correctedThumb}" alt="Thumbnail">
                                                                             </div>
                                                                         </c:otherwise>
                                                                     </c:choose>

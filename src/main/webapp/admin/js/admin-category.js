@@ -37,3 +37,86 @@ parentCategoryFilter.addEventListener('change', function() {
 subCategoryFilter.addEventListener('change', function() {
     filterForm.submit();
 });
+
+document.getElementById('btnDeletePreview').addEventListener('click', function() {
+    document.getElementById('categoryImage').value = '';
+    document.getElementById('imagePreview').src = '';
+    document.getElementById('imagePreviewContainer').style.display = 'none';
+    document.getElementById('isImageDeleted').value = 'true';
+});
+
+function openCategoryModal(button = null) {
+    const modalLabel = document.getElementById('categoryModalLabel');
+    const formAction = document.getElementById('formAction');
+    const idInput = document.getElementById('subCategoryId');
+    const parentIdInput = document.getElementById('parentId');
+    const nameInput = document.getElementById('subCategoryName');
+    const descInput = document.getElementById('categoryDesc');
+    const imgInput = document.getElementById('categoryImage');
+    const imgPreviewCont = document.getElementById('imagePreviewContainer');
+    const imgPreview = document.getElementById('imagePreview');
+    const isDeletedInput = document.getElementById('isImageDeleted');
+    const btnSubmitSpan = document.querySelector('#btnSubmitCategory span');
+
+    // Reset trạng thái ban đầu mỗi khi mở modal
+    imgInput.value = '';
+    isDeletedInput.value = "false";
+
+    if (!button) {
+        modalLabel.innerText = "Thêm Danh Mục Mới";
+        formAction.value = "add";
+        idInput.value = "";
+        parentIdInput.value = "";
+        nameInput.value = "";
+        descInput.value = "";
+        imgPreviewCont.style.display = "none";
+        imgPreview.src = "";
+        btnSubmitSpan.innerText = "Thêm Mới";
+        imgInput.required = true;
+    } else {
+        modalLabel.innerText = "Cập Nhật Danh Mục";
+        formAction.value = "update";
+
+        idInput.value = button.getAttribute("data-id");
+        parentIdInput.value = button.getAttribute("data-parent-id");
+        nameInput.value = button.getAttribute("data-name");
+        descInput.value = button.getAttribute("data-desc");
+
+        const imgUrl = button.getAttribute("data-img");
+        if (imgUrl && imgUrl.trim() !== '') {
+            imgPreview.src = imgUrl;
+            imgPreviewCont.style.display = "block";
+        } else {
+            imgPreviewCont.style.display = "none";
+        }
+
+        btnSubmitSpan.innerText = "Cập Nhật";
+        imgInput.required = false;
+    }
+
+    const modalElement = document.getElementById('categoryModal');
+    const myModal = bootstrap.Modal.getOrCreateInstance(modalElement);
+    myModal.show();
+}
+document.getElementById('categoryImage').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const previewImage = document.getElementById('imagePreview');
+    const isDeletedInput = document.getElementById('isImageDeleted');
+
+    if (file) {
+        // Tạo một URL tạm thời cho bức ảnh vừa chọn từ máy tính
+        const objectUrl = URL.createObjectURL(file);
+
+        // Gắn URL đó vào thẻ img và hiển thị khung chứa lên
+        previewImage.src = objectUrl;
+        previewContainer.style.display = 'block';
+
+        // Đặt lại biến xóa ảnh về false vì người dùng vừa up ảnh mới
+        isDeletedInput.value = 'false';
+    } else {
+        // Nếu người dùng mở hộp thoại lên nhưng bấm Cancel (hủy chọn)
+        previewImage.src = '';
+        previewContainer.style.display = 'none';
+    }
+});

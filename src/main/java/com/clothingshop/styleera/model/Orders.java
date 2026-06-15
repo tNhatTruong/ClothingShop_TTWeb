@@ -112,6 +112,12 @@ public class Orders {
         this.createdAt = createdAt;
     }
 
+    public String getFormattedCreatedAt() {
+        if (createdAt == null) return "";
+        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        return createdAt.format(formatter);
+    }
+
     private String userName;
     private String email;
 
