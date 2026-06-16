@@ -48,7 +48,7 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a href="${root}/admin/admin-user-comment.jsp"
+                <a href="${root}/admin-reviews"
                    class="menu-link ${currentPage == 'comment' ? 'active' : ''}">
                     <i class="fa-solid fa-comment"></i>
                     <span>Quản lý Bình Luận</span>

@@ -9,7 +9,7 @@
     <title>StyleEra - Quản lý bình luận</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-    <link rel="stylesheet" href="css/admin.css?v=1.2"/>
+    <link rel="stylesheet" href="${root}/admin/css/admin.css"/>
 </head>
 <body>
 
@@ -55,7 +55,7 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-light border-bottom d-flex justify-content-between align-items-center">
                     <h6 class="mb-0">Danh Sách Bình Luận</h6>
-                    <span class="text-muted small">Tổng cộng: <strong>1</strong> Bình luận</span>
+                    <span class="text-muted small">Tổng cộng: <strong>${totalReviews}</strong> Bình luận</span>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -72,21 +72,40 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>#1</td>
-                                <td>Áo thun Form rộng</td>
-                                <td>Nguyễn Văn A</td>
-                                <td>
-                                    <div class="text-warning">
-                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                                    </div>
-                                </td>
-                                <td>Sản phẩm rất đẹp, vải mát.</td>
-                                <td>10/01/2025 14:22</td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
+                            <c:forEach var="item" items="${reviewList}">
+                                <tr>
+                                    <td>#${item.id}</td>
+
+                                    <td>Mã SP: ${item.productId}</td>
+
+                                    <td><strong>${item.fullName}</strong></td>
+
+                                    <td>
+                                        <div class="text-warning">
+                                            <c:forEach begin="1" end="${item.rating}">
+                                                <i class="fas fa-star"></i>
+                                            </c:forEach>
+                                            <c:forEach begin="${item.rating + 1}" end="5">
+                                                <i class="far fa-star"></i>
+                                            </c:forEach>
+                                        </div>
+                                    </td>
+
+                                    <td style="max-width: 250px;" class="text-truncate" title="${item.comment}">
+                                            ${item.comment}
+                                    </td>
+
+                                    <td>
+                                        <fmt:formatDate value="${item.createdAt}" pattern="dd/MM/yyyy HH:mm" />
+                                    </td>
+
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i> Xóa
+                                        </button>
+                                    </td>
+                                </tr>
+                            </c:forEach>
                             </tbody>
                         </table>
                     </div>

@@ -20,4 +20,8 @@ public class ReviewService {
     public void insertReview(int productId, int userId, int rating, String comment) {
         reviewDao.insertReview(productId, userId, rating, comment);
     }
+
+    public List<Review> getAllReviews() {
+        return reviewDao.findAll();
+    }
 }
