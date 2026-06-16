@@ -44,6 +44,9 @@
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
                 <li>
+                    <a class="dropdown-item" href="${root}/">Trang chủ</a>
+                </li>
+                <li>
                     <a class="dropdown-item" href="${root}/admin-profile">Hồ Sơ</a>
                 </li>
                 <li>
