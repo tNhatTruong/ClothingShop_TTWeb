@@ -24,4 +24,11 @@ public class ReviewService {
     public List<Review> getAllReviews() {
         return reviewDao.findAll();
     }
+    public List<Review> getFilteredReviews(String ratingFilter, String dateSort) {
+        if ((ratingFilter == null || ratingFilter.isEmpty()) &&
+                (dateSort == null || "newest".equals(dateSort))) {
+            return reviewDao.findAll();
+        }
+        return reviewDao.filterReviews(ratingFilter, dateSort);
+    }
 }

@@ -21,8 +21,10 @@ public class AdminReviewController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Gọi hàm từ tầng Service
-        List<Review> list = reviewService.getAllReviews();
+        String ratingFilter = request.getParameter("ratingFilter");
+        String dateSort = request.getParameter("dateSort");
+
+        List<Review> list = reviewService.getFilteredReviews(ratingFilter, dateSort);
 
         request.setAttribute("reviewList", list);
         request.setAttribute("totalReviews", list.size());

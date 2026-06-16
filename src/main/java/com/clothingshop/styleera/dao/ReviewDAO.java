@@ -60,4 +60,20 @@ public class ReviewDAO {
                     .execute();
         });
     }
+    public List<Review> filterReviews(String ratingFilter, String dateSort) {
+        String sql = "SELECT r.id, r.variant_id AS variantId, r.product_id AS productId, " +
+                "r.user_id AS userId, r.rating, r.comment, r.created_at AS createdAt, " +
+                "u.user_name AS fullName FROM review r " +
+                "JOIN users u ON r.user_id = u.id WHERE 1=1 ";
+
+        if ("good".equals(ratingFilter)) sql += " AND r.rating >= 4";
+        else if ("average".equals(ratingFilter)) sql += " AND r.rating >= 3 AND r.rating < 4";
+        else if ("bad".equals(ratingFilter)) sql += " AND r.rating < 3";
+
+        sql += " ORDER BY r.created_at " + ("oldest".equals(dateSort) ? "ASC" : "DESC");
+
+        String finalSql = sql;
+        return JDBIConnector.getJdbi().withHandle(handle ->
+                handle.createQuery(finalSql).mapToBean(Review.class).list());
+    }
 }

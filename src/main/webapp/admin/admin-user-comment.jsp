@@ -25,29 +25,29 @@
     </div>
     <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <div class="row g-3 align-items-end">
+            <form action="${root}/admin-reviews" method="GET" class="row g-3 align-items-end">
                 <div class="col-md-6">
                     <label class="form-label">Tìm Kiếm</label>
                     <input type="text" class="form-control" id="searchInput" placeholder="Tên tài khoản"/>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Phân loại đánh giá</label>
-                    <select class="form-select" id="ratingFilter">
+                    <select class="form-select" name="ratingFilter" onchange="this.form.submit()">
                         <option value="">Tất cả</option>
-                        <option value="good">Tốt (4 - 5 sao)</option>
-                        <option value="average">Trung bình (3 - 4 sao)</option>
-                        <option value="bad">Tệ (1 - 3 sao)</option>
+                        <option value="good" ${param.ratingFilter == 'good' ? 'selected' : ''}>Tốt (4 - 5 sao)</option>
+                        <option value="average" ${param.ratingFilter == 'average' ? 'selected' : ''}>Trung bình (3 - 4 sao)</option>
+                        <option value="bad" ${param.ratingFilter == 'bad' ? 'selected' : ''}>Tệ (1 - 3 sao)</option>
                     </select>
                 </div>
+
                 <div class="col-md-3">
                     <label class="form-label">Ngày Bình luận</label>
-                    <select class="form-select" id="categoryFilter">
-                        <option value="">Tất Cả các ngày</option>
-                        <option value="admin">Bình luận cũ nhất</option>
-                        <option value="usr">Bình luận mới nhất</option>
+                    <select class="form-select" name="dateSort" onchange="this.form.submit()">
+                        <option value="newest" ${param.dateSort == 'newest' ? 'selected' : ''}>Bình luận mới nhất</option>
+                        <option value="oldest" ${param.dateSort == 'oldest' ? 'selected' : ''}>Bình luận cũ nhất</option>
                     </select>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
     <div>
