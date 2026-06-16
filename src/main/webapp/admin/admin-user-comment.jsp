@@ -22,11 +22,6 @@
         <div>
             <h1 class="page-title">Quản lý Bình Luận</h1>
         </div>
-        <div class="page-actions">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                <i class="fas fa-plus"></i> Thêm Tài Khoản
-            </button>
-        </div>
     </div>
     <div class="card shadow-sm mb-4">
         <div class="card-body">
@@ -34,6 +29,15 @@
                 <div class="col-md-6">
                     <label class="form-label">Tìm Kiếm</label>
                     <input type="text" class="form-control" id="searchInput" placeholder="Tên tài khoản"/>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Phân loại đánh giá</label>
+                    <select class="form-select" id="ratingFilter">
+                        <option value="">Tất cả</option>
+                        <option value="good">Tốt (4 - 5 sao)</option>
+                        <option value="average">Trung bình (3 - 4 sao)</option>
+                        <option value="bad">Tệ (1 - 3 sao)</option>
+                    </select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Ngày Bình luận</label>
@@ -51,7 +55,7 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-light border-bottom d-flex justify-content-between align-items-center">
                     <h6 class="mb-0">Danh Sách Bình Luận</h6>
-                    <span class="text-muted small">Tổng cộng: <strong>1</strong> Người dùng</span>
+                    <span class="text-muted small">Tổng cộng: <strong>1</strong> Bình luận</span>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -59,28 +63,28 @@
                             <thead class="table-light">
                             <tr>
                                 <th>ID</th>
-                                <th>Tên khách hàng</th>
-                                <th>Ngày bình luận</th>
-                                <th>Ảnh bình luận</th>
-                                <th>Màu</th>
-                                <th>Size</th>
-                                <th>Lời bình luận</th>
+                                <th>Sản phẩm</th>
+                                <th>Người dùng</th>
+                                <th>Đánh giá</th>
+                                <th>Nội dung</th>
+                                <th>Ngày tạo</th>
                                 <th>Hành Động</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
-                                <td>#3</td>
-                                <td>T***h</td>
-                                <td>2025-20-11</td>
-                                <td><img src="" alt="no picture"></td>
-                                <td>Xanh</td>
-                                <td>L</td>
-                                <td>0904899626</td>
+                                <td>#1</td>
+                                <td>Áo thun Form rộng</td>
+                                <td>Nguyễn Văn A</td>
                                 <td>
-                                    <button class="btn btn-sm btn-danger" title="Xóa">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <div class="text-warning">
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                    </div>
+                                </td>
+                                <td>Sản phẩm rất đẹp, vải mát.</td>
+                                <td>10/01/2025 14:22</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
                                 </td>
                             </tr>
                             </tbody>
