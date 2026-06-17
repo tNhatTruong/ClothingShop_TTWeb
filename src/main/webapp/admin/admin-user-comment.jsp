@@ -67,6 +67,7 @@
                                 <th>Người dùng</th>
                                 <th>Đánh giá</th>
                                 <th>Nội dung</th>
+                                <th>Trạng thái</th>
                                 <th>Ngày tạo</th>
                                 <th>Hành Động</th>
                             </tr>
@@ -93,6 +94,20 @@
 
                                     <td style="max-width: 250px;" class="text-truncate" title="${item.comment}">
                                             ${item.comment}
+                                        <c:if test="${item.editCount > 0}">
+                                            <br><small class="text-muted">(Đã chỉnh sửa)</small>
+                                        </c:if>
+                                    </td>
+                                    
+                                    <td style="max-width: 200px;" class="text-truncate" title="${item.adminReply}" id="reply-status-${item.id}">
+                                        <c:choose>
+                                            <c:when test="${not empty item.adminReply}">
+                                                <span class="text-success"><i class="fas fa-check-circle"></i> Đã trả lời</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="text-secondary"><i class="fas fa-clock"></i> Chưa trả lời</span>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </td>
 
                                     <td>
@@ -100,8 +115,8 @@
                                     </td>
 
                                     <td>
-                                        <button class="btn btn-sm btn-outline-danger">
-                                            <i class="fas fa-trash"></i> Xóa
+                                        <button class="btn btn-sm btn-outline-primary" id="btn-reply-${item.id}" onclick="openReplyModal('${item.id}', '${item.fullName}', '${item.adminReply}')">
+                                            <i class="fas fa-reply"></i> ${not empty item.adminReply ? 'Sửa trả lời' : 'Trả lời'}
                                         </button>
                                     </td>
                                 </tr>
@@ -114,5 +129,109 @@
         </div>
     </div>
 </main>
+
+<!-- Reply Modal -->
+<div class="modal fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="replyModalLabel"><i class="fas fa-reply me-2"></i>Trả lời bình luận</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form onsubmit="submitReplyForm(event)">
+                <div class="modal-body">
+                    <p class="mb-3">Đang trả lời người dùng: <strong id="replyUserName"></strong></p>
+                    <input type="hidden" name="reviewId" id="replyReviewId">
+                    <div class="mb-3">
+                        <label for="adminReplyText" class="form-label fw-medium">Nội dung phản hồi:</label>
+                        <textarea class="form-control" name="adminReply" id="adminReplyText" rows="4" placeholder="Nhập câu trả lời của Người bán..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Gửi phản hồi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100; margin-top: 60px;">
+    <div id="liveToast" class="toast align-items-center text-white bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body fw-medium" id="toastMessage">
+                <i class="fas fa-check-circle me-2"></i> Thành công!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function openReplyModal(reviewId, userName, currentReply) {
+        document.getElementById('replyReviewId').value = reviewId;
+        document.getElementById('replyUserName').textContent = userName;
+        document.getElementById('adminReplyText').value = currentReply && currentReply !== 'null' ? currentReply : '';
+        
+        const modal = new bootstrap.Modal(document.getElementById('replyModal'));
+        modal.show();
+    }
+
+    function submitReplyForm(event) {
+        event.preventDefault();
+        const form = event.target;
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerText;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang gửi...';
+        submitBtn.disabled = true;
+
+        const formData = new FormData(form);
+        formData.append("ajax", "true");
+        
+        fetch('${root}/admin-reviews', {
+            method: 'POST',
+            body: new URLSearchParams(formData)
+        })
+        .then(res => res.json())
+        .then(data => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            
+            if(data.status === 'success') {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('replyModal'));
+                modal.hide();
+                
+                // Hiển thị toast
+                document.getElementById('toastMessage').innerHTML = '<i class="fas fa-check-circle me-2"></i> ' + data.message;
+                const toast = new bootstrap.Toast(document.getElementById('liveToast'));
+                toast.show();
+                
+                // Cập nhật DOM
+                const reviewId = document.getElementById('replyReviewId').value;
+                const replyText = document.getElementById('adminReplyText').value;
+                
+                const statusTd = document.getElementById('reply-status-' + reviewId);
+                if (statusTd) {
+                    statusTd.title = replyText;
+                    statusTd.innerHTML = '<span class="text-success"><i class="fas fa-check-circle"></i> Đã trả lời</span>';
+                }
+                
+                const btn = document.getElementById('btn-reply-' + reviewId);
+                if (btn) {
+                    btn.innerHTML = '<i class="fas fa-reply"></i> Sửa trả lời';
+                    btn.setAttribute('onclick', "openReplyModal('" + reviewId + "', '" + document.getElementById('replyUserName').textContent + "', '" + replyText.replace(/'/g, "\\'") + "')");
+                }
+            } else {
+                alert(data.message);
+            }
+        }).catch(err => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            alert("Có lỗi kết nối xảy ra!");
+        });
+    }
+</script>
 </body>
 </html>

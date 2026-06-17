@@ -17,8 +17,20 @@ public class ReviewService {
         return reviewDao.findByProductId(productId);
     }
 
-    public void insertReview(int productId, int userId, int rating, String comment) {
-        reviewDao.insertReview(productId, userId, rating, comment);
+    public void insertReview(int orderId, int productId, int userId, int rating, String comment) {
+        reviewDao.insertReview(orderId, productId, userId, rating, comment);
+    }
+
+    public Review checkIfReviewed(int orderId, int productId, int userId) {
+        return reviewDao.checkIfReviewed(orderId, productId, userId);
+    }
+
+    public void updateReviewByUser(int reviewId, int newRating, String newComment) {
+        reviewDao.updateReviewByUser(reviewId, newRating, newComment);
+    }
+
+    public void updateAdminReply(int reviewId, String adminReply) {
+        reviewDao.updateAdminReply(reviewId, adminReply);
     }
 
     public List<Review> getAllReviews() {
