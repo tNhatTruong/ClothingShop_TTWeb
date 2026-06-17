@@ -51,7 +51,6 @@ public class UserDAO {
         });
     }
 
-    // 4. Tìm User theo Email (Dùng cho login & check trùng)
     public User findByEmail(String email) {
         Jdbi jdbi = JDBIConnector.getJdbi();
         return jdbi.withHandle(handle ->
@@ -60,6 +59,31 @@ public class UserDAO {
                         .mapToBean(User.class)
                         .findOne().orElse(null)
         );
+    }
+
+    public User findByPhone(String phone) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        return jdbi.withHandle(handle ->
+                handle.createQuery("SELECT * FROM users WHERE phone = ?")
+                        .bind(0, phone)
+                        .mapToBean(User.class)
+                        .findOne().orElse(null)
+        );
+    }
+
+    public int registerGuestUser(User user) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        return jdbi.withHandle(handle -> {
+            String sql = "INSERT INTO users (user_name, email, phone, role, status, enabled) " +
+                    "VALUES (?, ?, ?, 'User', 'Hoạt Động', 1)";
+            return handle.createUpdate(sql)
+                    .bind(0, user.getUser_name())
+                    .bind(1, user.getEmail())
+                    .bind(2, user.getPhone())
+                    .executeAndReturnGeneratedKeys("id")
+                    .mapTo(Integer.class)
+                    .one();
+        });
     }
 
     // 5. Lưu user không cần mật khẩu

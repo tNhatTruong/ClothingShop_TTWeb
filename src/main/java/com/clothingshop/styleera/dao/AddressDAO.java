@@ -55,4 +55,39 @@ public class AddressDAO {
             }
         });
     }
+
+    // 3. Lưu hoặc Cập nhật địa chỉ và trả về ID
+    public int saveOrUpdateAndReturnId(int userId, String street, String province, String district, String ward) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        return jdbi.withHandle(handle -> {
+            String selectSql = "SELECT id FROM addresses WHERE user_id = ? ORDER BY is_default DESC, id DESC LIMIT 1";
+            Optional<Integer> existId = handle.createQuery(selectSql)
+                    .bind(0, userId)
+                    .mapTo(Integer.class)
+                    .findOne();
+
+            if (existId.isPresent()) {
+                String updateSql = "UPDATE addresses SET street = ?, province = ?, district = ?, ward = ? WHERE id = ?";
+                handle.createUpdate(updateSql)
+                        .bind(0, street)
+                        .bind(1, province)
+                        .bind(2, district)
+                        .bind(3, ward)
+                        .bind(4, existId.get())
+                        .execute();
+                return existId.get();
+            } else {
+                String insertSql = "INSERT INTO addresses (user_id, street, province, district, ward, is_default) VALUES (?, ?, ?, ?, ?, 1)";
+                return handle.createUpdate(insertSql)
+                        .bind(0, userId)
+                        .bind(1, street)
+                        .bind(2, province)
+                        .bind(3, district)
+                        .bind(4, ward)
+                        .executeAndReturnGeneratedKeys("id")
+                        .mapTo(Integer.class)
+                        .one();
+            }
+        });
+    }
 }

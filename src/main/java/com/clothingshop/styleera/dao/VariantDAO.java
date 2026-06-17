@@ -158,4 +158,46 @@ public class VariantDAO {
             return updatedRows > 0;
         });
     }
+
+    public List<Variants> searchVariantsByKeyword(String keyword) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        String sql = "SELECT v.id AS variant_id, v.size, v.color, v.quantity AS variant_quantity, " +
+                "p.id AS product_id, p.product_name, p.price, i.path AS thumbnail " +
+                "FROM variants v " +
+                "JOIN products p ON v.product_id = p.id " +
+                "LEFT JOIN images i ON p.image_id = i.id " +
+                "WHERE p.product_name LIKE :keyword OR p.id = :exactId " +
+                "ORDER BY p.product_name, v.size, v.color LIMIT 20";
+
+        // Try to parse exactId in case user typed a product ID
+        int exactId = -1;
+        try {
+            exactId = Integer.parseInt(keyword);
+        } catch (Exception ignored) {}
+
+        final int finalExactId = exactId;
+
+        return jdbi.withHandle(handle ->
+                handle.createQuery(sql)
+                        .bind("keyword", "%" + keyword + "%")
+                        .bind("exactId", finalExactId)
+                        .map((rs, ctx) -> {
+                            Product product = new Product();
+                            product.setProduct_id(rs.getInt("product_id"));
+                            product.setProduct_name(rs.getString("product_name"));
+                            product.setPrice(rs.getDouble("price"));
+                            product.setThumbnail(rs.getString("thumbnail"));
+
+                            Variants variant = new Variants();
+                            variant.setVariantId(rs.getInt("variant_id"));
+                            variant.setSize(rs.getString("size"));
+                            variant.setColor(rs.getString("color"));
+                            variant.setQuantity(rs.getInt("variant_quantity"));
+                            variant.setProduct(product);
+
+                            return variant;
+                        })
+                        .list()
+        );
+    }
 }
