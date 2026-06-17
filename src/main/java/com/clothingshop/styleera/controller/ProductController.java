@@ -32,6 +32,11 @@ public class ProductController extends HttpServlet {
         String sortParam = request.getParameter("sort");
         String searchParam = request.getParameter("search");
         String priceRangeParam = request.getParameter("priceRange");
+        String[] selectedSizes = request.getParameterValues("size");
+        String[] selectedColors = request.getParameterValues("color");
+        System.out.println("====== FILTER DEBUG ======");
+        System.out.println("Sizes received: " + (selectedSizes != null ? java.util.Arrays.toString(selectedSizes) : "null"));
+        System.out.println("Colors received: " + (selectedColors != null ? java.util.Arrays.toString(selectedColors) : "null"));
 
         // Lấy trang hiện tại
         String pageParam = request.getParameter("page");
@@ -88,6 +93,47 @@ public class ProductController extends HttpServlet {
                 title += " - Lọc theo giá";
             }
 
+            // BƯỚC 2.5: LỌC THEO SIZE VÀ COLOR
+            if ((selectedSizes != null && selectedSizes.length > 0) || (selectedColors != null && selectedColors.length > 0)) {
+                fullList.removeIf(p -> {
+                    if (p.getVariants() == null || p.getVariants().isEmpty()) {
+                        return true; // Loại bỏ nếu sản phẩm không có biến thể nào
+                    }
+                    // Giữ lại sản phẩm nếu có ít nhất 1 biến thể khớp với tiêu chí Size và Color
+                    boolean hasMatchingVariant = false;
+                    for (com.clothingshop.styleera.model.Variants v : p.getVariants()) {
+                        boolean matchSize = true;
+                        boolean matchColor = true;
+
+                        if (selectedSizes != null && selectedSizes.length > 0) {
+                            matchSize = false;
+                            for (String s : selectedSizes) {
+                                if (s.equalsIgnoreCase(v.getSize())) {
+                                    matchSize = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (selectedColors != null && selectedColors.length > 0) {
+                            matchColor = false;
+                            for (String c : selectedColors) {
+                                if (c.equalsIgnoreCase(v.getColor())) {
+                                    matchColor = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (matchSize && matchColor) {
+                            hasMatchingVariant = true;
+                            break;
+                        }
+                    }
+                    return !hasMatchingVariant; // Xóa nếu không có biến thể nào khớp
+                });
+            }
+
             // BƯỚC 3: SẮP XẾP DANH SÁCH
             if (sortParam != null && !sortParam.isEmpty()) {
                 if (sortParam.equals("price_asc")) {
@@ -100,6 +146,8 @@ public class ProductController extends HttpServlet {
             }
 
         } catch (NumberFormatException e) {
+            System.out.println("====== EXCEPTION CAUGHT ======");
+            e.printStackTrace();
             fullList = (productService.findAll() != null) ? new ArrayList<>(productService.findAll()) : new ArrayList<>();
         }
 
@@ -141,6 +189,18 @@ public class ProductController extends HttpServlet {
         request.setAttribute("currentParent", parentIdParam);
         request.setAttribute("currentSearch", searchParam);
         request.setAttribute("currentPriceRange", priceRangeParam);
+
+        java.util.List<String> currentSizes = new ArrayList<>();
+        if (selectedSizes != null) {
+            for (String s : selectedSizes) currentSizes.add(s);
+        }
+        request.setAttribute("currentSizes", currentSizes);
+
+        java.util.List<String> currentColors = new ArrayList<>();
+        if (selectedColors != null) {
+            for (String c : selectedColors) currentColors.add(c);
+        }
+        request.setAttribute("currentColors", currentColors);
 
         request.setAttribute("listSizes", variantDAO.getAllSizes());
         request.setAttribute("listColors", variantDAO.getAllColors());
