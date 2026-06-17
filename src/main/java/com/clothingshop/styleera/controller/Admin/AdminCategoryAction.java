@@ -36,7 +36,7 @@ public class AdminCategoryAction extends HttpServlet {
                 throw new ServletException("Không tìm thấy file cấu hình!");
             }
             prop.load(input);
-            uploadDir = prop.getProperty("upload.directory");
+            uploadDir = prop.getProperty("uploadPath");
         } catch (IOException ex) {
             throw new ServletException("Lỗi khi đọc file cấu hình", ex);
         }
