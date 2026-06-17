@@ -21,6 +21,27 @@ function initializeDashboard() {
     if (targetCanvas) {
         initializeTargetChart(targetCanvas);
     }
+
+    const btnMonthly = document.getElementById("btnMonthly");
+    const btnDaily = document.getElementById("btnDaily");
+
+    if (btnMonthly && btnDaily) {
+        btnMonthly.addEventListener("change", function () {
+            if (this.checked && revenueChart) {
+                revenueChart.data.labels = window.monthlyLabels;
+                revenueChart.data.datasets[0].data = window.monthlyData;
+                revenueChart.update();
+            }
+        });
+
+        btnDaily.addEventListener("change", function () {
+            if (this.checked && revenueChart) {
+                revenueChart.data.labels = window.dailyLabels;
+                revenueChart.data.datasets[0].data = window.dailyData;
+                revenueChart.update();
+            }
+        });
+    }
 }
 
 function getDashboardChartConfig() {
