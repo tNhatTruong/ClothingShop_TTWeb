@@ -104,6 +104,51 @@ public class VariantDAO {
         );
     }
 
+    public int countLowStockVariants(int threshold) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        return jdbi.withHandle(handle ->
+                handle.createQuery("SELECT COUNT(*) FROM variants WHERE quantity <= :threshold")
+                        .bind("threshold", threshold)
+                        .mapTo(Integer.class)
+                        .findOne()
+                        .orElse(0)
+        );
+    }
+    
+    public List<Variants> getLowStockVariants(int threshold, int limit) {
+        Jdbi jdbi = JDBIConnector.getJdbi();
+        String sql = "SELECT v.id AS variant_id, v.size, v.color, v.quantity AS variant_quantity, " +
+                "p.id AS product_id, p.product_name, p.price, i.path AS thumbnail " +
+                "FROM variants v " +
+                "JOIN products p ON v.product_id = p.id " +
+                "LEFT JOIN images i ON p.image_id = i.id " +
+                "WHERE v.quantity <= :threshold " +
+                "ORDER BY v.quantity ASC LIMIT :limit";
+
+        return jdbi.withHandle(handle ->
+                handle.createQuery(sql)
+                        .bind("threshold", threshold)
+                        .bind("limit", limit)
+                        .map((rs, ctx) -> {
+                            com.clothingshop.styleera.model.Product product = new com.clothingshop.styleera.model.Product();
+                            product.setProduct_id(rs.getInt("product_id"));
+                            product.setProduct_name(rs.getString("product_name"));
+                            product.setPrice(rs.getDouble("price"));
+                            product.setThumbnail(rs.getString("thumbnail"));
+
+                            Variants variant = new Variants();
+                            variant.setVariantId(rs.getInt("variant_id"));
+                            variant.setSize(rs.getString("size"));
+                            variant.setColor(rs.getString("color"));
+                            variant.setQuantity(rs.getInt("variant_quantity"));
+                            variant.setProduct(product);
+
+                            return variant;
+                        })
+                        .list()
+        );
+    }
+
     public List<String> getSizesByProductId(int productId) {
         Jdbi jdbi = JDBIConnector.getJdbi();
         return jdbi.withHandle(handle ->

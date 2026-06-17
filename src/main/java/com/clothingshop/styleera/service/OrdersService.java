@@ -43,6 +43,58 @@ public class OrdersService {
         return data;
     }
 
+    public int countPendingApprovalOrders() {
+        return ordersDAO.countPendingApprovalOrders();
+    }
+    
+    public List<Orders> getPendingApprovalOrders(int limit) {
+        return ordersDAO.getPendingApprovalOrders(limit);
+    }
+
+    public int countReturnRequestedOrders() {
+        return ordersDAO.countReturnRequestedOrders();
+    }
+    
+    public List<Orders> getReturnRequestedOrders(int limit) {
+        return ordersDAO.getReturnRequestedOrders(limit);
+    }
+
+    public List<String> getDailyRevenueChartLabels() {
+        List<String> labels = new ArrayList<>();
+        int lengthOfMonth = java.time.LocalDate.now().lengthOfMonth();
+        for (int i = 1; i <= lengthOfMonth; i++) {
+            labels.add(String.valueOf(i));
+        }
+        return labels;
+    }
+
+    public List<Double> getDailyRevenueChartData() {
+        Map<Integer, Double> revenueByDay = ordersDAO.getDailyRevenueCurrentMonth();
+        List<Double> data = new ArrayList<>();
+        int lengthOfMonth = java.time.LocalDate.now().lengthOfMonth();
+        for (int i = 1; i <= lengthOfMonth; i++) {
+            data.add(revenueByDay.getOrDefault(i, 0.0));
+        }
+        return data;
+    }
+
+    public List<String> getMonthlyRevenueChartLabels() {
+        List<String> labels = new ArrayList<>();
+        for (int i = 1; i <= 12; i++) {
+            labels.add("Tháng " + i);
+        }
+        return labels;
+    }
+
+    public List<Double> getMonthlyRevenueChartData() {
+        Map<Integer, Double> revenueByMonth = ordersDAO.getMonthlyRevenueCurrentYear();
+        List<Double> data = new ArrayList<>();
+        for (int i = 1; i <= 12; i++) {
+            data.add(revenueByMonth.getOrDefault(i, 0.0));
+        }
+        return data;
+    }
+
     public Orders findById(int orderId) {
         return ordersDAO.findById(orderId);
     }

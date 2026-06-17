@@ -20,4 +20,10 @@ public class VariantService {
         VariantDAO variantDAO = new VariantDAO();
         return variantDAO.getVariantsByProductId(productId);
     }
+    public int countLowStockVariants(int threshold) {
+        return variantDAO.countLowStockVariants(threshold);
+    }
+    public List<Variants> getLowStockVariants(int threshold, int limit) {
+        return variantDAO.getLowStockVariants(threshold, limit);
+    }
 }

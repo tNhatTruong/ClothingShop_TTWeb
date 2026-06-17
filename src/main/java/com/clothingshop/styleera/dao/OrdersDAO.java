@@ -63,6 +63,82 @@ public class OrdersDAO {
         });
     }
 
+    /** Doanh thu theo ngày trong tháng hiện tại */
+    public Map<Integer, Double> getDailyRevenueCurrentMonth() {
+        return JDBIConnector.getJdbi().withHandle(handle -> {
+            Map<Integer, Double> revenueByDay = new HashMap<>();
+            handle.createQuery(
+                    "SELECT DAY(created_at) AS d, COALESCE(SUM(total_price), 0) AS revenue " +
+                    "FROM orders " +
+                    "WHERE status = :status AND MONTH(created_at) = MONTH(NOW()) AND YEAR(created_at) = YEAR(NOW()) " +
+                    "GROUP BY DAY(created_at)"
+            )
+            .bind("status", com.clothingshop.styleera.model.enums.OrderStatus.DELIVERED.getValue())
+            .map((rs, ctx) -> Map.entry(rs.getInt("d"), rs.getDouble("revenue")))
+            .list()
+            .forEach(entry -> revenueByDay.put(entry.getKey(), entry.getValue()));
+            return revenueByDay;
+        });
+    }
+
+    /** Doanh thu theo tháng trong năm hiện tại */
+    public Map<Integer, Double> getMonthlyRevenueCurrentYear() {
+        return JDBIConnector.getJdbi().withHandle(handle -> {
+            Map<Integer, Double> revenueByMonth = new HashMap<>();
+            handle.createQuery(
+                    "SELECT MONTH(created_at) AS m, COALESCE(SUM(total_price), 0) AS revenue " +
+                    "FROM orders " +
+                    "WHERE status = :status AND YEAR(created_at) = YEAR(NOW()) " +
+                    "GROUP BY MONTH(created_at)"
+            )
+            .bind("status", com.clothingshop.styleera.model.enums.OrderStatus.DELIVERED.getValue())
+            .map((rs, ctx) -> Map.entry(rs.getInt("m"), rs.getDouble("revenue")))
+            .list()
+            .forEach(entry -> revenueByMonth.put(entry.getKey(), entry.getValue()));
+            return revenueByMonth;
+        });
+    }
+
+    /** Đếm đơn hàng chờ duyệt */
+    public int countPendingApprovalOrders() {
+        return JDBIConnector.getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT COUNT(*) FROM orders WHERE status = :status")
+                        .bind("status", com.clothingshop.styleera.model.enums.OrderStatus.PENDING_APPROVAL.getValue())
+                        .mapTo(Integer.class)
+                        .one()
+        );
+    }
+    
+    public List<Orders> getPendingApprovalOrders(int limit) {
+        return JDBIConnector.getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT id, user_id, address_id, shipping_name, shipping_phone, shipping_address, status, note, price, fee_delivery, total_price, created_at FROM orders WHERE status = :status ORDER BY created_at ASC LIMIT :limit")
+                        .bind("status", com.clothingshop.styleera.model.enums.OrderStatus.PENDING_APPROVAL.getValue())
+                        .bind("limit", limit)
+                        .mapToBean(Orders.class)
+                        .list()
+        );
+    }
+
+    /** Đếm đơn hàng yêu cầu hoàn trả */
+    public int countReturnRequestedOrders() {
+        return JDBIConnector.getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT COUNT(*) FROM orders WHERE status = :status")
+                        .bind("status", com.clothingshop.styleera.model.enums.OrderStatus.RETURN_REQUESTED.getValue())
+                        .mapTo(Integer.class)
+                        .one()
+        );
+    }
+
+    public List<Orders> getReturnRequestedOrders(int limit) {
+        return JDBIConnector.getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT id, user_id, address_id, shipping_name, shipping_phone, shipping_address, status, note, price, fee_delivery, total_price, created_at FROM orders WHERE status = :status ORDER BY created_at ASC LIMIT :limit")
+                        .bind("status", com.clothingshop.styleera.model.enums.OrderStatus.RETURN_REQUESTED.getValue())
+                        .bind("limit", limit)
+                        .mapToBean(Orders.class)
+                        .list()
+        );
+    }
+
     // Lấy thông tin đơn hàng theo ID
     public Orders findById(int orderId) {
         return JDBIConnector.getJdbi().withHandle(handle ->
