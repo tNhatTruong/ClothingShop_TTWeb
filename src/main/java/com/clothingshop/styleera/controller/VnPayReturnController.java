@@ -1,6 +1,5 @@
 package com.clothingshop.styleera.controller;
 
-import com.clothingshop.styleera.dao.OrdersDAO;
 import com.clothingshop.styleera.util.VnPayConfig;
 import com.clothingshop.styleera.util.VnPayUtils;
 import jakarta.servlet.ServletException;
@@ -61,7 +60,6 @@ public class VnPayReturnController extends HttpServlet {
 
         String signValue = VnPayUtils.hmacSHA512(VnPayConfig.vnp_HashSecret, hashData.toString());
         
-        OrdersDAO ordersDAO = new OrdersDAO();
 
         String txnRef = request.getParameter("vnp_TxnRef");
         int orderId = 0;
@@ -77,9 +75,13 @@ public class VnPayReturnController extends HttpServlet {
 
         if (signValue.equals(vnp_SecureHash)) {
             if ("00".equals(request.getParameter("vnp_TransactionStatus"))) {
-                // Thanh toán thành công
+                // Thanh toán thành công: Cập nhật DB (Dành cho môi trường Local không có IPN Webhook)
                 if (orderId > 0) {
-                    ordersDAO.updateStatus(orderId, "Đã Thanh Toán");
+                    com.clothingshop.styleera.dao.OrdersDAO ordersDAO = new com.clothingshop.styleera.dao.OrdersDAO();
+                    com.clothingshop.styleera.model.Orders order = ordersDAO.findById(orderId);
+                    if (order != null && com.clothingshop.styleera.model.enums.OrderStatus.PENDING_PAYMENT.getValue().equals(order.getStatus())) {
+                        ordersDAO.updateStatus(orderId, com.clothingshop.styleera.model.enums.OrderStatus.PAID.getValue());
+                    }
                 }
                 response.sendRedirect(request.getContextPath() + "/order-success?id=" + orderId);
             } else {

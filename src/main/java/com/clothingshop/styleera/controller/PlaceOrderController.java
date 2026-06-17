@@ -143,10 +143,8 @@ public class PlaceOrderController extends HttpServlet {
 
         // Nếu validation thành công, tạo đơn hàng và lưu vào DB
         try {
-            com.clothingshop.styleera.dao.OrdersDAO ordersDAO = new com.clothingshop.styleera.dao.OrdersDAO();
-            com.clothingshop.styleera.dao.OrderDetailsDAO orderDetailsDAO = new com.clothingshop.styleera.dao.OrderDetailsDAO();
+            com.clothingshop.styleera.service.OrderService orderService = new com.clothingshop.styleera.service.OrderService();
             com.clothingshop.styleera.dao.VariantDAO variantDAO = new com.clothingshop.styleera.dao.VariantDAO();
-            com.clothingshop.styleera.dao.CartDao cartDao = new com.clothingshop.styleera.dao.CartDao();
 
             boolean isBuyNow = "true".equals(request.getParameter("isBuyNow"));
             String paymentMethod = request.getParameter("payment_method");
@@ -177,9 +175,9 @@ public class PlaceOrderController extends HttpServlet {
             order.setShippingPhone(phone);
             
             if ("vnpay".equalsIgnoreCase(paymentMethod)) {
-                order.setStatus("Chờ thanh toán");
+                order.setStatus(com.clothingshop.styleera.model.enums.OrderStatus.PENDING_PAYMENT.getValue());
             } else {
-                order.setStatus("Chờ duyệt");
+                order.setStatus(com.clothingshop.styleera.model.enums.OrderStatus.PENDING_APPROVAL.getValue());
             }
             order.setNote("");
             
@@ -214,21 +212,12 @@ public class PlaceOrderController extends HttpServlet {
                 order.setPrice(subTotal);
                 order.setTotalPrice(subTotal + shipping);
                 
-                currentOrderId = ordersDAO.insertOrder(order);
+                // Gọi Transaction Service tạo đơn, trừ kho, lưu detail, xóa giỏ DB
+                currentOrderId = orderService.placeOrder(order, checkoutItems, user, false);
                 
-                // Lưu OrderDetails và trừ Tồn kho, Xóa giỏ hàng
+                // Cập nhật giỏ hàng trên Session
                 for (com.clothingshop.styleera.model.CartItem item : checkoutItems) {
-                    int variantId = item.getVariant().getVariantId();
-                    int qty = item.getQuantity();
-                    double price = item.getVariant().getProduct().getPrice();
-                    
-                    com.clothingshop.styleera.model.OrderDetail detail = new com.clothingshop.styleera.model.OrderDetail(0, currentOrderId, variantId, qty, price);
-                    orderDetailsDAO.insertOrderDetail(detail);
-                    variantDAO.updateStock(variantId, qty);
-                    
-                    // Xóa item trong DB giỏ hàng và trong đối tượng Cart session
-                    cartDao.removeCartItem(user.getId(), variantId);
-                    cart.removeItem(variantId);
+                    cart.removeItem(item.getVariant().getVariantId());
                 }
             } else {
                 // Xử lý Buy Now
@@ -243,11 +232,15 @@ public class PlaceOrderController extends HttpServlet {
                 order.setPrice(subTotal);
                 order.setTotalPrice(subTotal + shipping);
                 
-                currentOrderId = ordersDAO.insertOrder(order);
-                
-                com.clothingshop.styleera.model.OrderDetail detail = new com.clothingshop.styleera.model.OrderDetail(0, currentOrderId, variantId, quantity, realPrice);
-                orderDetailsDAO.insertOrderDetail(detail);
-                variantDAO.updateStock(variantId, quantity);
+                // Build a temporary CartItem list
+                com.clothingshop.styleera.model.CartItem singleItem = new com.clothingshop.styleera.model.CartItem();
+                singleItem.setVariant(variantInfo);
+                singleItem.setQuantity(quantity);
+                java.util.List<com.clothingshop.styleera.model.CartItem> checkoutItems = new java.util.ArrayList<>();
+                checkoutItems.add(singleItem);
+
+                // Gọi Transaction Service tạo đơn
+                currentOrderId = orderService.placeOrder(order, checkoutItems, user, true);
             }
             
             if ("vnpay".equals(paymentMethod)) {
