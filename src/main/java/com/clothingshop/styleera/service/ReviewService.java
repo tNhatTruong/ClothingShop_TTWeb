@@ -20,4 +20,15 @@ public class ReviewService {
     public void insertReview(int productId, int userId, int rating, String comment) {
         reviewDao.insertReview(productId, userId, rating, comment);
     }
+
+    public List<Review> getAllReviews() {
+        return reviewDao.findAll();
+    }
+    public List<Review> getFilteredReviews(String ratingFilter, String dateSort) {
+        if ((ratingFilter == null || ratingFilter.isEmpty()) &&
+                (dateSort == null || "newest".equals(dateSort))) {
+            return reviewDao.findAll();
+        }
+        return reviewDao.filterReviews(ratingFilter, dateSort);
+    }
 }

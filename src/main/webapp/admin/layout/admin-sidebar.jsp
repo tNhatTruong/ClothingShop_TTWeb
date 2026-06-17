@@ -41,13 +41,6 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a href="${root}/admin-profile"
-                   class="menu-link ${currentPage == 'profile' ? 'active' : ''}">
-                    <i class="fa-solid fa-user"></i>
-                    <span>Quản Trị Viên</span>
-                </a>
-            </li>
-            <li class="menu-item">
                 <a href="${root}/admin-user"
                    class="menu-link ${currentPage == 'customer' ? 'active' : ''}">
                     <i class="fas fa-users"></i>
@@ -55,7 +48,7 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a href="${root}/admin/admin-user-comment.jsp"
+                <a href="${root}/admin-reviews"
                    class="menu-link ${currentPage == 'comment' ? 'active' : ''}">
                     <i class="fa-solid fa-comment"></i>
                     <span>Quản lý Bình Luận</span>

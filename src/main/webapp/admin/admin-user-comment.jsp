@@ -9,7 +9,7 @@
     <title>StyleEra - Quản lý bình luận</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-    <link rel="stylesheet" href="css/admin.css?v=1.2"/>
+    <link rel="stylesheet" href="${root}/admin/css/admin.css"/>
 </head>
 <body>
 
@@ -22,28 +22,32 @@
         <div>
             <h1 class="page-title">Quản lý Bình Luận</h1>
         </div>
-        <div class="page-actions">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                <i class="fas fa-plus"></i> Thêm Tài Khoản
-            </button>
-        </div>
     </div>
     <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <div class="row g-3 align-items-end">
+            <form action="${root}/admin-reviews" method="GET" class="row g-3 align-items-end">
                 <div class="col-md-6">
                     <label class="form-label">Tìm Kiếm</label>
                     <input type="text" class="form-control" id="searchInput" placeholder="Tên tài khoản"/>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">Ngày Bình luận</label>
-                    <select class="form-select" id="categoryFilter">
-                        <option value="">Tất Cả các ngày</option>
-                        <option value="admin">Bình luận cũ nhất</option>
-                        <option value="usr">Bình luận mới nhất</option>
+                    <label class="form-label">Phân loại đánh giá</label>
+                    <select class="form-select" name="ratingFilter" onchange="this.form.submit()">
+                        <option value="">Tất cả</option>
+                        <option value="good" ${param.ratingFilter == 'good' ? 'selected' : ''}>Tốt (4 - 5 sao)</option>
+                        <option value="average" ${param.ratingFilter == 'average' ? 'selected' : ''}>Trung bình (3 - 4 sao)</option>
+                        <option value="bad" ${param.ratingFilter == 'bad' ? 'selected' : ''}>Tệ (1 - 3 sao)</option>
                     </select>
                 </div>
-            </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Ngày Bình luận</label>
+                    <select class="form-select" name="dateSort" onchange="this.form.submit()">
+                        <option value="newest" ${param.dateSort == 'newest' ? 'selected' : ''}>Bình luận mới nhất</option>
+                        <option value="oldest" ${param.dateSort == 'oldest' ? 'selected' : ''}>Bình luận cũ nhất</option>
+                    </select>
+                </div>
+            </form>
         </div>
     </div>
     <div>
@@ -51,7 +55,7 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-light border-bottom d-flex justify-content-between align-items-center">
                     <h6 class="mb-0">Danh Sách Bình Luận</h6>
-                    <span class="text-muted small">Tổng cộng: <strong>1</strong> Người dùng</span>
+                    <span class="text-muted small">Tổng cộng: <strong>${totalReviews}</strong> Bình luận</span>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -59,30 +63,49 @@
                             <thead class="table-light">
                             <tr>
                                 <th>ID</th>
-                                <th>Tên khách hàng</th>
-                                <th>Ngày bình luận</th>
-                                <th>Ảnh bình luận</th>
-                                <th>Màu</th>
-                                <th>Size</th>
-                                <th>Lời bình luận</th>
+                                <th>Sản phẩm</th>
+                                <th>Người dùng</th>
+                                <th>Đánh giá</th>
+                                <th>Nội dung</th>
+                                <th>Ngày tạo</th>
                                 <th>Hành Động</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>#3</td>
-                                <td>T***h</td>
-                                <td>2025-20-11</td>
-                                <td><img src="" alt="no picture"></td>
-                                <td>Xanh</td>
-                                <td>L</td>
-                                <td>0904899626</td>
-                                <td>
-                                    <button class="btn btn-sm btn-danger" title="Xóa">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
+                            <c:forEach var="item" items="${reviewList}">
+                                <tr>
+                                    <td>#${item.id}</td>
+
+                                    <td>Mã SP: ${item.productId}</td>
+
+                                    <td><strong>${item.fullName}</strong></td>
+
+                                    <td>
+                                        <div class="text-warning">
+                                            <c:forEach begin="1" end="${item.rating}">
+                                                <i class="fas fa-star"></i>
+                                            </c:forEach>
+                                            <c:forEach begin="${item.rating + 1}" end="5">
+                                                <i class="far fa-star"></i>
+                                            </c:forEach>
+                                        </div>
+                                    </td>
+
+                                    <td style="max-width: 250px;" class="text-truncate" title="${item.comment}">
+                                            ${item.comment}
+                                    </td>
+
+                                    <td>
+                                        <fmt:formatDate value="${item.createdAt}" pattern="dd/MM/yyyy HH:mm" />
+                                    </td>
+
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i> Xóa
+                                        </button>
+                                    </td>
+                                </tr>
+                            </c:forEach>
                             </tbody>
                         </table>
                     </div>

@@ -6,6 +6,7 @@
                 <%@ page import="com.clothingshop.styleera.model.Review" %>
                     <%@ page import="com.clothingshop.styleera.model.Product" %>
                         <%@ page import="java.text.SimpleDateFormat" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
                             <!DOCTYPE html>
                             <html lang="vi">
