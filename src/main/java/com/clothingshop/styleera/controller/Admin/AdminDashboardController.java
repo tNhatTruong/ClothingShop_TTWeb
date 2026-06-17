@@ -3,7 +3,7 @@ package com.clothingshop.styleera.controller.Admin;
 import com.clothingshop.styleera.model.Orders;
 import com.clothingshop.styleera.model.ParentCategory;
 import com.clothingshop.styleera.model.Product;
-import com.clothingshop.styleera.model.User;
+
 import com.clothingshop.styleera.service.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
