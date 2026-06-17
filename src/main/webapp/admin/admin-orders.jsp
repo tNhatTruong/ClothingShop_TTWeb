@@ -40,9 +40,14 @@
             <!-- Page Header -->
             <div class="page-header mb-5 d-flex justify-content-between align-items-center w-100">
                 <h1 class="page-title mb-0">Quản Lý Đơn Hàng</h1>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adminCreateOrderModal">
-                    <i class="fas fa-plus me-1"></i> Tạo Đơn Hàng
-                </button>
+                <div>
+                    <button type="button" class="btn btn-secondary me-2" onclick="printSelectedOrders()">
+                        <i class="fas fa-print me-1"></i> In Đơn Đã Chọn
+                    </button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adminCreateOrderModal">
+                        <i class="fas fa-plus me-1"></i> Tạo Đơn Hàng
+                    </button>
+                </div>
             </div>
 
             <!-- Tính toán các trạng thái đơn hàng theo 6 nhóm Macro hợp lý -->
@@ -189,6 +194,7 @@
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                             <tr class="text-center align-middle">
+                                <th style="width: 40px;"><input type="checkbox" id="selectAllOrders" class="form-check-input"></th>
                                 <th>Mã ĐH</th>
                                 <th>Khách Hàng</th>
                                 <th>Email</th>
@@ -234,6 +240,7 @@
                                         </c:choose>
                                         
                                         <tr class="text-center align-middle" data-macro-status="${rowMacro}" data-exact-status="${o.status}">
+                                            <td><input type="checkbox" class="form-check-input order-checkbox" value="${o.id}"></td>
                                             <td><strong>#${o.id}</strong></td>
                                             <td>${not empty o.shippingName ? o.shippingName : o.userName}</td>
                                             <td>${o.email}</td>
@@ -370,6 +377,12 @@
                                                                         </form>
                                                                     </li>
                                                                 </c:if>
+                                                                <li><hr class="dropdown-divider"></li>
+                                                                <li>
+                                                                    <a href="${root}/admin/print-invoice?orderId=${o.id}" target="_blank" class="dropdown-item text-primary">
+                                                                        <i class="fas fa-print me-2"></i>In hóa đơn
+                                                                    </a>
+                                                                </li>
                                                             </ul>
                                                         </div>
                                                     </c:if>
@@ -643,7 +656,119 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (searchInput) searchInput.addEventListener("input", filterOrders);
     if (statusFilter) statusFilter.addEventListener("change", filterOrders);
+    
+    // AJAX for updating order status to prevent page reload jumping to top
+    const updateForms = document.querySelectorAll('form[action*="admin-update-order-status"]');
+    updateForms.forEach(form => {
+        const originalOnsubmit = form.getAttribute('onsubmit');
+        form.onsubmit = function(event) {
+            event.preventDefault();
+            
+            if (originalOnsubmit) {
+                const confirmMatch = originalOnsubmit.match(/confirm\('(.*?)'\)/);
+                if (confirmMatch && confirmMatch[1]) {
+                    if (!confirm(confirmMatch[1])) {
+                        return false;
+                    }
+                }
+            }
+            
+            const btn = form.querySelector('button[type="submit"]');
+            if(btn) {
+                btn.dataset.oldHtml = btn.innerHTML;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Đang xử lý...';
+                btn.disabled = true;
+            }
+            
+            const formData = new FormData(form);
+            formData.append("ajax", "true");
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: new URLSearchParams(formData)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    // Lưu tin nhắn toast vào sessionStorage và reload lại trang
+                    // window.location.reload() sẽ tự động giữ vị trí scroll hiện tại
+                    sessionStorage.setItem("orderToastMessage", data.message);
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                    if(btn) {
+                        btn.innerHTML = btn.dataset.oldHtml;
+                        btn.disabled = false;
+                    }
+                }
+            }).catch(err => {
+                alert("Lỗi kết nối!");
+                if(btn) {
+                    btn.innerHTML = btn.dataset.oldHtml;
+                    btn.disabled = false;
+                }
+            });
+        };
+    });
+
+    // Show toast after reload if it exists in session storage
+    const savedMessage = sessionStorage.getItem("orderToastMessage");
+    if (savedMessage) {
+        const toastMessage = document.getElementById('toastMessage');
+        if (toastMessage) {
+            toastMessage.innerHTML = '<i class="fas fa-check-circle me-2"></i> ' + savedMessage;
+            const toast = new bootstrap.Toast(document.getElementById('liveToast'));
+            toast.show();
+        }
+        sessionStorage.removeItem("orderToastMessage");
+        
+        // Ẩn alert top nếu có để tránh trùng lặp
+        const alertBox = document.querySelector('.alert-success');
+        if (alertBox) alertBox.remove();
+    }
 });
+    // Mặc định: Xử lý checkbox chọn tất cả đơn hàng
+    const selectAllCb = document.getElementById('selectAllOrders');
+    if(selectAllCb) {
+        selectAllCb.addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.order-checkbox');
+            checkboxes.forEach(cb => {
+                // Chỉ check những checkbox đang hiển thị (không bị ẩn)
+                if(cb.closest('tr').style.display !== 'none') {
+                    cb.checked = this.checked;
+                }
+            });
+        });
+    }
+
+// Hàm dùng bên ngoài DOMContentLoaded
+function printSelectedOrders() {
+    const selectedIds = [];
+    document.querySelectorAll('.order-checkbox:checked').forEach(cb => {
+        selectedIds.push(cb.value);
+    });
+
+    if (selectedIds.length === 0) {
+        alert('Vui lòng chọn ít nhất 1 đơn hàng để in!');
+        return;
+    }
+
+    const idsString = selectedIds.join(',');
+    window.open('${root}/admin/print-invoice?orderIds=' + idsString, '_blank');
+}
 </script>
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100; margin-top: 60px;">
+    <div id="liveToast" class="toast align-items-center text-white bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body fw-medium" id="toastMessage">
+                <i class="fas fa-check-circle me-2"></i> Thành công!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
