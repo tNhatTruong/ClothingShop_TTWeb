@@ -159,21 +159,39 @@
                     </div>
 
                     <!-- TIMELINE -->
-                    <c:set var="status" value="${order.status}" />
+                    <c:set var="statusLC" value="${fn:toLowerCase(order.status)}" />
                     <c:set var="step" value="0" />
                     <c:choose>
-                        <c:when test="${status == 'Chờ thanh toán'}"><c:set var="step" value="0" /></c:when>
-                        <c:when test="${status == 'Chờ duyệt' || status == 'Đã Thanh Toán'}"><c:set var="step" value="1" /></c:when>
-                        <c:when test="${status == 'Chờ lấy hàng' || status == 'Chờ đơn vị vận chuyển lấy hàng'}"><c:set var="step" value="2" /></c:when>
-                        <c:when test="${status == 'Đang vận chuyển' || status == 'Đang giao'}"><c:set var="step" value="3" /></c:when>
-                        <c:when test="${status == 'Đã giao'}"><c:set var="step" value="4" /></c:when>
-                        <c:when test="${fn:startsWith(status, 'Hủy')}"><c:set var="step" value="-1" /></c:when>
+                        <%-- Step 0: Chờ thanh toán, Chờ duyệt --%>
+                        <c:when test="${statusLC == 'chờ thanh toán' || statusLC == 'chờ duyệt'}">
+                            <c:set var="step" value="0" />
+                        </c:when>
+                        <%-- Step 1: Đã thanh toán, Đã xác nhận, Chờ lấy hàng, Chờ vận chuyển --%>
+                        <c:when test="${statusLC == 'đã thanh toán' || fn:contains(statusLC, 'xác nhận') || statusLC == 'admin_confirmed' || statusLC == 'chờ lấy hàng' || statusLC == 'chờ vận chuyển' || statusLC == 'chờ đơn vị vận chuyển lấy hàng'}">
+                            <c:set var="step" value="1" />
+                        </c:when>
+                        <%-- Step 2: Đang vận chuyển, Đang giao --%>
+                        <c:when test="${statusLC == 'đang vận chuyển' || statusLC == 'đang giao'}">
+                            <c:set var="step" value="2" />
+                        </c:when>
+                        <%-- Step 3: Đã giao --%>
+                        <c:when test="${statusLC == 'đã giao' || statusLC == 'đã giao hàng' || fn:contains(statusLC, 'tại quầy') || statusLC == 'paid_at_counter'}">
+                            <c:set var="step" value="3" />
+                        </c:when>
+                        <%-- Step 4: Đang trả hàng --%>
+                        <c:when test="${statusLC == 'yêu cầu trả hàng' || statusLC == 'đang xử lý trả hàng'}">
+                            <c:set var="step" value="4" />
+                        </c:when>
+                        <%-- Step -1: Đóng (Hủy, Thất bại, Từ chối, Hoàn tiền) --%>
+                        <c:when test="${fn:contains(statusLC, 'hủy') || statusLC == 'đã hủy' || statusLC == 'giao thất bại' || statusLC == 'đã hoàn tiền' || statusLC == 'từ chối trả hàng'}">
+                            <c:set var="step" value="-1" />
+                        </c:when>
                     </c:choose>
 
                     <div class="p-4 border-bottom">
                         <c:if test="${step >= 0}">
                             <div class="timeline">
-                                <div class="timeline-item ${step >= 1 ? 'completed' : 'pending'}">
+                                <div class="timeline-item ${step >= 1 ? 'completed' : 'active'}">
                                     <div class="timeline-icon"><i class="fas fa-file-invoice"></i></div>
                                     <div class="timeline-content">
                                         <div class="timeline-title">Đơn Hàng Đã Đặt</div>
@@ -195,7 +213,7 @@
                                         <div class="timeline-title">Đang Vận Chuyển</div>
                                     </div>
                                 </div>
-                                <div class="timeline-item ${step >= 4 ? 'completed' : (step == 3 ? 'active' : 'pending')}">
+                                <div class="timeline-item ${step >= 3 ? 'completed' : 'pending'}">
                                     <div class="timeline-icon"><i class="fas fa-star"></i></div>
                                     <div class="timeline-content">
                                         <div class="timeline-title">Đã Giao Hàng</div>
@@ -208,8 +226,19 @@
                                 <div class="timeline-item completed" style="border-left-color: #ee4d2d;">
                                     <div class="timeline-icon" style="background-color: #ee4d2d; color: white;"><i class="fas fa-times"></i></div>
                                     <div class="timeline-content">
-                                        <div class="timeline-title" style="color: #ee4d2d;">Đã Hủy</div>
-                                        <div class="timeline-desc">${status}</div>
+                                        <div class="timeline-title" style="color: #ee4d2d;">Đơn Hàng Đã Đóng</div>
+                                        <div class="timeline-desc">${order.status}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:if>
+                        <c:if test="${step == 4}">
+                            <div class="timeline">
+                                <div class="timeline-item completed" style="border-left-color: #ffc107;">
+                                    <div class="timeline-icon" style="background-color: #ffc107; color: white;"><i class="fas fa-undo"></i></div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-title" style="color: #ffc107;">Tiến Trình Trả Hàng</div>
+                                        <div class="timeline-desc">${order.status}</div>
                                     </div>
                                 </div>
                             </div>
@@ -231,14 +260,35 @@
                                 <a href="${root}/retry-payment?orderId=${order.id}" class="btn btn-shopee-primary">Thanh Toán Ngay</a>
                             </c:if>
                             
-                            <%-- Hủy Đơn Hàng: hiển thị nếu Chờ duyệt, Chờ thanh toán, Đã thanh toán --%>
-                            <c:if test="${order.status == 'Chờ duyệt' || order.status == 'Chờ thanh toán' || order.status == 'Đã Thanh Toán' || order.status == 'Chờ lấy hàng' || order.status == 'Chờ đơn vị vận chuyển lấy hàng'}">
+                            <%-- Hủy Đơn Hàng: hiển thị nếu Chờ duyệt --%>
+                            <c:if test="${statusLC == 'chờ duyệt'}">
                                 <button type="button" class="btn btn-shopee-outline ms-2" data-bs-toggle="modal" data-bs-target="#cancelModal">Hủy Đơn Hàng</button>
                             </c:if>
                             
-                            <%-- Trả Hàng: hiển thị nếu Đang vận chuyển hoặc Đã giao --%>
-                            <c:if test="${order.status == 'Đang vận chuyển' || order.status == 'Đang giao' || order.status == 'Đã giao'}">
-                                <button type="button" class="btn btn-shopee-outline ms-2" onclick="alert('Tính năng Trả hàng đang được nâng cấp. Vui lòng liên hệ bộ phận CSKH để được hỗ trợ.')">Trả Hàng</button>
+                            <%-- Chờ vận chuyển: Ẩn nút hủy, hiển thị text --%>
+                            <c:if test="${statusLC == 'chờ vận chuyển' || statusLC == 'chờ lấy hàng' || statusLC == 'đang chuẩn bị hàng'}">
+                                <span class="text-danger small ms-2"><i class="fas fa-info-circle"></i> Đơn hàng đang được chuẩn bị. Muốn hủy vui lòng liên hệ CSKH.</span>
+                            </c:if>
+                            
+                            <%-- Đã giao: Trả hàng, Đánh giá, Mua lại --%>
+                            <c:if test="${statusLC == 'đã giao'}">
+                                <form action="${root}/user-request-return" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn Yêu cầu trả hàng / khiếu nại?');">
+                                    <input type="hidden" name="orderId" value="${order.id}">
+                                    <button type="submit" class="btn btn-shopee-outline ms-2">Yêu cầu trả hàng</button>
+                                </form>
+                                <button type="button" class="btn btn-shopee-primary ms-2" onclick="alert('Tính năng Đánh giá đang được phát triển!')">Đánh giá</button>
+                                <button type="button" class="btn btn-shopee-outline ms-2" onclick="alert('Tính năng Mua lại đang được phát triển!')">Mua lại</button>
+                            </c:if>
+                            
+                            <%-- Trả hàng logic buttons --%>
+                            <c:if test="${statusLC == 'yêu cầu trả hàng'}">
+                                <button type="button" class="btn btn-shopee-outline ms-2" onclick="alert('Tính năng Hủy yêu cầu trả hàng đang được phát triển!')">Hủy yêu cầu trả hàng</button>
+                            </c:if>
+                            <c:if test="${statusLC == 'đang xử lý trả hàng'}">
+                                <span class="text-info small ms-2"><i class="fas fa-box-open"></i> Hướng dẫn đóng gói & Gửi về địa chỉ kho: 123 Đường ABC, Quận X, TP.HCM</span>
+                            </c:if>
+                            <c:if test="${statusLC == 'giao thất bại'}">
+                                <button type="button" class="btn btn-shopee-outline ms-2" onclick="alert('Vui lòng gọi hotline 1900-xxxx để được hỗ trợ nhận lại hàng.')">Liên hệ hỗ trợ</button>
                             </c:if>
                         </div>
                     </div>
@@ -260,27 +310,31 @@
                             <div class="col-md-6 border-start px-4">
                                 <!-- Giả lập phần logs vận chuyển để layout cân đối như Shopee -->
                                 <c:choose>
-                                    <c:when test="${step == 4}">
-                                        <div class="text-success small mb-1"><i class="fas fa-check-circle me-2"></i><strong>Đã giao</strong></div>
-                                        <div class="text-muted small ps-4">Giao hàng thành công</div>
-                                    </c:when>
                                     <c:when test="${step == 3}">
-                                        <div class="text-primary small mb-1"><i class="fas fa-truck me-2"></i><strong>Đang vận chuyển</strong></div>
-                                        <div class="text-muted small ps-4">Đơn hàng đang trên đường giao đến bạn</div>
+                                        <c:choose>
+                                            <c:when test="${statusLC == 'paid_at_counter'}">
+                                                <div class="text-success small mb-1"><i class="fas fa-store me-2"></i><strong>Nhận tại quầy</strong></div>
+                                                <div class="text-muted small ps-4">Đơn hàng đã được thanh toán và nhận tại quầy</div>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <div class="text-success small mb-1"><i class="fas fa-check-circle me-2"></i><strong>Đã giao</strong></div>
+                                                <div class="text-muted small ps-4">Giao hàng thành công</div>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </c:when>
                                     <c:when test="${step == 2}">
-                                        <div class="text-secondary small mb-1"><i class="fas fa-box me-2"></i><strong>Chờ lấy hàng</strong></div>
-                                        <div class="text-muted small ps-4">Người bán đang chuẩn bị hàng</div>
+                                        <div class="text-primary small mb-1"><i class="fas fa-truck me-2"></i><strong>Đang vận chuyển</strong></div>
+                                        <div class="text-muted small ps-4">Mã vận đơn: #${order.id}</div>
                                     </c:when>
                                     <c:when test="${step == 1}">
                                         <c:choose>
-                                            <c:when test="${status == 'Chờ duyệt'}">
-                                                <div class="text-secondary small mb-1"><i class="fas fa-hourglass-half me-2"></i><strong>Chờ duyệt</strong></div>
-                                                <div class="text-muted small ps-4">Đơn hàng đang chờ người bán xác nhận</div>
-                                            </c:when>
-                                            <c:when test="${status == 'Đã Thanh Toán'}">
+                                            <c:when test="${statusLC == 'đã thanh toán'}">
                                                 <div class="text-success small mb-1"><i class="fas fa-check-circle me-2"></i><strong>Đã thanh toán</strong></div>
-                                                <div class="text-muted small ps-4">Đơn hàng đã được thanh toán</div>
+                                                <div class="text-muted small ps-4">Đơn hàng đã được thanh toán, chờ lấy hàng</div>
+                                            </c:when>
+                                            <c:when test="${statusLC == 'chờ lấy hàng' || statusLC == 'chờ vận chuyển'}">
+                                                <div class="text-secondary small mb-1"><i class="fas fa-box me-2"></i><strong>Chờ lấy hàng</strong></div>
+                                                <div class="text-muted small ps-4">Người bán đang chuẩn bị hàng</div>
                                             </c:when>
                                             <c:otherwise>
                                                 <div class="text-secondary small mb-1"><i class="fas fa-file-invoice me-2"></i><strong>Đã xác nhận</strong></div>
@@ -289,12 +343,48 @@
                                         </c:choose>
                                     </c:when>
                                     <c:when test="${step == 0}">
-                                        <div class="text-warning small mb-1"><i class="fas fa-wallet me-2"></i><strong>Chờ thanh toán</strong></div>
-                                        <div class="text-muted small ps-4">Vui lòng thanh toán để hoàn tất đơn hàng</div>
+                                        <c:choose>
+                                            <c:when test="${statusLC == 'chờ duyệt'}">
+                                                <div class="text-secondary small mb-1"><i class="fas fa-hourglass-half me-2"></i><strong>Chờ duyệt</strong></div>
+                                                <div class="text-muted small ps-4">Đơn hàng đang chờ xác nhận</div>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <div class="text-warning small mb-1"><i class="fas fa-wallet me-2"></i><strong>Chờ thanh toán</strong></div>
+                                                <div class="text-muted small ps-4">Vui lòng thanh toán để hoàn tất đơn hàng</div>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:when>
+                                    <c:when test="${step == 4}">
+                                        <c:choose>
+                                            <c:when test="${statusLC == 'đang xử lý trả hàng'}">
+                                                <div class="text-warning small mb-1"><i class="fas fa-box-open me-2"></i><strong>Đang xử lý trả hàng</strong></div>
+                                                <div class="text-muted small ps-4">Yêu cầu trả hàng đã được duyệt, chờ nhận lại hàng</div>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <div class="text-warning small mb-1"><i class="fas fa-undo me-2"></i><strong>Yêu cầu trả hàng</strong></div>
+                                                <div class="text-muted small ps-4">Đang chờ Admin duyệt yêu cầu trả hàng của bạn</div>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </c:when>
                                     <c:when test="${step == -1}">
-                                        <div class="text-danger small mb-1"><i class="fas fa-times-circle me-2"></i><strong>Đã hủy</strong></div>
-                                        <div class="text-muted small ps-4">Đơn hàng đã bị hủy</div>
+                                        <c:choose>
+                                            <c:when test="${statusLC == 'giao thất bại'}">
+                                                <div class="text-danger small mb-1"><i class="fas fa-exclamation-triangle me-2"></i><strong>Giao thất bại</strong></div>
+                                                <div class="text-muted small ps-4">Bưu tá không thể liên lạc hoặc bị từ chối nhận hàng</div>
+                                            </c:when>
+                                            <c:when test="${statusLC == 'đã hoàn tiền'}">
+                                                <div class="text-success small mb-1"><i class="fas fa-money-bill-wave me-2"></i><strong>Đã hoàn tiền</strong></div>
+                                                <div class="text-muted small ps-4">Yêu cầu trả hàng hoàn tất, tiền đã được hoàn lại</div>
+                                            </c:when>
+                                            <c:when test="${statusLC == 'từ chối trả hàng'}">
+                                                <div class="text-danger small mb-1"><i class="fas fa-ban me-2"></i><strong>Từ chối trả hàng</strong></div>
+                                                <div class="text-muted small ps-4">Yêu cầu trả hàng của bạn không hợp lệ và bị từ chối</div>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <div class="text-danger small mb-1"><i class="fas fa-times-circle me-2"></i><strong>Đã hủy</strong></div>
+                                                <div class="text-muted small ps-4">Đơn hàng đã bị hủy</div>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </c:when>
                                 </c:choose>
                             </div>

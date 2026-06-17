@@ -3,6 +3,7 @@ package com.clothingshop.styleera.controller;
 import com.clothingshop.styleera.dao.OrdersDAO;
 import com.clothingshop.styleera.model.Orders;
 import com.clothingshop.styleera.model.User;
+import com.clothingshop.styleera.model.enums.OrderStatus;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -11,8 +12,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet("/cancel-order")
-public class CancelOrderController extends HttpServlet {
+@WebServlet("/user-request-return")
+public class UserRequestReturnController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         User authUser = (User) request.getSession().getAttribute("auth");
@@ -28,14 +29,9 @@ public class CancelOrderController extends HttpServlet {
 
             if (order != null && order.getUserId() == authUser.getId()) {
                 String status = order.getStatus();
-                if (com.clothingshop.styleera.model.enums.OrderStatus.PENDING_APPROVAL.getValue().equals(status) || 
-                    com.clothingshop.styleera.model.enums.OrderStatus.PENDING_PAYMENT.getValue().equals(status) || 
-                    com.clothingshop.styleera.model.enums.OrderStatus.PAID.getValue().equals(status) || 
-                    com.clothingshop.styleera.model.enums.OrderStatus.READY_TO_SHIP.getValue().equals(status)) {
-                    
-                    // Gọi service hủy đơn và hoàn kho trong 1 transaction
-                    com.clothingshop.styleera.service.OrderService orderService = new com.clothingshop.styleera.service.OrderService();
-                    orderService.cancelOrderWithStockRestore(orderId, com.clothingshop.styleera.model.enums.OrderStatus.CANCELED_BY_USER);
+                // Chỉ cho phép yêu cầu trả hàng khi đơn hàng Đã Giao
+                if (OrderStatus.DELIVERED.getValue().equals(status) || OrderStatus.PAID_AT_COUNTER.getValue().equals(status)) {
+                    ordersDAO.updateStatus(orderId, OrderStatus.RETURN_REQUESTED.getValue());
                 }
             }
             
