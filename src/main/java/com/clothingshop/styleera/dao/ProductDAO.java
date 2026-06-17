@@ -543,7 +543,7 @@ public class ProductDAO {
                     "i.path AS thumbnail " +
                     "FROM products p " +
                     "LEFT JOIN images i ON p.image_id = i.id " +
-                    "ORDER BY p.average_rating DESC LIMIT 5";
+                    "ORDER BY p.sold_quantity DESC LIMIT 5";
             return handle.createQuery(sql).mapToBean(Product.class).list();
         });
     }

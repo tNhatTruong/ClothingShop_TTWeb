@@ -11,7 +11,7 @@
  Target Server Version : 80409 (8.4.9)
  File Encoding         : 65001
 
- Date: 11/06/2026 15:44:30
+ Date: 17/06/2026 19:30:11
 */
 
 SET NAMES utf8mb4;
@@ -29,21 +29,24 @@ CREATE TABLE `addresses`  (
   `district` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `is_default` tinyint(1) NULL DEFAULT 0,
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `ward` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `fk_address_user`(`user_id` ASC) USING BTREE,
   CONSTRAINT `fk_address_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of addresses
 -- ----------------------------
-INSERT INTO `addresses` VALUES (1, 2, '45 Nguyễn Văn Cừ', 'TP. Hồ Chí Minh', 'Quận 5', 1, '2025-12-16 00:40:16');
-INSERT INTO `addresses` VALUES (2, 6, '89 Phan Chu Trinh', 'Đà Nẵng', 'Quận Hải Châu', 1, '2025-12-16 00:40:16');
-INSERT INTO `addresses` VALUES (3, 4, '210 Võ Thị Sáu', 'TP. Hồ Chí Minh', 'Quận 3', 1, '2025-12-16 00:40:16');
-INSERT INTO `addresses` VALUES (4, 10, '332 Hùng Vương', 'Hải Phòng', 'Quận Lê Chân', 1, '2025-12-16 00:40:16');
-INSERT INTO `addresses` VALUES (5, 5, '67 Nguyễn Trãi', 'Hà Nội', 'Quận Thanh Xuân', 1, '2025-12-16 00:40:16');
-INSERT INTO `addresses` VALUES (6, 1, '252 Tỉnh lộ 10', 'TP. Hồ Chí Minh', 'Quận Bình Tân', 1, '2025-12-16 00:40:16');
-INSERT INTO `addresses` VALUES (7, 15, 'Linh Tây, Thủ Đức, TP. Hồ Chí Minh', 'TP.Hồ Chí Minh - Ngoại thành', 'Huyện Bình Chánh', 1, '2026-01-27 00:11:40');
+INSERT INTO `addresses` VALUES (1, 2, '45 Nguyễn Văn Cừ', 'TP. Hồ Chí Minh', 'Quận 5', 1, '2025-12-16 00:40:16', NULL);
+INSERT INTO `addresses` VALUES (2, 6, '89 Phan Chu Trinh', 'Đà Nẵng', 'Quận Hải Châu', 1, '2025-12-16 00:40:16', NULL);
+INSERT INTO `addresses` VALUES (3, 4, '210 Võ Thị Sáu', 'TP. Hồ Chí Minh', 'Quận 3', 1, '2025-12-16 00:40:16', NULL);
+INSERT INTO `addresses` VALUES (4, 10, '332 Hùng Vương', 'Hải Phòng', 'Quận Lê Chân', 1, '2025-12-16 00:40:16', NULL);
+INSERT INTO `addresses` VALUES (5, 5, '67 Nguyễn Trãi', 'Hà Nội', 'Quận Thanh Xuân', 1, '2025-12-16 00:40:16', NULL);
+INSERT INTO `addresses` VALUES (6, 1, '252 Tỉnh lộ 10', 'TP. Hồ Chí Minh', 'Quận Bình Tân', 1, '2025-12-16 00:40:16', NULL);
+INSERT INTO `addresses` VALUES (7, 15, '50 Đường Số 10', 'Hồ Chí Minh', 'Quận 9', 1, '2026-06-16 18:52:30', 'Phường Hiệp Phú');
+INSERT INTO `addresses` VALUES (8, 14, '100 Đường số 100', 'Hồ Chí Minh', 'Quận 9', 1, '2026-06-11 15:36:50', 'Phường Tân Phú');
+INSERT INTO `addresses` VALUES (9, 16, '10 Đường 10', 'Yên Bái', 'Thị xã Nghĩa Lộ', 1, '2026-06-16 20:49:44', 'Xã Phúc Sơn');
 
 -- ----------------------------
 -- Table structure for cartitem
@@ -61,7 +64,7 @@ CREATE TABLE `cartitem`  (
   INDEX `fk_cart_user`(`user_id` ASC) USING BTREE,
   CONSTRAINT `fk_cart_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `fk_cart_variant` FOREIGN KEY (`variant_id`) REFERENCES `variants` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 48 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 74 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of cartitem
@@ -96,6 +99,9 @@ INSERT INTO `cartitem` VALUES (27, 7, 9, 3, '2025-12-16 00:40:16', '2025-12-16 0
 INSERT INTO `cartitem` VALUES (28, 8, 10, 1, '2025-12-16 00:40:16', '2025-12-16 00:40:16');
 INSERT INTO `cartitem` VALUES (29, 9, 10, 2, '2025-12-16 00:40:16', '2025-12-16 00:40:16');
 INSERT INTO `cartitem` VALUES (30, 10, 10, 1, '2025-12-16 00:40:16', '2025-12-16 00:40:16');
+INSERT INTO `cartitem` VALUES (63, 57, 14, 1, '2026-06-11 17:01:53', '2026-06-11 17:01:53');
+INSERT INTO `cartitem` VALUES (64, 59, 14, 1, '2026-06-11 17:01:57', '2026-06-11 17:01:57');
+INSERT INTO `cartitem` VALUES (67, 6, 14, 1, '2026-06-11 17:02:10', '2026-06-11 17:02:10');
 
 -- ----------------------------
 -- Table structure for contacts
@@ -167,7 +173,7 @@ CREATE TABLE `images`  (
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `product_id` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 297 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 300 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of images
@@ -462,12 +468,6 @@ INSERT INTO `images` VALUES (287, 'Áo Khoác Bomber Couple', '/images/product_i
 INSERT INTO `images` VALUES (288, 'Áo Thun Đôi Trái Tim', '/images/product_item_couple/2/heart_tee.png', '2026-01-26 23:39:22', 17);
 INSERT INTO `images` VALUES (289, 'Pijama Đôi Lụa', '/images/product_item_couple/3/pijama.png', '2026-01-26 23:39:22', 18);
 INSERT INTO `images` VALUES (290, 'Áo Hoodie Đôi Basic', '/images/product_item_couple/1/hoodie.png', '2026-01-26 23:39:22', 19);
-INSERT INTO `images` VALUES (291, 'Áo Khoác Da Biker', '/images/no-image.png', '2026-06-06 07:40:22', 20);
-INSERT INTO `images` VALUES (292, 'Sơ Mi Lụa Hàn Quốc', '/images/no-image.png', '2026-06-06 07:40:22', 21);
-INSERT INTO `images` VALUES (293, 'Quần Jean Ống Rộng', '/images/no-image.png', '2026-06-06 07:40:22', 22);
-INSERT INTO `images` VALUES (294, 'Áo Polo Thể Thao', '/images/no-image.png', '2026-06-06 07:40:22', 23);
-INSERT INTO `images` VALUES (295, 'Váy Chữ A', '/images/no-image.png', '2026-06-06 07:40:22', 24);
-INSERT INTO `images` VALUES (296, 'Áo Len Đôi', '/images/no-image.png', '2026-06-06 07:40:22', 25);
 
 -- ----------------------------
 -- Table structure for orderdetails
@@ -484,7 +484,7 @@ CREATE TABLE `orderdetails`  (
   INDEX `fk_orderdetail_variant`(`variant_id` ASC) USING BTREE,
   CONSTRAINT `fk_orderdetail_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `fk_orderdetail_variant` FOREIGN KEY (`variant_id`) REFERENCES `variants` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 31 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 58 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of orderdetails
@@ -509,16 +509,36 @@ INSERT INTO `orderdetails` VALUES (17, 16, 2, 1, 320000.00);
 INSERT INTO `orderdetails` VALUES (18, 17, 8, 2, 230000.00);
 INSERT INTO `orderdetails` VALUES (19, 18, 1, 1, 160000.00);
 INSERT INTO `orderdetails` VALUES (20, 19, 3, 3, 240000.00);
-INSERT INTO `orderdetails` VALUES (21, 20, 31, 1, 240000.00);
-INSERT INTO `orderdetails` VALUES (22, 21, 34, 1, 260000.00);
-INSERT INTO `orderdetails` VALUES (23, 21, 36, 1, 290000.00);
-INSERT INTO `orderdetails` VALUES (24, 21, 29, 1, 210000.00);
-INSERT INTO `orderdetails` VALUES (25, 22, 49, 1, 180000.00);
-INSERT INTO `orderdetails` VALUES (26, 23, 53, 1, 320000.00);
-INSERT INTO `orderdetails` VALUES (27, 24, 57, 1, 290000.00);
 INSERT INTO `orderdetails` VALUES (28, 25, 49, 1, 180000.00);
 INSERT INTO `orderdetails` VALUES (29, 26, 57, 1, 290000.00);
 INSERT INTO `orderdetails` VALUES (30, 27, 53, 1, 320000.00);
+INSERT INTO `orderdetails` VALUES (31, 29, 1, 1, 350000.00);
+INSERT INTO `orderdetails` VALUES (32, 29, 60, 1, 290000.00);
+INSERT INTO `orderdetails` VALUES (33, 30, 12, 1, 260000.00);
+INSERT INTO `orderdetails` VALUES (34, 31, 9, 1, 220000.00);
+INSERT INTO `orderdetails` VALUES (35, 32, 6, 1, 160000.00);
+INSERT INTO `orderdetails` VALUES (36, 33, 51, 1, 180000.00);
+INSERT INTO `orderdetails` VALUES (37, 34, 3, 1, 350000.00);
+INSERT INTO `orderdetails` VALUES (38, 35, 56, 1, 320000.00);
+INSERT INTO `orderdetails` VALUES (39, 36, 21, 1, 300000.00);
+INSERT INTO `orderdetails` VALUES (40, 37, 4, 1, 160000.00);
+INSERT INTO `orderdetails` VALUES (41, 38, 5, 1, 160000.00);
+INSERT INTO `orderdetails` VALUES (42, 39, 3, 1, 350000.00);
+INSERT INTO `orderdetails` VALUES (43, 39, 4, 1, 160000.00);
+INSERT INTO `orderdetails` VALUES (44, 40, 10, 1, 260000.00);
+INSERT INTO `orderdetails` VALUES (45, 41, 13, 1, 190000.00);
+INSERT INTO `orderdetails` VALUES (46, 42, 19, 1, 300000.00);
+INSERT INTO `orderdetails` VALUES (47, 43, 4, 1, 160000.00);
+INSERT INTO `orderdetails` VALUES (48, 44, 7, 1, 220000.00);
+INSERT INTO `orderdetails` VALUES (49, 45, 4, 1, 160000.00);
+INSERT INTO `orderdetails` VALUES (50, 46, 4, 1, 160000.00);
+INSERT INTO `orderdetails` VALUES (51, 47, 2, 1, 350000.00);
+INSERT INTO `orderdetails` VALUES (52, 48, 10, 1, 260000.00);
+INSERT INTO `orderdetails` VALUES (53, 49, 20, 1, 300000.00);
+INSERT INTO `orderdetails` VALUES (54, 50, 59, 1, 290000.00);
+INSERT INTO `orderdetails` VALUES (55, 51, 39, 1, 180000.00);
+INSERT INTO `orderdetails` VALUES (56, 52, 42, 1, 270000.00);
+INSERT INTO `orderdetails` VALUES (57, 53, 24, 1, 340000.00);
 
 -- ----------------------------
 -- Table structure for orders
@@ -542,12 +562,12 @@ CREATE TABLE `orders`  (
   INDEX `fk_order_address`(`address_id` ASC) USING BTREE,
   CONSTRAINT `fk_order_address` FOREIGN KEY (`address_id`) REFERENCES `addresses` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_order_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 54 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of orders
 -- ----------------------------
-INSERT INTO `orders` VALUES (1, 1, 6, NULL, NULL, NULL, 'Đang vận chuyển', NULL, 350000.00, 0.00, 350000.00, '2024-12-28 10:15:00');
+INSERT INTO `orders` VALUES (1, 1, 6, '', NULL, NULL, 'Đang vận chuyển', NULL, 350000.00, 0.00, 350000.00, '2024-12-28 10:15:00');
 INSERT INTO `orders` VALUES (2, 2, 1, NULL, NULL, NULL, 'Chờ vận chuyển', NULL, 587000.00, 3000.00, 590000.00, '2024-07-25 09:00:00');
 INSERT INTO `orders` VALUES (3, 2, 1, NULL, NULL, NULL, 'Đang vận chuyển', NULL, 300000.00, 0.00, 300000.00, '2024-03-29 11:40:00');
 INSERT INTO `orders` VALUES (4, 5, 5, NULL, NULL, NULL, 'Đã huỷ', 'Khách hủy', 497000.00, 3000.00, 500000.00, '2025-07-07 10:12:00');
@@ -566,14 +586,34 @@ INSERT INTO `orders` VALUES (16, 1, 6, NULL, NULL, NULL, 'Đã Giao', NULL, 3370
 INSERT INTO `orders` VALUES (17, 5, 5, NULL, NULL, NULL, 'Đang vận chuyển', NULL, 487000.00, 3000.00, 490000.00, '2025-12-16 00:40:16');
 INSERT INTO `orders` VALUES (18, 8, 6, NULL, NULL, NULL, 'Đang vận chuyển', NULL, 187000.00, 3000.00, 190000.00, '2025-04-05 15:00:00');
 INSERT INTO `orders` VALUES (19, 7, 1, NULL, NULL, NULL, 'Đã Giao', NULL, 750000.00, 0.00, 750000.00, '2025-12-16 00:40:16');
-INSERT INTO `orders` VALUES (20, 15, 7, NULL, NULL, NULL, 'Hủy (Quá hạn thanh toán)', '', 240000.00, 30000.00, 270000.00, '2026-06-01 09:01:05');
-INSERT INTO `orders` VALUES (21, 15, 7, NULL, NULL, NULL, 'Hủy (Quá hạn thanh toán)', '', 760000.00, 30000.00, 790000.00, '2026-06-01 09:27:30');
-INSERT INTO `orders` VALUES (22, 15, 7, NULL, NULL, NULL, 'Hủy (Quá hạn thanh toán)', '', 180000.00, 30000.00, 210000.00, '2026-06-01 09:32:44');
-INSERT INTO `orders` VALUES (23, 15, 7, NULL, NULL, NULL, 'Đã Thanh Toán', '', 320000.00, 30000.00, 350000.00, '2026-06-01 09:36:50');
-INSERT INTO `orders` VALUES (24, 15, 7, NULL, NULL, NULL, 'Hủy (Quá hạn thanh toán)', '', 290000.00, 30000.00, 320000.00, '2026-06-02 06:48:42');
 INSERT INTO `orders` VALUES (25, 15, 7, 'Trần Nhật Trường', '0949844246', 'Linh Tây, Thủ Đức, TP. Hồ Chí Minh', 'Đã Thanh Toán', '', 180000.00, 30000.00, 210000.00, '2026-06-02 07:16:25');
 INSERT INTO `orders` VALUES (26, 15, 7, 'Trần Nhật Trường', '0949844246', 'Linh Tây, Thủ Đức, TP. Hồ Chí Minh', 'Hủy (Quá hạn thanh toán)', '', 290000.00, 30000.00, 320000.00, '2026-06-02 07:18:44');
 INSERT INTO `orders` VALUES (27, 15, 7, 'Trần Nhật Trường', '0949844246', 'Linh Tây, Thủ Đức, TP. Hồ Chí Minh', 'Hủy (Quá hạn thanh toán)', '', 320000.00, 30000.00, 350000.00, '2026-06-02 07:25:24');
+INSERT INTO `orders` VALUES (29, 14, 8, 'Trần Nhật Trường', '0949844246', '100 Đường số 10', 'Hủy (Quá hạn thanh toán)', '', 640000.00, 30000.00, 670000.00, '2026-06-11 09:23:43');
+INSERT INTO `orders` VALUES (30, 14, 8, 'Trần Nhật Trường', '0949844246', '100 Đường số 10', 'Hủy (Quá hạn thanh toán)', '', 260000.00, 30000.00, 290000.00, '2026-06-11 13:49:05');
+INSERT INTO `orders` VALUES (31, 14, 8, 'Trần Nhật Trường', '0949844246', '100 Đường số 10', 'Hủy (Lỗi Thanh Toán)', '', 220000.00, 30000.00, 250000.00, '2026-06-11 13:51:38');
+INSERT INTO `orders` VALUES (32, 14, 8, 'Trần Nhật Trường', '0949844246', '100 Đường số 10', 'Đã Thanh Toán', '', 160000.00, 30000.00, 190000.00, '2026-06-11 13:52:20');
+INSERT INTO `orders` VALUES (33, 14, 8, 'Trần Nhật Trường', '0949844246', '100 Đường số 10', 'Chờ duyệt', '', 180000.00, 30000.00, 210000.00, '2026-06-11 15:10:10');
+INSERT INTO `orders` VALUES (34, 14, 8, 'Trần Nhật Trường', '0949844246', '100 Đường số 99', 'Chờ duyệt', '', 350000.00, 30000.00, 380000.00, '2026-06-11 15:12:17');
+INSERT INTO `orders` VALUES (35, 14, 8, 'Trần Nhật Trường', '0949844246', '100 Đường số 5, Phường Tân Hiệp, Thành phố Biên Hòa, Đồng Nai', 'Chờ duyệt', '', 320000.00, 30000.00, 350000.00, '2026-06-11 15:37:52');
+INSERT INTO `orders` VALUES (36, 14, 8, 'Trần Nhật Trường', '0949844246', '100 Đường số 100, Phường Tân Phú, Quận 9, Hồ Chí Minh', 'Chờ duyệt', '', 300000.00, 30000.00, 330000.00, '2026-06-11 15:49:00');
+INSERT INTO `orders` VALUES (37, 14, 8, 'Trần Nhật Trường', '0949844246', '100 Đường số 100, Phường Tân Phú, Quận 9, Hồ Chí Minh', 'Chờ duyệt', '', 160000.00, 30000.00, 190000.00, '2026-06-11 17:02:46');
+INSERT INTO `orders` VALUES (38, 14, 8, 'Trần Nhật Trường', '0949844246', '100 Đường số 100, Phường Tân Phú, Quận 9, Hồ Chí Minh', 'Đã Thanh Toán', '', 160000.00, 30000.00, 190000.00, '2026-06-11 17:21:23');
+INSERT INTO `orders` VALUES (39, 15, 7, 'Trần Nhật Trường', '0949844246', '50 Đường số 10, Phường Hiệp Phú, Quận 9, Hồ Chí Minh', 'Chờ duyệt', '', 510000.00, 30000.00, 540000.00, '2026-06-16 18:49:11');
+INSERT INTO `orders` VALUES (40, 15, 7, 'Trần Nhật Trường', '0949844246', '50 Đường Số 10, Phường Hiệp Phú, Quận 9, Hồ Chí Minh', 'Đã Giao', '', 260000.00, 30000.00, 290000.00, '2026-06-16 18:52:45');
+INSERT INTO `orders` VALUES (41, 15, 7, 'Trần Nhật Trường', '0949844246', '50 Đường Số 10, Phường Hiệp Phú, Quận 9, Hồ Chí Minh', 'Hủy (Quá hạn thanh toán)', '', 190000.00, 30000.00, 220000.00, '2026-06-16 18:53:31');
+INSERT INTO `orders` VALUES (42, 15, 7, 'Trần Nhật Trường', '0949844246', '50 Đường Số 10, Phường Hiệp Phú, Quận 9, Hồ Chí Minh', 'Hủy (Quá hạn thanh toán)', '', 300000.00, 30000.00, 330000.00, '2026-06-16 18:54:30');
+INSERT INTO `orders` VALUES (43, 15, 7, 'Trần Nhật Trường', '0949844246', '50 Đường Số 10, Phường Hiệp Phú, Quận 9, Hồ Chí Minh', 'Hủy (Quá hạn thanh toán)', '', 160000.00, 30000.00, 190000.00, '2026-06-16 18:55:45');
+INSERT INTO `orders` VALUES (44, 15, 7, 'Trần Nhật Trường', '0949844246', '50 Đường Số 10, Phường Hiệp Phú, Quận 9, Hồ Chí Minh', 'Hủy (Quá hạn thanh toán)', '', 220000.00, 30000.00, 250000.00, '2026-06-16 18:57:12');
+INSERT INTO `orders` VALUES (45, 15, 7, 'Trần Nhật Trường', '0949844246', '50 Đường Số 10, Phường Hiệp Phú, Quận 9, Hồ Chí Minh', 'Đang xử lý trả hàng', '', 160000.00, 30000.00, 190000.00, '2026-06-16 19:07:31');
+INSERT INTO `orders` VALUES (46, 15, 7, 'Trần Nhật Trường', '0949844246', '50 Đường Số 10, Phường Hiệp Phú, Quận 9, Hồ Chí Minh', 'Đang vận chuyển', '', 160000.00, 30000.00, 190000.00, '2026-06-16 19:08:01');
+INSERT INTO `orders` VALUES (47, 15, 7, 'Trần Nhật Trường', '0949844246', '50 Đường Số 10, Phường Hiệp Phú, Quận 9, Hồ Chí Minh', 'Hủy (Quá hạn thanh toán)', '', 350000.00, 30000.00, 380000.00, '2026-06-16 19:09:02');
+INSERT INTO `orders` VALUES (48, 15, 7, 'Trần Nhật Trường', '0949844246', '50 Đường Số 10, Phường Hiệp Phú, Quận 9, Hồ Chí Minh', 'Từ chối trả hàng', '', 260000.00, 30000.00, 290000.00, '2026-06-16 19:09:36');
+INSERT INTO `orders` VALUES (49, 15, 7, 'Trần Nhật Trường', '0949844246', '50 Đường Số 10, Phường Hiệp Phú, Quận 9, Hồ Chí Minh', 'Hủy (Bởi người dùng)', '', 300000.00, 30000.00, 330000.00, '2026-06-16 19:12:56');
+INSERT INTO `orders` VALUES (50, 16, 9, 'Trường Trần Nhật', '0987654321', '10 Đường 10, Xã Cán Cấu, Huyện Si Ma Cai, Lào Cai', 'ADMIN_CONFIRMED', '', 290000.00, 82500.00, 372500.00, '2026-06-16 20:34:39');
+INSERT INTO `orders` VALUES (51, 16, 9, 'Trường Trần Nhật', '0987654321', '10 Đường 10, Xã Lùng Thẩn, Huyện Si Ma Cai, Lào Cai', 'ADMIN_CONFIRMED', '', 180000.00, 82500.00, 262500.00, '2026-06-16 20:38:31');
+INSERT INTO `orders` VALUES (52, 16, 9, 'Trường Trần Nhật', '0987654321', '10 Đường 10, Phường Sông Đà, Thị xã Mường Lay, Điện Biên', 'Đang vận chuyển', '', 270000.00, 82500.00, 352500.00, '2026-06-16 20:43:06');
+INSERT INTO `orders` VALUES (53, 16, 9, 'Trường Trần Nhật', '0987654321', '10 Đường 10, Xã Phúc Sơn, Thị xã Nghĩa Lộ, Yên Bái', 'Đã Giao', '', 340000.00, 82500.00, 422500.00, '2026-06-16 20:49:44');
 
 -- ----------------------------
 -- Table structure for parentcategories
@@ -653,7 +693,7 @@ CREATE TABLE `products`  (
   INDEX `fk_product_image`(`image_id` ASC) USING BTREE,
   CONSTRAINT `fk_product_image` FOREIGN KEY (`image_id`) REFERENCES `images` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_product_subcategory` FOREIGN KEY (`category_sub_id`) REFERENCES `subcategories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of products
@@ -677,12 +717,6 @@ INSERT INTO `products` VALUES (16, 287, 16, 'Áo Khoác Bomber Couple', 4.80, '�
 INSERT INTO `products` VALUES (17, 288, 17, 'Áo Thun Đôi In Tim', 4.50, 'Áo thun cặp đôi in họa tiết trái tim, đơn giản mà lãng mạn.', 'Thông điệp tình yêu không cần nói thành lời. Cùng diện chiếc áo đôi nhỏ xinh này trong những chuyến du lịch để ghi lại khoảnh khắc đẹp nhất.\n\n**THÔNG TIN SẢN PHẨM**\n- Thiết kế unisex phù hợp nam nữ.\n- Họa tiết trái tim in chuyển nhiệt sắc nét giữa ngực.\n- Form áo rộng vừa phải.\n\n**CHẤT LIỆU SỬ DỤNG**\n- 100% Cotton chải kỹ (Combed Cotton) siêu láng mịn.\n- Bề mặt mát tay, hình in không bong tróc.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- ủi mặt trái của hình in.', 180000.00, '2026-06-06 07:33:55', '2026-06-06 07:33:55', 2);
 INSERT INTO `products` VALUES (18, 289, 18, 'Set Pijama Lụa Satin', 4.90, 'Set Pijama lụa satin cao cấp, thiết kế thanh lịch mang lại cảm giác thư giãn tuyệt đối.', 'Khám phá sự nuông chiều bản thân sau một ngày dài mệt mỏi. Không chỉ là đồ mặc nhà, đây còn là tuyên ngôn về phong cách sống tinh tế.\n\n**THÔNG TIN SẢN PHẨM**\n- Thiết kế tay dài, quần dài lịch sự.\n- Cổ áo pijama viền lé nổi bật.\n- Cúc ngọc trai nhân tạo sang trọng.\n- Quần chun mềm không hằn bụng.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Lụa Satin nhân tạo (Satin Silk) bóng mượt bắt sáng nhẹ.\n- Siêu mềm mịn, lướt trên da mát mẻ.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Giặt tay với dầu gội đầu hoặc xà phòng loãng.\n- Phơi trong bóng râm.', 320000.00, '2026-06-06 07:33:55', '2026-06-06 07:33:55', 2);
 INSERT INTO `products` VALUES (19, 290, 16, 'Áo Hoodie Couple Basic', 4.70, 'Áo hoodie đôi dáng rộng, có mũ trùm ấm áp cho mùa đông.', 'Cái ôm ấm áp nhất vào những ngày gió lùa. Hoodie đôi nỉ bông là món đồ minh chứng cho tình yêu bền chặt, rộng rãi để cùng chui vào một chiếc áo!\n\n**THÔNG TIN SẢN PHẨM**\n- Dáng Oversize form rộng thùng thình chuẩn Hàn Quốc.\n- Túi bụng Kangaroo to bản, mũ trùm sâu.\n- Dây rút dệt đôi chắc chắn.\n\n**CHẤT LIỆU SỬ DỤNG**\n- Nỉ lót bông (Fleece Heavyweight) dệt từ sợi CVC cực kỳ dày dặn.\n- Giữ nhiệt độ cơ thể xuất sắc trong mùa đại hàn.\n\n**HƯỚNG DẪN BẢO QUẢN**\n- Lộn trái áo trước khi giặt máy.\n- Dùng nước xả vải để giữ độ tơi xốp cho lớp lông.', 290000.00, '2026-06-06 07:33:55', '2026-06-06 07:33:55', 2);
-INSERT INTO `products` VALUES (20, 291, 1, 'Áo Khoác Da Biker Nam', 4.30, 'Áo khoác da thật phong cách bụi bặm', 'Chi tiết áo khoác da biker với khóa kéo chéo...', 850000.00, '2026-06-06 14:00:00', '2026-06-06 14:00:00', 2);
-INSERT INTO `products` VALUES (21, 292, 11, 'Áo Sơ Mi Lụa Hàn Quốc Nữ', 4.60, 'Sơ mi lụa mềm mịn, thoáng mát', 'Thiết kế thanh lịch phù hợp cho dân công sở...', 320000.00, '2026-06-06 14:00:00', '2026-06-06 14:00:00', 1);
-INSERT INTO `products` VALUES (22, 293, 15, 'Quần Jean Ống Rộng Nữ', 4.90, 'Quần jean form rộng hack dáng', 'Chất liệu denim cao cấp, không bai dão...', 450000.00, '2026-06-06 14:00:00', '2026-06-06 14:00:00', 8);
-INSERT INTO `products` VALUES (23, 294, 3, 'Áo Polo Thể Thao Nam', 4.50, 'Polo thoáng khí thấm hút mồ hôi', 'Thích hợp cho vận động và dạo phố...', 250000.00, '2026-06-06 14:00:00', '2026-06-06 14:00:00', 4);
-INSERT INTO `products` VALUES (24, 295, 12, 'Váy Chữ A Công Sở', 4.80, 'Váy thiết kế đơn giản, tôn dáng', 'Váy form chữ A che khuyết điểm cực tốt...', 380000.00, '2026-06-06 14:00:00', '2026-06-06 14:00:00', 6);
-INSERT INTO `products` VALUES (25, 296, 16, 'Áo Len Đôi Mùa Đông', 4.20, 'Áo len giữ ấm, họa tiết dễ thương', 'Món quà tuyệt vời cho các cặp đôi...', 550000.00, '2026-06-06 14:00:00', '2026-06-06 14:00:00', 0);
 
 -- ----------------------------
 -- Table structure for review
@@ -696,6 +730,12 @@ CREATE TABLE `review`  (
   `rating` int NOT NULL,
   `comment` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `order_id` int NULL DEFAULT NULL,
+  `admin_reply` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+  `old_rating` int NULL DEFAULT NULL,
+  `old_comment` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+  `edited_at` datetime NULL DEFAULT NULL,
+  `edit_count` int NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `fk_review_product`(`product_id` ASC) USING BTREE,
   INDEX `fk_review_variant`(`variant_id` ASC) USING BTREE,
@@ -704,21 +744,22 @@ CREATE TABLE `review`  (
   CONSTRAINT `fk_review_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_review_variant` FOREIGN KEY (`variant_id`) REFERENCES `variants` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `review_chk_1` CHECK ((`rating` >= 1) and (`rating` <= 5))
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of review
 -- ----------------------------
-INSERT INTO `review` VALUES (1, NULL, 1, 3, 5, 'Sản phẩm tốt, giao hàng nhanh', '2025-01-10 14:22:10');
-INSERT INTO `review` VALUES (2, NULL, 2, 5, 3, 'Chất lượng tạm ổn, đóng gói chưa đẹp', '2025-01-12 09:11:45');
-INSERT INTO `review` VALUES (3, NULL, 3, 7, 5, 'Rất hài lòng, sẽ mua lại', '2025-01-15 18:33:20');
-INSERT INTO `review` VALUES (4, NULL, 1, 4, 3, 'Không giống mô tả, màu hơi lệch', '2025-01-17 12:05:55');
-INSERT INTO `review` VALUES (5, NULL, 4, 1, 4, 'Giá tốt, chất lượng ổn trong tầm giá', '2025-01-20 20:14:03');
-INSERT INTO `review` VALUES (6, NULL, 2, 6, 2, 'Sản phẩm lỗi, phải đổi trả', '2025-01-21 10:45:37');
-INSERT INTO `review` VALUES (7, NULL, 5, 2, 4, 'Vải mềm, mặc thoải mái, sẽ ủng hộ tiếp', '2025-01-22 16:20:11');
-INSERT INTO `review` VALUES (8, NULL, 3, 8, 4, 'Mặc ổn nhưng size hơi nhỏ hơn so với mô tả', '2025-01-23 08:55:49');
-INSERT INTO `review` VALUES (9, NULL, 6, 4, 5, 'Đóng gói cẩn thận, chất lượng vượt mong đợi', '2025-01-24 19:40:28');
-INSERT INTO `review` VALUES (10, NULL, 1, 9, 2, 'Giao chậm, sản phẩm không như kỳ vọng', '2025-01-25 11:13:57');
+INSERT INTO `review` VALUES (1, NULL, 1, 3, 5, 'Sản phẩm tốt, giao hàng nhanh', '2025-01-10 14:22:10', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `review` VALUES (2, NULL, 2, 5, 3, 'Chất lượng tạm ổn, đóng gói chưa đẹp', '2025-01-12 09:11:45', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `review` VALUES (3, NULL, 3, 7, 5, 'Rất hài lòng, sẽ mua lại', '2025-01-15 18:33:20', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `review` VALUES (4, NULL, 1, 4, 3, 'Không giống mô tả, màu hơi lệch', '2025-01-17 12:05:55', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `review` VALUES (5, NULL, 4, 1, 4, 'Giá tốt, chất lượng ổn trong tầm giá', '2025-01-20 20:14:03', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `review` VALUES (6, NULL, 2, 6, 2, 'Sản phẩm lỗi, phải đổi trả', '2025-01-21 10:45:37', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `review` VALUES (7, NULL, 5, 2, 4, 'Vải mềm, mặc thoải mái, sẽ ủng hộ tiếp', '2025-01-22 16:20:11', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `review` VALUES (8, NULL, 3, 8, 4, 'Mặc ổn nhưng size hơi nhỏ hơn so với mô tả', '2025-01-23 08:55:49', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `review` VALUES (9, NULL, 6, 4, 5, 'Đóng gói cẩn thận, chất lượng vượt mong đợi', '2025-01-24 19:40:28', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `review` VALUES (10, NULL, 1, 9, 2, 'Giao chậm, sản phẩm không như kỳ vọng', '2025-01-25 11:13:57', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `review` VALUES (11, NULL, 4, 15, 4, 'Tốt', '2026-06-17 09:44:08', 40, 'Cảm ơn đã đánh giá.', NULL, NULL, NULL, 0);
 
 -- ----------------------------
 -- Table structure for reviewimages
@@ -756,7 +797,7 @@ CREATE TABLE `subcategories`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `fk_subcategory_parent`(`category_parent_id` ASC) USING BTREE,
   CONSTRAINT `fk_subcategory_parent` FOREIGN KEY (`category_parent_id`) REFERENCES `parentcategories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of subcategories
@@ -834,7 +875,7 @@ INSERT INTO `users` VALUES (8, 'Nguyễn An Khánh', 'aKhanh123@gmail.com', '$2a
 INSERT INTO `users` VALUES (9, 'Lê Xuân Kiên', 'kien91@gmail.com', '$2a$12$U1Ha3Ax5EQr52oZys8ZbduYJ98Ab9f0J3/01beMFpZQmN1r/gG7Um', '0800000009', 'Không Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
 INSERT INTO `users` VALUES (10, 'Phan Hai Long', 'solong356@gmail.com', '$2a$12$U1Ha3Ax5EQr52oZys8ZbduYJ98Ab9f0J3/01beMFpZQmN1r/gG7Um', '0776055510', 'Hoạt Động', 'User', '2025-12-16 00:40:16', NULL, 1, NULL);
 INSERT INTO `users` VALUES (13, 'Trần Nhật Trường', 'tkun2k@gmail.com', '$2a$12$iO2CAYtpHi0OMrPacIjEs.TH6C8znaPmIYAzCErUfZgFLFWE8T2Bu', '0949844246', 'Hoạt Động', 'User', '2026-01-05 14:09:25', NULL, 1, NULL);
-INSERT INTO `users` VALUES (14, 'Trần Nhật Trường', 'trannhattruong257@gmail.com', NULL, NULL, 'Hoạt Động', 'User', '2026-01-05 23:29:46', NULL, 1, '113854648859296000907');
+INSERT INTO `users` VALUES (14, 'Trần Nhật Trường', 'trannhattruong257@gmail.com', '$2a$12$joG/egG8xHXQryiCA9.eeebfEVqntL/N7ac0Stpj5X4ORnULqgkXS', '0949844246', 'Hoạt Động', 'User', '2026-01-05 23:29:46', NULL, 1, '113854648859296000907');
 INSERT INTO `users` VALUES (15, 'Trần Nhật Trường', '22130306@st.hcmuaf.edu.vn', '$2a$12$nj3Ex458lmZqmEnq2Iqoye9TkwVAT9h1yvM/t9u9c7knbnCykFPG2', '0949844246', 'Hoạt Động', 'User', '2026-01-21 03:24:05', NULL, 1, '111049883126427327377');
 INSERT INTO `users` VALUES (16, 'Test User', 'testuser@gmail.com', '$2a$12$d3mIVq/seJM14ZZwXi3YEO.UoFLd5YLnSx5JB3WmN4rIDy5rtfv/G', '0987654321', 'Hoạt Động', 'User', '2026-05-17 18:43:00', '977262', 0, NULL);
 
@@ -851,21 +892,21 @@ CREATE TABLE `variants`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `fk_variant_product`(`product_id` ASC) USING BTREE,
   CONSTRAINT `fk_variant_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 61 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 63 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of variants
 -- ----------------------------
 INSERT INTO `variants` VALUES (1, 1, 'M', 'Đen', 30);
 INSERT INTO `variants` VALUES (2, 1, 'L', 'Đen', 25);
-INSERT INTO `variants` VALUES (3, 1, 'XL', 'Trắng', 20);
-INSERT INTO `variants` VALUES (4, 2, 'S', 'Trắng', 15);
-INSERT INTO `variants` VALUES (5, 2, 'M', 'Đen', 35);
-INSERT INTO `variants` VALUES (6, 2, 'L', 'Xanh', 28);
+INSERT INTO `variants` VALUES (3, 1, 'XL', 'Trắng', 18);
+INSERT INTO `variants` VALUES (4, 2, 'S', 'Trắng', 11);
+INSERT INTO `variants` VALUES (5, 2, 'M', 'Đen', 34);
+INSERT INTO `variants` VALUES (6, 2, 'L', 'Xanh', 27);
 INSERT INTO `variants` VALUES (7, 3, 'M', 'Đen', 40);
 INSERT INTO `variants` VALUES (8, 3, 'L', 'Đỏ', 22);
 INSERT INTO `variants` VALUES (9, 3, 'XL', 'Trắng', 18);
-INSERT INTO `variants` VALUES (10, 4, 'S', 'Xanh', 12);
+INSERT INTO `variants` VALUES (10, 4, 'S', 'Xanh', 10);
 INSERT INTO `variants` VALUES (11, 4, 'M', 'Trắng', 27);
 INSERT INTO `variants` VALUES (12, 4, 'L', 'Đen', 33);
 INSERT INTO `variants` VALUES (13, 5, 'M', 'Đen', 44);
@@ -876,10 +917,10 @@ INSERT INTO `variants` VALUES (17, 6, 'M', 'Đen', 31);
 INSERT INTO `variants` VALUES (18, 6, 'L', 'Trắng', 29);
 INSERT INTO `variants` VALUES (19, 7, 'M', 'Đen', 37);
 INSERT INTO `variants` VALUES (20, 7, 'L', 'Xanh', 25);
-INSERT INTO `variants` VALUES (21, 7, 'XL', 'Trắng', 16);
+INSERT INTO `variants` VALUES (21, 7, 'XL', 'Trắng', 15);
 INSERT INTO `variants` VALUES (22, 8, 'S', 'Đen', 11);
 INSERT INTO `variants` VALUES (23, 8, 'M', 'Trắng', 34);
-INSERT INTO `variants` VALUES (24, 8, 'L', 'Đỏ', 22);
+INSERT INTO `variants` VALUES (24, 8, 'L', 'Đỏ', 21);
 INSERT INTO `variants` VALUES (25, 9, 'M', 'Xanh', 36);
 INSERT INTO `variants` VALUES (26, 9, 'L', 'Đen', 24);
 INSERT INTO `variants` VALUES (27, 9, 'XL', 'Trắng', 17);
@@ -894,10 +935,10 @@ INSERT INTO `variants` VALUES (35, 12, 'XL', 'Đen', 20);
 INSERT INTO `variants` VALUES (36, 13, 'L', 'Đen', 31);
 INSERT INTO `variants` VALUES (37, 13, 'XL', 'Trắng', 14);
 INSERT INTO `variants` VALUES (38, 14, 'M', 'Đen', 39);
-INSERT INTO `variants` VALUES (39, 14, 'L', 'Xanh', 22);
+INSERT INTO `variants` VALUES (39, 14, 'L', 'Xanh', 21);
 INSERT INTO `variants` VALUES (40, 15, 'S', 'Trắng', 15);
 INSERT INTO `variants` VALUES (41, 15, 'M', 'Đỏ', 27);
-INSERT INTO `variants` VALUES (42, 15, 'L', 'Đen', 32);
+INSERT INTO `variants` VALUES (42, 15, 'L', 'Đen', 31);
 INSERT INTO `variants` VALUES (43, 16, 'M', 'Đen', 20);
 INSERT INTO `variants` VALUES (44, 16, 'L', 'Đen', 15);
 INSERT INTO `variants` VALUES (45, 16, 'XL', 'Đen', 10);
@@ -906,15 +947,15 @@ INSERT INTO `variants` VALUES (47, 16, 'L', 'Xanh Rêu', 15);
 INSERT INTO `variants` VALUES (48, 17, 'S', 'Trắng', 30);
 INSERT INTO `variants` VALUES (49, 17, 'M', 'Trắng', 39);
 INSERT INTO `variants` VALUES (50, 17, 'L', 'Trắng', 35);
-INSERT INTO `variants` VALUES (51, 17, 'S', 'Hồng', 25);
+INSERT INTO `variants` VALUES (51, 17, 'S', 'Hồng', 24);
 INSERT INTO `variants` VALUES (52, 17, 'M', 'Hồng', 25);
 INSERT INTO `variants` VALUES (53, 18, 'M', 'Đỏ', 14);
 INSERT INTO `variants` VALUES (54, 18, 'L', 'Đỏ', 15);
 INSERT INTO `variants` VALUES (55, 18, 'M', 'Xanh Than', 20);
-INSERT INTO `variants` VALUES (56, 18, 'L', 'Xanh Than', 20);
+INSERT INTO `variants` VALUES (56, 18, 'L', 'Xanh Than', 19);
 INSERT INTO `variants` VALUES (57, 19, 'L', 'Xám', 30);
 INSERT INTO `variants` VALUES (58, 19, 'XL', 'Xám', 25);
-INSERT INTO `variants` VALUES (59, 19, 'L', 'Be', 30);
+INSERT INTO `variants` VALUES (59, 19, 'L', 'Be', 29);
 INSERT INTO `variants` VALUES (60, 19, 'XL', 'Be', 20);
 
 SET FOREIGN_KEY_CHECKS = 1;

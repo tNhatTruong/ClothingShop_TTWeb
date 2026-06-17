@@ -143,6 +143,7 @@
                                                          </c:choose>
                                                      </td>
                                                      <td>
+                                                         <div class="d-flex justify-content-center align-items-center gap-2">
                                                          <!-- 1. Nút Chỉnh Sửa -->
                                                          <c:choose>
                                                              <c:when test="${uIsRoot}">
@@ -183,7 +184,7 @@
                                                          <!-- 2. Nút Khóa / Mở Khóa (Ban/Unban) -->
                                                          <c:choose>
                                                              <c:when test="${uIsRoot}">
-                                                                 <button class="btn btn-sm btn-secondary ms-1" disabled title="Không thể khóa Admin gốc">
+                                                                 <button class="btn btn-sm btn-secondary" disabled title="Không thể khóa Admin gốc">
                                                                      <i class="fas fa-user-shield"></i>
                                                                  </button>
                                                              </c:when>
@@ -192,19 +193,19 @@
                                                                      <c:when test="${isRoot}">
                                                                          <c:choose>
                                                                              <c:when test="${u.status eq 'BANNED'}">
-                                                                                 <button class="btn btn-sm btn-success ms-1 btn-toggle-ban" data-user-id="${u.id}" data-action="unban" title="Mở khóa tài khoản">
+                                                                                 <button class="btn btn-sm btn-success btn-toggle-ban" data-user-id="${u.id}" data-action="unban" title="Mở khóa tài khoản">
                                                                                      <i class="fas fa-unlock"></i>
                                                                                  </button>
                                                                              </c:when>
                                                                              <c:otherwise>
-                                                                                 <button class="btn btn-sm btn-danger ms-1 btn-toggle-ban" data-user-id="${u.id}" data-action="ban" title="Khóa tài khoản">
+                                                                                 <button class="btn btn-sm btn-danger btn-toggle-ban" data-user-id="${u.id}" data-action="ban" title="Khóa tài khoản">
                                                                                      <i class="fas fa-ban"></i>
                                                                                  </button>
                                                                              </c:otherwise>
                                                                          </c:choose>
                                                                      </c:when>
                                                                      <c:otherwise>
-                                                                         <button class="btn btn-sm btn-secondary ms-1" disabled title="Chỉ Admin gốc mới có quyền khóa Admin khác">
+                                                                         <button class="btn btn-sm btn-secondary" disabled title="Chỉ Admin gốc mới có quyền khóa Admin khác">
                                                                              <i class="fas fa-user-shield"></i>
                                                                          </button>
                                                                      </c:otherwise>
@@ -213,12 +214,12 @@
                                                              <c:otherwise>
                                                                  <c:choose>
                                                                      <c:when test="${u.status eq 'BANNED'}">
-                                                                         <button class="btn btn-sm btn-success ms-1 btn-toggle-ban" data-user-id="${u.id}" data-action="unban" title="Mở khóa tài khoản">
+                                                                         <button class="btn btn-sm btn-success btn-toggle-ban" data-user-id="${u.id}" data-action="unban" title="Mở khóa tài khoản">
                                                                              <i class="fas fa-unlock"></i>
                                                                          </button>
                                                                      </c:when>
                                                                      <c:otherwise>
-                                                                         <button class="btn btn-sm btn-danger ms-1 btn-toggle-ban" data-user-id="${u.id}" data-action="ban" title="Khóa tài khoản">
+                                                                         <button class="btn btn-sm btn-danger btn-toggle-ban" data-user-id="${u.id}" data-action="ban" title="Khóa tài khoản">
                                                                              <i class="fas fa-ban"></i>
                                                                          </button>
                                                                      </c:otherwise>
@@ -229,30 +230,31 @@
                                                          <!-- 3. Nút Xóa Cứng (Delete) -->
                                                          <c:choose>
                                                              <c:when test="${uIsRoot}">
-                                                                 <button class="btn btn-sm btn-secondary ms-1" disabled title="Không thể xóa Admin gốc">
+                                                                 <button class="btn btn-sm btn-secondary" disabled title="Không thể xóa Admin gốc">
                                                                      <i class="fas fa-trash"></i>
                                                                  </button>
                                                              </c:when>
                                                              <c:when test="${uIsAdmin}">
                                                                  <c:choose>
                                                                      <c:when test="${isRoot}">
-                                                                         <a href="javascript:void(0);" data-id="${u.id}" data-name="${u.user_name}" onclick="confirmDelete(this.getAttribute('data-id'), this.getAttribute('data-name'))" class="btn btn-sm btn-danger ms-1" title="Xóa vĩnh viễn tài khoản">
+                                                                         <a href="javascript:void(0);" data-id="${u.id}" data-name="${u.user_name}" onclick="confirmDelete(this.getAttribute('data-id'), this.getAttribute('data-name'))" class="btn btn-sm btn-danger" title="Xóa vĩnh viễn tài khoản">
                                                                              <i class="fas fa-trash"></i>
                                                                          </a>
                                                                      </c:when>
                                                                      <c:otherwise>
-                                                                         <button class="btn btn-sm btn-secondary ms-1" disabled title="Chỉ Admin gốc mới có quyền xóa Admin khác">
+                                                                         <button class="btn btn-sm btn-secondary" disabled title="Chỉ Admin gốc mới có quyền xóa Admin khác">
                                                                              <i class="fas fa-trash"></i>
                                                                          </button>
                                                                      </c:otherwise>
                                                                  </c:choose>
                                                              </c:when>
                                                              <c:otherwise>
-                                                                 <a href="javascript:void(0);" data-id="${u.id}" data-name="${u.user_name}" onclick="confirmDelete(this.getAttribute('data-id'), this.getAttribute('data-name'))" class="btn btn-sm btn-danger ms-1" title="Xóa vĩnh viễn tài khoản">
+                                                                 <a href="javascript:void(0);" data-id="${u.id}" data-name="${u.user_name}" onclick="confirmDelete(this.getAttribute('data-id'), this.getAttribute('data-name'))" class="btn btn-sm btn-danger" title="Xóa vĩnh viễn tài khoản">
                                                                      <i class="fas fa-trash"></i>
                                                                  </a>
                                                              </c:otherwise>
                                                          </c:choose>
+                                                         </div>
                                                      </td>
                                                  </tr>
                                              </c:forEach>
@@ -362,12 +364,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 // 2. Cập nhật Nút Hành Động
                 if (data.newStatus === "BANNED") {
-                    btn.className = "btn btn-sm btn-success ms-1 btn-toggle-ban";
+                    btn.className = "btn btn-sm btn-success btn-toggle-ban";
                     btn.setAttribute("data-action", "unban");
                     btn.setAttribute("title", "Mở khóa tài khoản");
                     btn.innerHTML = '<i class="fas fa-unlock"></i>';
                 } else {
-                    btn.className = "btn btn-sm btn-danger ms-1 btn-toggle-ban";
+                    btn.className = "btn btn-sm btn-danger btn-toggle-ban";
                     btn.setAttribute("data-action", "ban");
                     btn.setAttribute("title", "Khóa tài khoản");
                     btn.innerHTML = '<i class="fas fa-ban"></i>';
