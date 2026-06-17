@@ -45,15 +45,25 @@ public class OrderStatusController extends HttpServlet {
 
                     com.clothingshop.styleera.dao.OrderDetailsDAO orderDetailsDAO = new com.clothingshop.styleera.dao.OrderDetailsDAO();
                     com.clothingshop.styleera.dao.VariantDAO variantDAO = new com.clothingshop.styleera.dao.VariantDAO();
+                    com.clothingshop.styleera.dao.ReviewDAO reviewDAO = new com.clothingshop.styleera.dao.ReviewDAO();
 
                     java.util.List<com.clothingshop.styleera.model.OrderDetail> details = orderDetailsDAO.findByOrderId(order.getId());
                     java.util.Map<Integer, com.clothingshop.styleera.model.Variants> variantMap = new java.util.HashMap<>();
+                    java.util.Map<Integer, com.clothingshop.styleera.model.Review> reviewMap = new java.util.HashMap<>();
 
                     if (details != null) {
                         for (com.clothingshop.styleera.model.OrderDetail detail : details) {
                             if (!variantMap.containsKey(detail.getVariant_id())) {
                                 com.clothingshop.styleera.model.Variants variant = variantDAO.getById(detail.getVariant_id());
                                 variantMap.put(detail.getVariant_id(), variant);
+                                
+                                if (variant != null && variant.getProduct() != null) {
+                                    int productId = variant.getProduct().getProduct_id();
+                                    com.clothingshop.styleera.model.Review review = reviewDAO.checkIfReviewed(order.getId(), productId, currentUser.getId());
+                                    if (review != null) {
+                                        reviewMap.put(productId, review);
+                                    }
+                                }
                             }
                         }
                     }
@@ -61,6 +71,7 @@ public class OrderStatusController extends HttpServlet {
                     request.setAttribute("order", order);
                     request.setAttribute("orderDetails", details);
                     request.setAttribute("variantMap", variantMap);
+                    request.setAttribute("reviewMap", reviewMap);
                 } else {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "Đơn hàng không tồn tại!");
                     return;

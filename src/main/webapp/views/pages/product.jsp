@@ -79,23 +79,24 @@
                     </c:forEach>
 
                     <hr>
+                    <form id="priceFilterForm" action="product" method="get">
+                        <!-- Giữ cateId hoặc parentId nếu có -->
+                        <c:if test="${not empty currentCate}">
+                            <input type="hidden" name="cateId" value="${currentCate}" />
+                        </c:if>
+                        <c:if test="${not empty currentParent}">
+                            <input type="hidden" name="parentId" value="${currentParent}" />
+                        </c:if>
+
+                        <c:if test="${not empty currentSort}">
+                            <input type="hidden" name="sort" value="${currentSort}" />
+                        </c:if>
+                        <c:if test="${not empty currentSearch}">
+                            <input type="hidden" name="search" value="${currentSearch}" />
+                        </c:if>
+                        
                     <div class="filter-section">
                         <h5>Giá</h5>
-                        <form id="priceFilterForm" action="product" method="get">
-                            <!-- Giữ cateId hoặc parentId nếu có -->
-                            <c:if test="${not empty currentCate}">
-                                <input type="hidden" name="cateId" value="${currentCate}" />
-                            </c:if>
-                            <c:if test="${not empty currentParent}">
-                                <input type="hidden" name="parentId" value="${currentParent}" />
-                            </c:if>
-
-                            <c:if test="${not empty currentSort}">
-                                <input type="hidden" name="sort" value="${currentSort}" />
-                            </c:if>
-                            <c:if test="${not empty currentSearch}">
-                                <input type="hidden" name="search" value="${currentSearch}" />
-                            </c:if>
 
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="priceRange" value="1"
@@ -114,16 +115,14 @@
                                        id="priceRange3" ${currentPriceRange == '3' ? 'checked' : ''}>
                                 <label class="form-check-label" for="priceRange3">Trên 500.000</label>
                             </div>
-                        </form>
                     </div>
                     <hr>
                     <div class="filter-section">
                         <h6>Kích thước</h6>
                         <div class="size-list" style="display: flex; flex-wrap: wrap; gap: 5px;">
                             <c:forEach items="${listSizes}" var="size" varStatus="status">
-                                <a href="#" class="btn btn-outline-secondary btn-sm ${status.index >= 4 ? 'hidden-size' : ''}">
-                                        ${size}
-                                </a>
+                                <input type="checkbox" class="btn-check size-checkbox" name="size" value="${size}" id="size-${status.index}" ${currentSizes != null && currentSizes.contains(size) ? 'checked' : ''}>
+                                <label class="btn btn-outline-secondary btn-sm ${status.index >= 4 ? 'hidden-size' : ''}" for="size-${status.index}">${size}</label>
                             </c:forEach>
                             <c:if test="${fn:length(listSizes) > 4}">
                                 <a href="#" class="toggle-size float-end">
@@ -139,7 +138,8 @@
                         <ul class="color-list" style="list-style:none; padding:0;">
                             <c:forEach items="${listColors}" var="color" varStatus="status">
                                 <li class="${status.index >= 4 ? 'hidden-color' : ''}" style="margin-bottom:5px;">
-                                    <input type="checkbox"> ${color}
+                                    <input class="form-check-input color-checkbox" type="checkbox" name="color" value="${color}" id="color-${status.index}" ${currentColors != null && currentColors.contains(color) ? 'checked' : ''}>
+                                    <label class="form-check-label" for="color-${status.index}">${color}</label>
                                 </li>
                             </c:forEach>
                         </ul>
@@ -150,6 +150,7 @@
                             </a>
                         </c:if>
                     </div>
+                    </form>
                 </div>
             </aside>
 
@@ -352,7 +353,7 @@
             document.body.style.overflow = 'auto';
         }
     }
-    document.querySelectorAll('#priceFilterForm input[name="priceRange"]').forEach(function(el) {
+    document.querySelectorAll('#priceFilterForm input[type="radio"], #priceFilterForm input[type="checkbox"]').forEach(function(el) {
         el.addEventListener('change', function() {
             const form = document.getElementById('priceFilterForm');
             const url = new URL(form.action);

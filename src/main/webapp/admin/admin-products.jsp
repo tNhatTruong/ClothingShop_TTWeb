@@ -2,6 +2,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <c:set var="root" value="${pageContext.request.contextPath}" scope="request" />
 
 <!DOCTYPE html>
@@ -206,14 +207,34 @@
                                         </c:if>
                                     </td>
                                     <td><strong><fmt:formatNumber value="${p.price}" type="currency" currencySymbol="₫"/></strong></td>
-                                    <td class="text-center">
+                                    <td class="text-center align-middle">
                                         <c:set var="totalQuantity" value="0" />
+                                        <c:set var="hasLowStock" value="false" />
                                         <c:if test="${not empty p.variants}">
                                             <c:forEach items="${p.variants}" var="v">
                                                 <c:set var="totalQuantity" value="${totalQuantity + v.quantity}" />
+                                                <c:if test="${v.quantity < 5}">
+                                                    <c:set var="hasLowStock" value="true" />
+                                                </c:if>
                                             </c:forEach>
                                         </c:if>
-                                        <span>${totalQuantity}</span>
+                                        
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm ${totalQuantity == 0 ? 'btn-danger' : (hasLowStock ? 'btn-warning text-dark' : 'btn-outline-secondary')} dropdown-toggle fw-bold" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 60px;">
+                                                ${totalQuantity}
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end shadow p-2" style="min-width: 200px; font-size: 13px;">
+                                                <li><h6 class="dropdown-header text-center border-bottom pb-2 mb-2">Chi tiết Tồn kho</h6></li>
+                                                <c:if test="${not empty p.variants}">
+                                                    <c:forEach items="${p.variants}" var="v">
+                                                        <li class="d-flex justify-content-between align-items-center mb-1 pb-1">
+                                                            <span>${v.color} - Size ${v.size}</span>
+                                                            <span class="badge ${v.quantity == 0 ? 'bg-danger' : (v.quantity < 5 ? 'bg-warning text-dark' : 'bg-success')} rounded-pill">${v.quantity}</span>
+                                                        </li>
+                                                    </c:forEach>
+                                                </c:if>
+                                            </ul>
+                                        </div>
                                     </td>
                                     <td>
                                         <a href="${root}/AdminEditProduct?id=${p.product_id}"
@@ -257,6 +278,51 @@
     </div>
 </main>
 </div>
+</div>
+
+<!-- Modal Nhập Kho Nhanh -->
+<div class="modal fade" id="quickStockModal" tabindex="-1" aria-labelledby="quickStockModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-light border-bottom">
+                <h5 class="modal-title" id="quickStockModalLabel">
+                    <i class="fas fa-boxes me-2 text-info"></i> Nhập Kho: <span id="quickStockProductName" class="text-primary"></span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="quickStockForm">
+                <input type="hidden" id="quickStockProductId" name="productId">
+                <div class="modal-body">
+                    <div id="quickStockLoading" class="text-center py-3" style="display: none;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Đang tải dữ liệu biến thể...</p>
+                    </div>
+                    <div id="quickStockContent">
+                        <table class="table table-sm align-middle text-center">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Màu Sắc</th>
+                                    <th>Size</th>
+                                    <th style="width: 120px;">Số Lượng</th>
+                                </tr>
+                            </thead>
+                            <tbody id="quickStockVariantsList">
+                                <!-- Render qua JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary" id="btnSaveStock">
+                        <i class="fas fa-save me-1"></i> Lưu Thay Đổi
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <!-- Modal Thêm Sản Phẩm -->
@@ -394,6 +460,105 @@
             toast.show();
         }
     });
+
+    // --- Xử lý Nhập Kho Nhanh ---
+    let quickStockModal;
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        quickStockModal = new bootstrap.Modal(document.getElementById('quickStockModal'));
+        
+        document.getElementById('quickStockForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const btnSave = document.getElementById('btnSaveStock');
+            btnSave.disabled = true;
+            btnSave.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang lưu...';
+            
+            // Gom dữ liệu biến thể
+            const variantsData = [];
+            document.querySelectorAll('.variant-stock-input').forEach(input => {
+                variantsData.push({
+                    variantId: input.dataset.variantId,
+                    quantity: input.value
+                });
+            });
+            
+            const productId = document.getElementById('quickStockProductId').value;
+            
+            fetch('${root}/api/admin/update-stock', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    productId: productId,
+                    variants: variantsData
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Hiển thị thông báo thành công và load lại trang
+                    sessionStorage.setItem('successMessage', 'Cập nhật số lượng tồn kho thành công!');
+                    window.location.reload();
+                } else {
+                    alert('Lỗi: ' + (data.message || 'Không thể cập nhật'));
+                    btnSave.disabled = false;
+                    btnSave.innerHTML = '<i class="fas fa-save me-1"></i> Lưu Thay Đổi';
+                }
+            })
+            .catch(err => {
+                alert('Lỗi kết nối máy chủ!');
+                btnSave.disabled = false;
+                btnSave.innerHTML = '<i class="fas fa-save me-1"></i> Lưu Thay Đổi';
+            });
+        });
+    });
+
+    function openStockModal(productId, productName) {
+        document.getElementById('quickStockProductName').textContent = productName;
+        document.getElementById('quickStockProductId').value = productId;
+        
+        const loading = document.getElementById('quickStockLoading');
+        const content = document.getElementById('quickStockContent');
+        const tbody = document.getElementById('quickStockVariantsList');
+        
+        loading.style.display = 'block';
+        content.style.display = 'none';
+        tbody.innerHTML = '';
+        
+        quickStockModal.show();
+        
+        // Gọi API lấy danh sách biến thể của sản phẩm này
+        fetch('${root}/api/admin/product-variants?productId=' + productId)
+            .then(res => res.json())
+            .then(data => {
+                loading.style.display = 'none';
+                if (data && data.length > 0) {
+                    content.style.display = 'block';
+                    data.forEach(v => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td><span class="badge bg-secondary">${v.color}</span></td>
+                            <td><strong>${v.size}</strong></td>
+                            <td>
+                                <input type="number" class="form-control form-control-sm text-center variant-stock-input" 
+                                       data-variant-id="${v.variantId}" 
+                                       value="${v.quantity}" min="0" required>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    loading.style.display = 'block';
+                    loading.innerHTML = '<p class="text-danger">Không tìm thấy biến thể nào cho sản phẩm này.</p>';
+                }
+            })
+            .catch(err => {
+                loading.style.display = 'block';
+                loading.innerHTML = '<p class="text-danger">Lỗi kết nối khi lấy dữ liệu.</p>';
+            });
+    }
 </script>
 </body>
 </html>

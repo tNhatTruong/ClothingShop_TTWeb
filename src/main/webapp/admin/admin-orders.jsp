@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <c:set var="root" value="${pageContext.request.contextPath}" scope="request" />
 
 <!DOCTYPE html>
@@ -37,65 +38,101 @@
             </c:if>
 
             <!-- Page Header -->
-            <div class="page-header mb-5">
+            <div class="page-header mb-5 d-flex justify-content-between align-items-center w-100">
+                <h1 class="page-title mb-0">Quản Lý Đơn Hàng</h1>
                 <div>
-                    <h1 class="page-title">Quản Lý Đơn Hàng</h1>
+                    <button type="button" class="btn btn-secondary me-2" onclick="printSelectedOrders()">
+                        <i class="fas fa-print me-1"></i> In Đơn Đã Chọn
+                    </button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adminCreateOrderModal">
+                        <i class="fas fa-plus me-1"></i> Tạo Đơn Hàng
+                    </button>
                 </div>
             </div>
 
-            <!-- Tính toán các trạng thái đơn hàng -->
-            <c:set var="pendingCount" value="0" />
-            <c:set var="shippingCount" value="0" />
-            <c:set var="deliveredCount" value="0" />
-            <c:set var="cancelledCount" value="0" />
+            <!-- Tính toán các trạng thái đơn hàng theo 6 nhóm Macro hợp lý -->
+            <c:set var="pendingConfirm" value="0" />
+            <c:set var="pendingShip" value="0" />
+            <c:set var="shipping" value="0" />
+            <c:set var="delivered" value="0" />
+            <c:set var="returns" value="0" />
+            <c:set var="cancelled" value="0" />
+
             <c:forEach items="${orders}" var="o">
+                <c:set var="st" value="${fn:toLowerCase(o.status)}" />
                 <c:choose>
-                    <c:when test="${o.status eq 'Chờ vận chuyển'}">
-                        <c:set var="pendingCount" value="${pendingCount + 1}" />
+                    <c:when test="${o.status eq 'Chờ duyệt' || o.status eq 'Chờ thanh toán'}">
+                        <c:set var="pendingConfirm" value="${pendingConfirm + 1}" />
+                    </c:when>
+                    <c:when test="${o.status eq 'Đã Thanh Toán' || o.status eq 'ADMIN_CONFIRMED' || o.status eq 'Chờ vận chuyển' || o.status eq 'PAID_AT_COUNTER'}">
+                        <c:set var="pendingShip" value="${pendingShip + 1}" />
                     </c:when>
                     <c:when test="${o.status eq 'Đang vận chuyển'}">
-                        <c:set var="shippingCount" value="${shippingCount + 1}" />
+                        <c:set var="shipping" value="${shipping + 1}" />
                     </c:when>
                     <c:when test="${o.status eq 'Đã Giao'}">
-                        <c:set var="deliveredCount" value="${deliveredCount + 1}" />
+                        <c:set var="delivered" value="${delivered + 1}" />
                     </c:when>
-                    <c:when test="${o.status eq 'Đã hủy'}">
-                        <c:set var="cancelledCount" value="${cancelledCount + 1}" />
+                    <c:when test="${fn:contains(st, 'trả hàng') || fn:contains(st, 'hoàn tiền')}">
+                        <c:set var="returns" value="${returns + 1}" />
                     </c:when>
+                    <c:when test="${fn:contains(st, 'hủy') || fn:contains(st, 'thất bại')}">
+                        <c:set var="cancelled" value="${cancelled + 1}" />
+                    </c:when>
+                    <c:otherwise>
+                        <!-- Dự phòng cho các trạng thái không xác định -->
+                        <c:set var="pendingConfirm" value="${pendingConfirm + 1}" />
+                    </c:otherwise>
                 </c:choose>
             </c:forEach>
 
-            <!-- Stats -->
-            <div class="row mb-4 g-3">
-                <div class="col-md-3">
-                    <div class="card text-center shadow-sm">
-                        <div class="card-body">
-                            <h3 class="mb-1 text-info">${pendingCount}</h3>
-                            <p class="text-muted small mb-0">Chờ Vận chuyển</p>
+            <!-- Stats (6 nhóm) -->
+            <div class="row mb-4 g-2">
+                <div class="col-md-2 col-sm-4 col-6">
+                    <div class="card text-center shadow-sm border-secondary border-bottom border-3 h-100">
+                        <div class="card-body p-2 d-flex flex-column justify-content-center">
+                            <h4 class="mb-1 text-secondary">${pendingConfirm}</h4>
+                            <p class="text-muted small mb-0" style="font-size: 12px;">Chờ Xác Nhận</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card text-center shadow-sm">
-                        <div class="card-body">
-                            <h3 class="mb-1 text-warning">${shippingCount}</h3>
-                            <p class="text-muted small mb-0">Đang Vận chuyển</p>
+                <div class="col-md-2 col-sm-4 col-6">
+                    <div class="card text-center shadow-sm border-info border-bottom border-3 h-100">
+                        <div class="card-body p-2 d-flex flex-column justify-content-center">
+                            <h4 class="mb-1 text-info">${pendingShip}</h4>
+                            <p class="text-muted small mb-0" style="font-size: 12px;">Chờ Giao Hàng</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card text-center shadow-sm">
-                        <div class="card-body">
-                            <h3 class="mb-1 text-success">${deliveredCount}</h3>
-                            <p class="text-muted small mb-0">Đã Giao</p>
+                <div class="col-md-2 col-sm-4 col-6">
+                    <div class="card text-center shadow-sm border-warning border-bottom border-3 h-100">
+                        <div class="card-body p-2 d-flex flex-column justify-content-center">
+                            <h4 class="mb-1 text-warning">${shipping}</h4>
+                            <p class="text-muted small mb-0" style="font-size: 12px;">Đang Vận Chuyển</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card text-center shadow-sm">
-                        <div class="card-body">
-                            <h3 class="mb-1 text-danger">${cancelledCount}</h3>
-                            <p class="text-muted small mb-0">Đã Hủy</p>
+                <div class="col-md-2 col-sm-4 col-6">
+                    <div class="card text-center shadow-sm border-success border-bottom border-3 h-100">
+                        <div class="card-body p-2 d-flex flex-column justify-content-center">
+                            <h4 class="mb-1 text-success">${delivered}</h4>
+                            <p class="text-muted small mb-0" style="font-size: 12px;">Đã Giao</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-4 col-6">
+                    <div class="card text-center shadow-sm border-primary border-bottom border-3 h-100">
+                        <div class="card-body p-2 d-flex flex-column justify-content-center">
+                            <h4 class="mb-1 text-primary">${returns}</h4>
+                            <p class="text-muted small mb-0" style="font-size: 12px;">Đổi Trả / Hoàn Tiền</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-4 col-6">
+                    <div class="card text-center shadow-sm border-danger border-bottom border-3 h-100">
+                        <div class="card-body p-2 d-flex flex-column justify-content-center">
+                            <h4 class="mb-1 text-danger">${cancelled}</h4>
+                            <p class="text-muted small mb-0" style="font-size: 12px;">Hủy / Thất Bại</p>
                         </div>
                     </div>
                 </div>
@@ -113,10 +150,33 @@
                             <label class="form-label">Trạng Thái</label>
                             <select class="form-select" id="statusOrderFilter">
                                 <option value="">Tất Cả Trạng Thái</option>
-                                <option value="Chờ vận chuyển">Chờ vận chuyển</option>
-                                <option value="Đang vận chuyển">Đang vận chuyển</option>
-                                <option value="Đã Giao">Đã Giao</option>
-                                <option value="Đã hủy">Đã hủy</option>
+                                <optgroup label="Chờ Xác Nhận">
+                                    <option value="Chờ duyệt">Chờ duyệt</option>
+                                    <option value="Chờ thanh toán">Chờ thanh toán</option>
+                                </optgroup>
+                                <optgroup label="Chờ Giao Hàng">
+                                    <option value="Đã Thanh Toán">Đã Thanh Toán</option>
+                                    <option value="ADMIN_CONFIRMED">Đã Xác Nhận (Admin)</option>
+                                    <option value="Chờ vận chuyển">Chờ vận chuyển</option>
+                                    <option value="PAID_AT_COUNTER">Tại Quầy (Chờ chốt)</option>
+                                </optgroup>
+                                <optgroup label="Vận Chuyển & Giao Hàng">
+                                    <option value="Đang vận chuyển">Đang vận chuyển</option>
+                                    <option value="Đã Giao">Đã Giao</option>
+                                </optgroup>
+                                <optgroup label="Đổi Trả / Hoàn Tiền">
+                                    <option value="Yêu cầu trả hàng">Yêu cầu trả hàng</option>
+                                    <option value="Đang xử lý trả hàng">Đang xử lý trả hàng</option>
+                                    <option value="Đã hoàn tiền">Đã hoàn tiền</option>
+                                    <option value="Từ chối trả hàng">Từ chối trả hàng</option>
+                                </optgroup>
+                                <optgroup label="Hủy / Thất Bại">
+                                    <option value="Đã hủy">Đã hủy</option>
+                                    <option value="Hủy (Bởi người dùng)">Hủy (Bởi người dùng)</option>
+                                    <option value="Hủy (Quá hạn thanh toán)">Hủy (Quá hạn thanh toán)</option>
+                                    <option value="Hủy (Lỗi Thanh Toán)">Hủy (Lỗi Thanh Toán)</option>
+                                    <option value="Giao thất bại">Giao thất bại</option>
+                                </optgroup>
                             </select>
                         </div>
                     </div>
@@ -134,6 +194,7 @@
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                             <tr class="text-center align-middle">
+                                <th style="width: 40px;"><input type="checkbox" id="selectAllOrders" class="form-check-input"></th>
                                 <th>Mã ĐH</th>
                                 <th>Khách Hàng</th>
                                 <th>Email</th>
@@ -155,9 +216,33 @@
                                 </c:when>
                                 <c:otherwise>
                                     <c:forEach items="${orders}" var="o">
-                                        <tr class="text-center align-middle">
+                                        <c:set var="rowSt" value="${fn:toLowerCase(o.status)}" />
+                                        <c:set var="rowMacro" value="Chờ Xác Nhận" />
+                                        <c:choose>
+                                            <c:when test="${o.status eq 'Chờ duyệt' || o.status eq 'Chờ thanh toán'}">
+                                                <c:set var="rowMacro" value="Chờ Xác Nhận" />
+                                            </c:when>
+                                            <c:when test="${o.status eq 'Đã Thanh Toán' || o.status eq 'ADMIN_CONFIRMED' || o.status eq 'Chờ vận chuyển' || o.status eq 'PAID_AT_COUNTER'}">
+                                                <c:set var="rowMacro" value="Chờ Giao Hàng" />
+                                            </c:when>
+                                            <c:when test="${o.status eq 'Đang vận chuyển'}">
+                                                <c:set var="rowMacro" value="Đang Vận Chuyển" />
+                                            </c:when>
+                                            <c:when test="${o.status eq 'Đã Giao'}">
+                                                <c:set var="rowMacro" value="Đã Giao" />
+                                            </c:when>
+                                            <c:when test="${fn:contains(rowSt, 'trả hàng') || fn:contains(rowSt, 'hoàn tiền')}">
+                                                <c:set var="rowMacro" value="Đổi Trả / Hoàn Tiền" />
+                                            </c:when>
+                                            <c:when test="${fn:contains(rowSt, 'hủy') || fn:contains(rowSt, 'thất bại')}">
+                                                <c:set var="rowMacro" value="Hủy / Thất Bại" />
+                                            </c:when>
+                                        </c:choose>
+                                        
+                                        <tr class="text-center align-middle" data-macro-status="${rowMacro}" data-exact-status="${o.status}">
+                                            <td><input type="checkbox" class="form-check-input order-checkbox" value="${o.id}"></td>
                                             <td><strong>#${o.id}</strong></td>
-                                            <td>${o.userName}</td>
+                                            <td>${not empty o.shippingName ? o.shippingName : o.userName}</td>
                                             <td>${o.email}</td>
                                             <td><strong>${o.formattedCreatedAt}</strong></td>
                                             <td>
@@ -174,8 +259,14 @@
                                                     <c:when test="${o.status eq 'Đã Giao'}">
                                                         <span class="badge bg-success">${o.status}</span>
                                                     </c:when>
-                                                    <c:when test="${o.status eq 'Đã hủy'}">
+                                                    <c:when test="${fn:contains(fn:toLowerCase(o.status), 'hủy')}">
                                                         <span class="badge bg-danger">${o.status}</span>
+                                                    </c:when>
+                                                    <c:when test="${o.status eq 'ADMIN_CONFIRMED'}">
+                                                        <span class="badge bg-primary">Đã Xác Nhận (Admin)</span>
+                                                    </c:when>
+                                                    <c:when test="${o.status eq 'PAID_AT_COUNTER'}">
+                                                        <span class="badge bg-success">Tại Quầy (Chờ chốt)</span>
                                                     </c:when>
                                                     <c:otherwise>
                                                         <span class="badge bg-secondary">${o.status}</span>
@@ -183,18 +274,121 @@
                                                 </c:choose>
                                             </td>
                                             <td>
-                                                <!-- Dropdown đổi trạng thái -->
-                                                <div class="d-flex gap-1 justify-content-center flex-wrap">
-                                                    <form action="${root}/admin-update-order-status" method="post" class="d-flex gap-1">
-                                                        <input type="hidden" name="orderId" value="${o.id}">
-                                                        <select name="status" class="form-select form-select-sm" style="width:160px; font-size:12px;"
-                                                                onchange="this.form.submit()" title="Đổi trạng thái">
-                                                            <option value="Chờ vận chuyển"  ${o.status eq 'Chờ vận chuyển'  ? 'selected' : ''}>Chờ vận chuyển</option>
-                                                            <option value="Đang vận chuyển" ${o.status eq 'Đang vận chuyển' ? 'selected' : ''}>Đang vận chuyển</option>
-                                                            <option value="Đã Giao"         ${o.status eq 'Đã Giao'         ? 'selected' : ''}>Đã Giao</option>
-                                                            <option value="Đã hủy"          ${o.status eq 'Đã hủy'          ? 'selected' : ''}>Đã hủy</option>
-                                                        </select>
-                                                    </form>
+                                                <!-- Ô Action được thiết kế lại: Dùng Icon Edit mở ra Dropdown Menu -->
+                                                <div class="d-flex gap-1 justify-content-center align-items-center flex-wrap">
+                                                    <!-- Chỉ hiển thị nút Edit nếu có hành động tiếp theo hợp lệ -->
+                                                    <c:set var="canEdit" value="false" />
+                                                    <c:if test="${o.status eq 'Chờ duyệt' || o.status eq 'Đã Thanh Toán' || o.status eq 'ADMIN_CONFIRMED' || o.status eq 'Chờ thanh toán' || o.status eq 'Chờ vận chuyển' || o.status eq 'Đang vận chuyển' || o.status eq 'PAID_AT_COUNTER' || o.status eq 'Yêu cầu trả hàng' || o.status eq 'Đang xử lý trả hàng'}">
+                                                        <c:set var="canEdit" value="true" />
+                                                    </c:if>
+
+                                                    <c:if test="${canEdit}">
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-sm btn-outline-warning dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Cập nhật trạng thái">
+                                                                <i class="fas fa-edit"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu dropdown-menu-end shadow" style="font-size: 14px;">
+                                                                <li><h6 class="dropdown-header">Cập nhật trạng thái</h6></li>
+                                                                
+                                                                <c:if test="${o.status eq 'Chờ duyệt' || o.status eq 'Đã Thanh Toán' || o.status eq 'ADMIN_CONFIRMED'}">
+                                                                    <li>
+                                                                        <form action="${root}/admin-update-order-status" method="post" class="m-0 p-0" onsubmit="return confirm('Bạn muốn chuyển sang: Chờ vận chuyển?');">
+                                                                            <input type="hidden" name="orderId" value="${o.id}">
+                                                                            <input type="hidden" name="status" value="Chờ vận chuyển">
+                                                                            <button type="submit" class="dropdown-item"><i class="fas fa-box me-2 text-secondary"></i>Chờ vận chuyển</button>
+                                                                        </form>
+                                                                    </li>
+                                                                    <li>
+                                                                        <form action="${root}/admin-update-order-status" method="post" class="m-0 p-0" onsubmit="return confirm('Bạn có chắc chắn muốn Hủy đơn hàng này?');">
+                                                                            <input type="hidden" name="orderId" value="${o.id}">
+                                                                            <input type="hidden" name="status" value="Đã hủy">
+                                                                            <button type="submit" class="dropdown-item text-danger"><i class="fas fa-times me-2"></i>Đã hủy</button>
+                                                                        </form>
+                                                                    </li>
+                                                                </c:if>
+                                                                
+                                                                <c:if test="${o.status eq 'Chờ thanh toán'}">
+                                                                    <li>
+                                                                        <form action="${root}/admin-update-order-status" method="post" class="m-0 p-0" onsubmit="return confirm('Bạn có chắc chắn muốn Hủy đơn hàng này?');">
+                                                                            <input type="hidden" name="orderId" value="${o.id}">
+                                                                            <input type="hidden" name="status" value="Đã hủy">
+                                                                            <button type="submit" class="dropdown-item text-danger"><i class="fas fa-times me-2"></i>Đã hủy</button>
+                                                                        </form>
+                                                                    </li>
+                                                                </c:if>
+
+                                                                <c:if test="${o.status eq 'Chờ vận chuyển'}">
+                                                                    <li>
+                                                                        <form action="${root}/admin-update-order-status" method="post" class="m-0 p-0" onsubmit="return confirm('Bạn muốn chuyển sang: Đang vận chuyển?');">
+                                                                            <input type="hidden" name="orderId" value="${o.id}">
+                                                                            <input type="hidden" name="status" value="Đang vận chuyển">
+                                                                            <button type="submit" class="dropdown-item"><i class="fas fa-truck me-2 text-primary"></i>Đang vận chuyển</button>
+                                                                        </form>
+                                                                    </li>
+                                                                    <li>
+                                                                        <form action="${root}/admin-update-order-status" method="post" class="m-0 p-0" onsubmit="return confirm('Bạn có chắc chắn muốn Hủy đơn hàng này?');">
+                                                                            <input type="hidden" name="orderId" value="${o.id}">
+                                                                            <input type="hidden" name="status" value="Đã hủy">
+                                                                            <button type="submit" class="dropdown-item text-danger"><i class="fas fa-times me-2"></i>Đã hủy</button>
+                                                                        </form>
+                                                                    </li>
+                                                                </c:if>
+                                                                
+                                                                <c:if test="${o.status eq 'Đang vận chuyển' || o.status eq 'PAID_AT_COUNTER'}">
+                                                                    <li>
+                                                                        <form action="${root}/admin-update-order-status" method="post" class="m-0 p-0" onsubmit="return confirm('Xác nhận: Giao hàng thành công?');">
+                                                                            <input type="hidden" name="orderId" value="${o.id}">
+                                                                            <input type="hidden" name="status" value="Đã Giao">
+                                                                            <button type="submit" class="dropdown-item text-success"><i class="fas fa-check-circle me-2"></i>Đã Giao (Hoàn thành)</button>
+                                                                        </form>
+                                                                    </li>
+                                                                    <li>
+                                                                        <form action="${root}/admin-update-order-status" method="post" class="m-0 p-0" onsubmit="return confirm('Xác nhận: Giao hàng thất bại?');">
+                                                                            <input type="hidden" name="orderId" value="${o.id}">
+                                                                            <input type="hidden" name="status" value="Giao thất bại">
+                                                                            <button type="submit" class="dropdown-item text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Giao thất bại</button>
+                                                                        </form>
+                                                                    </li>
+                                                                </c:if>
+                                                                
+                                                                <c:if test="${o.status eq 'Yêu cầu trả hàng'}">
+                                                                    <li>
+                                                                        <form action="${root}/admin-update-order-status" method="post" class="m-0 p-0" onsubmit="return confirm('Chấp nhận yêu cầu trả hàng?');">
+                                                                            <input type="hidden" name="orderId" value="${o.id}">
+                                                                            <input type="hidden" name="status" value="Đang xử lý trả hàng">
+                                                                            <button type="submit" class="dropdown-item text-warning"><i class="fas fa-box-open me-2"></i>Duyệt: Đang xử lý</button>
+                                                                        </form>
+                                                                    </li>
+                                                                    <li>
+                                                                        <form action="${root}/admin-update-order-status" method="post" class="m-0 p-0" onsubmit="return confirm('Từ chối yêu cầu trả hàng?');">
+                                                                            <input type="hidden" name="orderId" value="${o.id}">
+                                                                            <input type="hidden" name="status" value="Từ chối trả hàng">
+                                                                            <button type="submit" class="dropdown-item text-danger"><i class="fas fa-ban me-2"></i>Từ chối yêu cầu</button>
+                                                                        </form>
+                                                                    </li>
+                                                                </c:if>
+                                                                
+                                                                <c:if test="${o.status eq 'Đang xử lý trả hàng'}">
+                                                                    <li>
+                                                                        <form action="${root}/admin-update-order-status" method="post" class="m-0 p-0" onsubmit="return confirm('Xác nhận đã hoàn tiền cho khách?');">
+                                                                            <input type="hidden" name="orderId" value="${o.id}">
+                                                                            <input type="hidden" name="status" value="Đã hoàn tiền">
+                                                                            <button type="submit" class="dropdown-item text-success"><i class="fas fa-money-bill-wave me-2"></i>Đã hoàn tiền</button>
+                                                                        </form>
+                                                                    </li>
+                                                                </c:if>
+                                                                <li><hr class="dropdown-divider"></li>
+                                                                <li>
+                                                                    <a href="${root}/admin/print-invoice?orderId=${o.id}" target="_blank" class="dropdown-item text-primary">
+                                                                        <i class="fas fa-print me-2"></i>In hóa đơn
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </c:if>
+                                                    <button type="button" class="btn btn-sm btn-outline-info" onclick="viewOrder('${root}', '${o.id}')" title="Xem chi tiết">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -228,6 +422,138 @@
     </div>
 </div>
 
+<!-- Admin Create Order Modal -->
+<div class="modal fade" id="adminCreateOrderModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tạo Đơn Hàng Mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Cột 1: Tìm kiếm & Chọn sản phẩm (Trái - Lớn) -->
+                    <div class="col-lg-7 border-end">
+                        <h6 class="text-muted mb-3"><i class="fas fa-box-open me-2"></i>Chọn Sản Phẩm</h6>
+                        
+                        <!-- Thanh tìm kiếm -->
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" id="createOrderSearchInput" class="form-control" placeholder="Tìm kiếm áo thun, kích cỡ, màu sắc..." autocomplete="off">
+                        </div>
+                        
+                        <!-- Kết quả tìm kiếm (Dropdown/List) -->
+                        <div id="searchProductResults" class="list-group mb-3 shadow-sm" style="max-height: 250px; overflow-y: auto; display: none; position: absolute; z-index: 1050; width: 95%;">
+                            <!-- Dữ liệu render bằng JS -->
+                        </div>
+                        
+                        <!-- Giỏ hàng nội bộ -->
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle text-center">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="text-start">Sản phẩm</th>
+                                        <th>Đơn giá</th>
+                                        <th style="width: 120px;">Số lượng</th>
+                                        <th>Thành tiền</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="createOrderCartBody">
+                                    <!-- Giỏ hàng JS -->
+                                    <tr id="emptyCartRow"><td colspan="5" class="text-muted py-3">Chưa có sản phẩm nào</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Cột 2: Thông tin Khách Hàng & Thanh toán (Phải - Nhỏ) -->
+                    <div class="col-lg-5">
+                        <h6 class="text-muted mb-3"><i class="fas fa-user me-2"></i>Thông Tin Khách Hàng</h6>
+                        <form id="adminCreateOrderForm">
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <label class="form-label small">Họ Tên *</label>
+                                    <input type="text" class="form-control form-control-sm" id="co_customerName" name="customerName" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small">Điện thoại *</label>
+                                    <input type="text" class="form-control form-control-sm" id="co_customerPhone" name="customerPhone" pattern="^(0|\+84)[35789][0-9]{8}$" required>
+                                </div>
+                            </div>
+                            
+                            <!-- GHN Dropdowns -->
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <label class="form-label small">Tỉnh / Thành *</label>
+                                    <select id="co_province" name="province_id" class="form-select form-select-sm" required>
+                                        <option value="">-- Chọn --</option>
+                                    </select>
+                                    <input type="hidden" name="province_name" id="co_provinceName">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small">Quận / Huyện *</label>
+                                    <select id="co_district" name="district_id" class="form-select form-select-sm" disabled required>
+                                        <option value="">-- Chọn --</option>
+                                    </select>
+                                    <input type="hidden" name="district_name" id="co_districtName">
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-12">
+                                    <label class="form-label small">Phường / Xã *</label>
+                                    <select id="co_ward" name="ward_code" class="form-select form-select-sm" disabled required>
+                                        <option value="">-- Chọn --</option>
+                                    </select>
+                                    <input type="hidden" name="ward_name" id="co_wardName">
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small">Địa chỉ chi tiết (Số nhà, đường) *</label>
+                                <input type="text" class="form-control form-control-sm" id="co_street" name="street" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small">Ghi chú (Tùy chọn)</label>
+                                <textarea class="form-control form-control-sm" id="co_note" name="note" rows="2"></textarea>
+                            </div>
+                            
+                            <hr>
+                            
+                            <!-- Payment & Total -->
+                            <div class="d-flex justify-content-between mb-1 small">
+                                <span>Tạm tính:</span>
+                                <strong id="co_subTotalDisplay" data-value="0">0đ</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2 small">
+                                <span>Phí vận chuyển:</span>
+                                <strong id="co_shippingFeeDisplay" data-value="0">0đ</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="fw-bold fs-6">Tổng cộng:</span>
+                                <strong class="text-danger fs-5" id="co_totalDisplay" data-value="0">0đ</strong>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label small">Trạng thái tạo đơn</label>
+                                <select class="form-select form-select-sm" id="co_orderStatus" name="orderStatus" required>
+                                    <option value="ADMIN_CONFIRMED">Đã Xác Nhận (Bởi Admin) - Giao Hàng</option>
+                                    <option value="PAID_AT_COUNTER">Thanh Toán Tại Quầy</option>
+                                </select>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary" id="btnSubmitCreateOrder">
+                                    <i class="fas fa-check-circle me-1"></i> Chốt Đơn Hàng
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Order Detail Modal -->
 <div class="modal fade" id="orderDetailModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
@@ -244,13 +570,14 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <h6 class="text-muted">Thông Tin Khách Hàng</h6>
-                        <p class="mb-1"><strong>Nguyễn Văn A</strong></p>
-                        <p class="mb-1 small text-muted">nguyenvana@email.com</p>
-                        <p class="small text-muted">0912345678</p>
+                        <p class="mb-1"><strong id="modalCustomerName">Nguyễn Văn A</strong></p>
+                        <p class="mb-1 small text-muted" id="modalCustomerEmail">nguyenvana@email.com</p>
+                        <p class="small text-muted" id="modalCustomerPhone">0912345678</p>
                     </div>
                     <div class="col-md-6">
                         <h6 class="text-muted">Địa Chỉ Giao Hàng</h6>
-                        <p class="small mb-0">123 Đường ABC, Quận 1, TP. HCM</p>
+                        <p class="small mb-1" id="modalShippingAddress">123 Đường ABC, Quận 1, TP. HCM</p>
+                        <p class="small text-muted mb-0" id="modalOrderNote"></p>
                     </div>
                 </div>
 
@@ -258,22 +585,18 @@
 
                 <h6 class="text-muted mb-3">Chi Tiết Sản Phẩm</h6>
                 <div class="table-responsive mb-3">
-                    <table class="table table-sm">
+                    <table class="table table-sm align-middle">
                         <thead class="table-light">
-                        <tr>
-                            <th>Sản Phẩm</th>
+                        <tr class="text-center">
+                            <th>Hình Ảnh</th>
+                            <th class="text-start">Sản Phẩm</th>
                             <th>Số Lượng</th>
                             <th>Đơn Giá</th>
                             <th>Thành Tiền</th>
                         </tr>
                         </thead>
-                        <tbody>
-                        <tr>
-                            <td>Áo Khoác Nam</td>
-                            <td>1</td>
-                            <td>500,000đ</td>
-                            <td>500,000đ</td>
-                        </tr>
+                        <tbody id="modalItemsTbody">
+                        <!-- Items rendered by JS -->
                         </tbody>
                     </table>
                 </div>
@@ -283,9 +606,9 @@
                 <div class="row text-end">
                     <div class="col-md-8"></div>
                     <div class="col-md-4">
-                        <p class="mb-1">Tổng: <strong>500,000đ</strong></p>
-                        <p class="mb-1">Phí vận chuyển: <strong>0đ</strong></p>
-                        <p class="mb-0 fw-bold">Tổng Cộng: 500,000đ</p>
+                        <p class="mb-1">Tạm tính: <strong id="modalSubtotal">500,000đ</strong></p>
+                        <p class="mb-1">Phí vận chuyển: <strong id="modalFeeDelivery">0đ</strong></p>
+                        <p class="mb-0 fw-bold">Tổng Cộng: <span class="text-danger fs-5" id="modalTotalPrice">500,000đ</span></p>
                     </div>
                 </div>
             </div>
@@ -299,8 +622,9 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Custom JS -->
+<script>var contextPath = "${root}";</script>
 <script src="${root}/admin/js/admin-common.js"></script>
-<script src="${root}/admin/js/admin_Orders.js"></script>
+<script src="${root}/admin/js/admin_Orders.js?v=<%= System.currentTimeMillis() %>"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const searchInput = document.getElementById("searchOrderInput");
@@ -317,10 +641,10 @@ document.addEventListener("DOMContentLoaded", function() {
             const orderIdText = row.cells[0].textContent.toLowerCase();
             const customerText = row.cells[1].textContent.toLowerCase();
             const emailText = row.cells[2].textContent.toLowerCase();
-            const statusText = row.cells[5].textContent.trim();
+            const exactStatus = row.getAttribute("data-exact-status");
 
             const matchesSearch = orderIdText.includes(searchVal) || customerText.includes(searchVal) || emailText.includes(searchVal);
-            const matchesStatus = !statusVal || statusText === statusVal;
+            const matchesStatus = !statusVal || exactStatus === statusVal;
 
             if (matchesSearch && matchesStatus) {
                 row.style.display = "";
@@ -332,7 +656,119 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (searchInput) searchInput.addEventListener("input", filterOrders);
     if (statusFilter) statusFilter.addEventListener("change", filterOrders);
+    
+    // AJAX for updating order status to prevent page reload jumping to top
+    const updateForms = document.querySelectorAll('form[action*="admin-update-order-status"]');
+    updateForms.forEach(form => {
+        const originalOnsubmit = form.getAttribute('onsubmit');
+        form.onsubmit = function(event) {
+            event.preventDefault();
+            
+            if (originalOnsubmit) {
+                const confirmMatch = originalOnsubmit.match(/confirm\('(.*?)'\)/);
+                if (confirmMatch && confirmMatch[1]) {
+                    if (!confirm(confirmMatch[1])) {
+                        return false;
+                    }
+                }
+            }
+            
+            const btn = form.querySelector('button[type="submit"]');
+            if(btn) {
+                btn.dataset.oldHtml = btn.innerHTML;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Đang xử lý...';
+                btn.disabled = true;
+            }
+            
+            const formData = new FormData(form);
+            formData.append("ajax", "true");
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: new URLSearchParams(formData)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    // Lưu tin nhắn toast vào sessionStorage và reload lại trang
+                    // window.location.reload() sẽ tự động giữ vị trí scroll hiện tại
+                    sessionStorage.setItem("orderToastMessage", data.message);
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                    if(btn) {
+                        btn.innerHTML = btn.dataset.oldHtml;
+                        btn.disabled = false;
+                    }
+                }
+            }).catch(err => {
+                alert("Lỗi kết nối!");
+                if(btn) {
+                    btn.innerHTML = btn.dataset.oldHtml;
+                    btn.disabled = false;
+                }
+            });
+        };
+    });
+
+    // Show toast after reload if it exists in session storage
+    const savedMessage = sessionStorage.getItem("orderToastMessage");
+    if (savedMessage) {
+        const toastMessage = document.getElementById('toastMessage');
+        if (toastMessage) {
+            toastMessage.innerHTML = '<i class="fas fa-check-circle me-2"></i> ' + savedMessage;
+            const toast = new bootstrap.Toast(document.getElementById('liveToast'));
+            toast.show();
+        }
+        sessionStorage.removeItem("orderToastMessage");
+        
+        // Ẩn alert top nếu có để tránh trùng lặp
+        const alertBox = document.querySelector('.alert-success');
+        if (alertBox) alertBox.remove();
+    }
 });
+    // Mặc định: Xử lý checkbox chọn tất cả đơn hàng
+    const selectAllCb = document.getElementById('selectAllOrders');
+    if(selectAllCb) {
+        selectAllCb.addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.order-checkbox');
+            checkboxes.forEach(cb => {
+                // Chỉ check những checkbox đang hiển thị (không bị ẩn)
+                if(cb.closest('tr').style.display !== 'none') {
+                    cb.checked = this.checked;
+                }
+            });
+        });
+    }
+
+// Hàm dùng bên ngoài DOMContentLoaded
+function printSelectedOrders() {
+    const selectedIds = [];
+    document.querySelectorAll('.order-checkbox:checked').forEach(cb => {
+        selectedIds.push(cb.value);
+    });
+
+    if (selectedIds.length === 0) {
+        alert('Vui lòng chọn ít nhất 1 đơn hàng để in!');
+        return;
+    }
+
+    const idsString = selectedIds.join(',');
+    window.open('${root}/admin/print-invoice?orderIds=' + idsString, '_blank');
+}
 </script>
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100; margin-top: 60px;">
+    <div id="liveToast" class="toast align-items-center text-white bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body fw-medium" id="toastMessage">
+                <i class="fas fa-check-circle me-2"></i> Thành công!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

@@ -721,4 +721,16 @@ public class ProductDAO {
                         .one()
         );
     }
+
+    // 27. Cập nhật số lượng tồn kho nhanh
+    public boolean updateVariantQuantity(int variantId, int quantity) {
+        org.jdbi.v3.core.Jdbi jdbi = JDBIConnector.getJdbi();
+        String sql = "UPDATE variants SET quantity = :qty WHERE id = :id";
+        return jdbi.withHandle(h ->
+                h.createUpdate(sql)
+                        .bind("qty", quantity)
+                        .bind("id", variantId)
+                        .execute() > 0
+        );
+    }
 }

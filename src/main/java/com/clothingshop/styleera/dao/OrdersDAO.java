@@ -35,7 +35,8 @@ public class OrdersDAO {
     // tính tổng doanh thu từ các đơn hàng đã giao thành công
     public double countTotalRevenue() {
         return JDBIConnector.getJdbi().withHandle(handle ->
-                handle.createQuery("SELECT COALESCE(SUM(total_price), 0) FROM orders WHERE status = 'Đã Giao'")
+                handle.createQuery("SELECT COALESCE(SUM(total_price), 0) FROM orders WHERE status = :status")
+                        .bind("status", com.clothingshop.styleera.model.enums.OrderStatus.DELIVERED.getValue())
                         .mapTo(Double.class)
                         .one()
         );
@@ -48,9 +49,10 @@ public class OrdersDAO {
             handle.createQuery(
                             "SELECT YEAR(created_at) AS y, MONTH(created_at) AS m, " +
                                     "COALESCE(SUM(total_price), 0) AS revenue " +
-                                    "FROM orders WHERE status = 'Đã Giao' " +
+                                    "FROM orders WHERE status = :status " +
                                     "GROUP BY YEAR(created_at), MONTH(created_at)"
                     )
+                    .bind("status", com.clothingshop.styleera.model.enums.OrderStatus.DELIVERED.getValue())
                     .map((rs, ctx) -> {
                         int key = rs.getInt("y") * 100 + rs.getInt("m");
                         return Map.entry(key, rs.getDouble("revenue"));
@@ -65,10 +67,13 @@ public class OrdersDAO {
     public Orders findById(int orderId) {
         return JDBIConnector.getJdbi().withHandle(handle ->
                 handle.createQuery(
-                                "SELECT id, user_id, address_id, shipping_name, shipping_phone, shipping_address, status, note, price, " +
-                                        "fee_delivery, total_price, created_at " +
-                                        "FROM orders " +
-                                        "WHERE id = :id"
+                                "SELECT o.id, o.user_id AS userId, o.address_id AS addressId, o.shipping_name AS shippingName, " +
+                                        "o.shipping_phone AS shippingPhone, o.shipping_address AS shippingAddress, " +
+                                        "o.status, o.note, o.price, o.fee_delivery AS feeDelivery, o.total_price AS totalPrice, " +
+                                        "o.created_at AS createdAt, u.user_name AS userName, u.email " +
+                                        "FROM orders o " +
+                                        "LEFT JOIN users u ON o.user_id = u.id " +
+                                        "WHERE o.id = :id"
                         )
                         .bind("id", orderId)
                         .mapToBean(Orders.class)
@@ -76,11 +81,12 @@ public class OrdersDAO {
                         .orElse(null)
         );
     }
-    // Lấy tất cả đơn hàng, thực hiện JOIN bảng users để map thông tin userName và email
     public List<Orders> findAllOrders() {
         return JDBIConnector.getJdbi().withHandle(handle ->
                 handle.createQuery(
-                                "SELECT o.id, o.user_id AS userId, o.address_id AS addressId, o.status, o.note, o.price, " +
+                                "SELECT o.id, o.user_id AS userId, o.address_id AS addressId, " +
+                                        "o.shipping_name AS shippingName, o.shipping_phone AS shippingPhone, " +
+                                        "o.status, o.note, o.price, " +
                                         "o.fee_delivery AS feeDelivery, o.total_price AS totalPrice, o.created_at AS createdAt, " +
                                         "u.user_name AS userName, u.email " +
                                         "FROM orders o JOIN users u ON o.user_id = u.id " +
@@ -116,7 +122,8 @@ public class OrdersDAO {
         return JDBIConnector.getJdbi().withHandle(handle ->
                 handle.createQuery("SELECT id, user_id, address_id, shipping_name, shipping_phone, shipping_address, status, note, price, fee_delivery, total_price, created_at " +
                                 "FROM orders " +
-                                "WHERE status = 'Chờ thanh toán' AND TIMESTAMPDIFF(MINUTE, created_at, NOW()) >= :timeout")
+                                "WHERE status = :status AND TIMESTAMPDIFF(MINUTE, created_at, NOW()) >= :timeout")
+                        .bind("status", com.clothingshop.styleera.model.enums.OrderStatus.PENDING_PAYMENT.getValue())
                         .bind("timeout", timeoutMinutes)
                         .mapToBean(Orders.class)
                         .list()

@@ -275,6 +275,12 @@
         </div>
     </div>
 </div>
-<script src="${root}/admin/js/admin-category.js"></script>
+
+    </div> <!-- End admin-main -->
+</div> <!-- End admin-container -->
+
+<script>var contextPath = "${root}";</script>
+<script src="${root}/admin/js/admin-common.js?v=<%= System.currentTimeMillis() %>"></script>
+<script src="${root}/admin/js/admin-category.js?v=<%= System.currentTimeMillis() %>"></script>
 </body>
 </html>

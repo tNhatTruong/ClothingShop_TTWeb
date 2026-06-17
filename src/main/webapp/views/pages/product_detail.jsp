@@ -1,12 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%@ taglib prefix="c" uri="jakarta.tags.core" %>
         <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+        <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
             <c:set var="root" value="${pageContext.request.contextPath}" scope="request" />
             <%@ page import="java.util.List" %>
                 <%@ page import="com.clothingshop.styleera.model.Review" %>
                     <%@ page import="com.clothingshop.styleera.model.Product" %>
                         <%@ page import="java.text.SimpleDateFormat" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
                             <!DOCTYPE html>
                             <html lang="vi">
@@ -301,19 +301,6 @@
                                     <div class="reviews">
                                         <div class="d-flex justify-content-between align-items-center mb-4">
                                             <h2>ĐÁNH GIÁ SẢN PHẨM</h2>
-                                            <c:choose>
-                                                <c:when test="${not empty sessionScope.currentUser}">
-                                                    <button type="button" class="btn btn-dark" data-bs-toggle="modal"
-                                                        data-bs-target="#reviewModal">
-                                                        <i class="fas fa-pen"></i> Viết đánh giá
-                                                    </button>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <a href="${root}/login" class="btn btn-outline-dark">
-                                                        <i class="fas fa-sign-in-alt"></i> Đăng nhập để đánh giá
-                                                    </a>
-                                                </c:otherwise>
-                                            </c:choose>
                                         </div>
                                         <div class="review-container">
                                             <% /* Lấy danh sách đánh giá từ request attribute do Controller gửi sang */
@@ -360,12 +347,18 @@
                                                                 <div class="item_content">
                                                                     <div class="item-content-main-content">
                                                                         <div class="item-content-main-content-reviews">
-                                                                            <div
-                                                                                class="item-content-main-content-reviews-item">
-                                                                                <span>
-                                                                                    <%= r.getComment() %>
-                                                                                </span>
+                                                                            <div class="item-content-main-content-reviews-item">
+                                                                                <span><%= r.getComment() %></span>
                                                                             </div>
+                                                                            <% if (r.getEditedAt() != null) { %>
+                                                                                <div class="text-muted small mt-1" style="font-size: 0.8rem;">(Đã chỉnh sửa)</div>
+                                                                            <% } %>
+                                                                            <% if (r.getAdminReply() != null && !r.getAdminReply().trim().isEmpty()) { %>
+                                                                            <div class="admin-reply bg-light p-3 mt-3 rounded border-start border-3 border-primary">
+                                                                                <strong><i class="fas fa-headset text-primary me-2"></i>Phản hồi từ Người bán:</strong>
+                                                                                <p class="mb-0 mt-1 text-muted" style="font-size: 0.95rem;"><%= r.getAdminReply() %></p>
+                                                                            </div>
+                                                                            <% } %>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -380,62 +373,7 @@
                                                         <% } %>
                                         </div>
                                     </div>
-                                    <div class="modal fade" id="reviewModal" tabindex="-1"
-                                        aria-labelledby="reviewModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title fw-bold" id="reviewModalLabel">Viết đánh giá
-                                                        sản phẩm</h5>
-                                                    <button type="button" class="btn btn-dark mb-4"
-                                                        data-bs-toggle="modal" data-bs-target="#reviewModal">
-                                                        <i class="fas fa-pen"></i> Viết đánh giá
-                                                    </button>
-                                                </div>
 
-                                                <form action="${root}/submit_review" method="POST">
-                                                    <div class="modal-body">
-                                                        <input type="hidden" name="productId"
-                                                            value="${product.product_id}">
-                                                        <input type="hidden" name="rating" id="ratingInput" value="5">
-
-                                                        <div class="mb-4 text-center">
-                                                            <label class="form-label d-block mb-2">Chất lượng sản
-                                                                phẩm:</label>
-                                                            <div class="star-rating-form"
-                                                                style="font-size: 2rem; cursor: pointer;">
-                                                                <i class="fas fa-star text-warning"
-                                                                    onclick="setFormRating(1)"></i>
-                                                                <i class="fas fa-star text-warning"
-                                                                    onclick="setFormRating(2)"></i>
-                                                                <i class="fas fa-star text-warning"
-                                                                    onclick="setFormRating(3)"></i>
-                                                                <i class="fas fa-star text-warning"
-                                                                    onclick="setFormRating(4)"></i>
-                                                                <i class="fas fa-star text-warning"
-                                                                    onclick="setFormRating(5)"></i>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="mb-3">
-                                                            <label for="reviewComment" class="form-label">Nội dung đánh
-                                                                giá:</label>
-                                                            <textarea class="form-control" name="comment"
-                                                                id="reviewComment" rows="4"
-                                                                placeholder="Hãy chia sẻ cảm nhận của bạn về sản phẩm này nhé..."
-                                                                required></textarea>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary"
-                                                            data-bs-dismiss="modal">Trở lại</button>
-                                                        <button type="submit" class="btn btn-primary">Gửi đánh
-                                                            giá</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
                                     </div>
                                     </div>
                                     </div>

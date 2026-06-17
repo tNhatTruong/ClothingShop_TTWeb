@@ -1,6 +1,9 @@
 package com.clothingshop.styleera.controller.Admin;
 
 import com.clothingshop.styleera.dao.OrdersDAO;
+import com.clothingshop.styleera.model.Orders;
+import com.clothingshop.styleera.model.enums.OrderStatus;
+import com.clothingshop.styleera.service.OrderService;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -8,16 +11,28 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @WebServlet("/admin-update-order-status")
 public class AdminUpdateOrderStatusController extends HttpServlet {
 
-    private static final List<String> ALLOWED_STATUSES = Arrays.asList(
-            "Chờ vận chuyển",
-            "Đang vận chuyển",
-            "Đã Giao",
-            "Đã hủy"
-    );
+    // Cấu hình State Machine: Các trạng thái nào được phép chuyển đến trạng thái nào
+    private static final Map<String, List<String>> VALID_TRANSITIONS = new HashMap<>();
+    static {
+        VALID_TRANSITIONS.put(OrderStatus.PENDING_APPROVAL.getValue(), Arrays.asList(OrderStatus.READY_TO_SHIP.getValue(), OrderStatus.CANCELED.getValue()));
+        VALID_TRANSITIONS.put(OrderStatus.PENDING_PAYMENT.getValue(), Arrays.asList(OrderStatus.CANCELED.getValue()));
+        VALID_TRANSITIONS.put(OrderStatus.PAID.getValue(), Arrays.asList(OrderStatus.READY_TO_SHIP.getValue(), OrderStatus.CANCELED.getValue()));
+        VALID_TRANSITIONS.put(OrderStatus.ADMIN_CONFIRMED.getValue(), Arrays.asList(OrderStatus.READY_TO_SHIP.getValue(), OrderStatus.CANCELED.getValue()));
+        
+        VALID_TRANSITIONS.put(OrderStatus.READY_TO_SHIP.getValue(), Arrays.asList(OrderStatus.SHIPPING.getValue(), OrderStatus.CANCELED.getValue()));
+        VALID_TRANSITIONS.put(OrderStatus.SHIPPING.getValue(), Arrays.asList(OrderStatus.DELIVERED.getValue(), OrderStatus.DELIVERY_FAILED.getValue()));
+        VALID_TRANSITIONS.put(OrderStatus.PAID_AT_COUNTER.getValue(), Arrays.asList(OrderStatus.DELIVERED.getValue()));
+        
+        // Luồng Trả hàng
+        VALID_TRANSITIONS.put(OrderStatus.RETURN_REQUESTED.getValue(), Arrays.asList(OrderStatus.RETURN_PROCESSING.getValue(), OrderStatus.RETURN_REJECTED.getValue()));
+        VALID_TRANSITIONS.put(OrderStatus.RETURN_PROCESSING.getValue(), Arrays.asList(OrderStatus.REFUNDED.getValue()));
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -26,8 +41,13 @@ public class AdminUpdateOrderStatusController extends HttpServlet {
         String orderIdStr = request.getParameter("orderId");
         String newStatus  = request.getParameter("status");
 
-        // Validate
-        if (orderIdStr == null || newStatus == null || !ALLOWED_STATUSES.contains(newStatus)) {
+        if (orderIdStr == null || newStatus == null) {
+            if ("true".equals(request.getParameter("ajax"))) {
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("{\"status\":\"error\", \"message\":\"Dữ liệu không hợp lệ.\"}");
+                return;
+            }
             response.sendRedirect(request.getContextPath() + "/admin-orders?error=invalid");
             return;
         }
@@ -35,10 +55,67 @@ public class AdminUpdateOrderStatusController extends HttpServlet {
         try {
             int orderId = Integer.parseInt(orderIdStr);
             OrdersDAO ordersDAO = new OrdersDAO();
-            ordersDAO.updateStatus(orderId, newStatus);
+            Orders order = ordersDAO.findById(orderId);
+
+            if (order == null) {
+                if ("true".equals(request.getParameter("ajax"))) {
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"status\":\"error\", \"message\":\"Không tìm thấy đơn hàng.\"}");
+                    return;
+                }
+                response.sendRedirect(request.getContextPath() + "/admin-orders?error=notfound");
+                return;
+            }
+
+            String currentStatus = order.getStatus();
+            
+            // State Machine Validation: Chuyển đổi trạng thái chỉ đi theo 1 chiều (hoặc luồng hoàn tác đã định nghĩa)
+            List<String> allowedNextStates = VALID_TRANSITIONS.get(currentStatus);
+            if (allowedNextStates == null || !allowedNextStates.contains(newStatus)) {
+                // Ràng buộc 1 chiều bị vi phạm (Ví dụ: Từ Chờ duyệt nhảy thẳng sang Đã giao)
+                if ("true".equals(request.getParameter("ajax"))) {
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"status\":\"error\", \"message\":\"Trạng thái chuyển đổi không hợp lệ!\"}");
+                    return;
+                }
+                response.sendRedirect(request.getContextPath() + "/admin-orders?error=invalid_transition");
+                return;
+            }
+
+            // Nếu trạng thái mới là Hủy, phải gọi Service hoàn kho
+            if (OrderStatus.CANCELED.getValue().equals(newStatus)) {
+                OrderService orderService = new OrderService();
+                orderService.cancelOrderWithStockRestore(orderId, OrderStatus.CANCELED);
+            } else {
+                ordersDAO.updateStatus(orderId, newStatus);
+            }
+            
+            if ("true".equals(request.getParameter("ajax"))) {
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("{\"status\":\"success\", \"message\":\"Cập nhật trạng thái thành công!\", \"newStatus\":\"" + newStatus + "\"}");
+                return;
+            }
             response.sendRedirect(request.getContextPath() + "/admin-orders?success=updated");
         } catch (NumberFormatException e) {
+            if ("true".equals(request.getParameter("ajax"))) {
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("{\"status\":\"error\", \"message\":\"ID đơn hàng không hợp lệ.\"}");
+                return;
+            }
             response.sendRedirect(request.getContextPath() + "/admin-orders?error=invalid");
+        } catch (Exception e) {
+            e.printStackTrace();
+            if ("true".equals(request.getParameter("ajax"))) {
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("{\"status\":\"error\", \"message\":\"Có lỗi xảy ra.\"}");
+                return;
+            }
+            response.sendRedirect(request.getContextPath() + "/admin-orders?error=exception");
         }
     }
 }
