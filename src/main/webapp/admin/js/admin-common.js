@@ -59,6 +59,15 @@ function showError(message) {
     }, 5000);
 }
 
+// Hỗ trợ hàm showAppToast bị thiếu ở các file JS khác
+function showAppToast(message, type) {
+    if (type === 'success') {
+        showSuccess(message);
+    } else {
+        showError(message); // warning, danger đều dùng showError
+    }
+}
+
 // Format currency
 function formatCurrency(amount) {
     return new Intl.NumberFormat('vi-VN', {

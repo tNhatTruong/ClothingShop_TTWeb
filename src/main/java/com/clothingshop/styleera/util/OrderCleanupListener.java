@@ -1,9 +1,5 @@
 package com.clothingshop.styleera.util;
 
-import com.clothingshop.styleera.dao.OrderDetailsDAO;
-import com.clothingshop.styleera.dao.OrdersDAO;
-import com.clothingshop.styleera.dao.VariantDAO;
-import com.clothingshop.styleera.model.OrderDetail;
 import com.clothingshop.styleera.model.Orders;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -41,26 +37,25 @@ public class OrderCleanupListener implements ServletContextListener {
 
     private void cleanupExpiredOrders() {
         try {
-            OrdersDAO ordersDAO = new OrdersDAO();
-            OrderDetailsDAO orderDetailsDAO = new OrderDetailsDAO();
-            VariantDAO variantDAO = new VariantDAO();
+            com.clothingshop.styleera.dao.OrdersDAO ordersDAO = new com.clothingshop.styleera.dao.OrdersDAO();
+            com.clothingshop.styleera.service.OrderService orderService = new com.clothingshop.styleera.service.OrderService();
 
             // Tìm đơn hàng "Chờ thanh toán" quá 30 phút
             List<Orders> expiredOrders = ordersDAO.findExpiredPendingOrders(30);
 
             if (expiredOrders != null && !expiredOrders.isEmpty()) {
                 for (Orders order : expiredOrders) {
-                    // Chuyển sang trạng thái hủy do quá hạn
-                    ordersDAO.updateStatus(order.getId(), "Hủy (Quá hạn thanh toán)");
-
-                    // Hoàn lại số lượng tồn kho
-                    List<OrderDetail> details = orderDetailsDAO.findByOrderId(order.getId());
-                    if (details != null) {
-                        for (OrderDetail detail : details) {
-                            variantDAO.restoreStock(detail.getVariant_id(), detail.getQuantity());
-                        }
+                    // Chuyển sang trạng thái hủy do quá hạn và hoàn lại tồn kho trong 1 transaction
+                    boolean success = orderService.cancelOrderWithStockRestore(
+                            order.getId(),
+                            com.clothingshop.styleera.model.enums.OrderStatus.EXPIRED
+                    );
+                    
+                    if (success) {
+                        System.out.println("Canceled expired order: " + order.getId() + " and restored stock.");
+                    } else {
+                        System.err.println("Failed to cancel expired order: " + order.getId());
                     }
-                    System.out.println("Canceled expired order: " + order.getId() + " and restored stock.");
                 }
             }
         } catch (Exception e) {

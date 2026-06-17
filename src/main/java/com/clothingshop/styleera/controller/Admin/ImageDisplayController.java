@@ -28,11 +28,6 @@ public class ImageDisplayController extends HttpServlet {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        // Phương án bọc lót nếu file config bị lỗi hoặc trống
-        if (this.uploadPath == null || this.uploadPath.trim().isEmpty()) {
-            this.uploadPath = "D:/ttweb/ClothingShop/src/main/webapp/images";
-        }
     }
 
     @Override
