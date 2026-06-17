@@ -1,7 +1,6 @@
 package com.clothingshop.styleera.controller.Admin;
 
 import com.clothingshop.styleera.model.Orders;
-import com.clothingshop.styleera.model.ParentCategory;
 import com.clothingshop.styleera.model.Product;
 
 import com.clothingshop.styleera.service.*;
@@ -20,11 +19,9 @@ public class AdminDashboardController extends HttpServlet {
         ProductService productService = new ProductService();
         OrdersService ordersService = new OrdersService();
         UserService userService = new UserService();
-        CategoryService categoryService = new CategoryService();
         VariantService variantService = new VariantService();
 
         List<Product> bestSellers = productService.findBestSellersAdmin();
-        List<ParentCategory> categoryStats = categoryService.getParentCategoryStats();
         int totalQuantity = variantService.getTotalQuantity();
         int totalOrders = ordersService.getTotalOrders();
         int totalProducts = productService.getTotalProducts();
@@ -32,12 +29,40 @@ public class AdminDashboardController extends HttpServlet {
         int totalUserCount = userService.countTotalUsers();
         double totalProductPrice = productService.getTotalProductPrice();
         List<Orders> latestOrders = ordersService.getLatestOrders(4);
-        List<String> revenueChartLabels = ordersService.getRevenueChartLabels();
-        List<Double> revenueChartData = ordersService.getRevenueChartData();
+        
+        // Biểu đồ theo tháng (trong năm nay)
+        List<String> monthlyLabels = ordersService.getMonthlyRevenueChartLabels();
+        List<Double> monthlyData = ordersService.getMonthlyRevenueChartData();
+        
+        // Biểu đồ theo ngày (trong tháng này)
+        List<String> dailyLabels = ordersService.getDailyRevenueChartLabels();
+        List<Double> dailyData = ordersService.getDailyRevenueChartData();
+
+        // Việc cần làm ngay
+        int pendingApprovalCount = ordersService.countPendingApprovalOrders();
+        int returnRequestedCount = ordersService.countReturnRequestedOrders();
+        int lowStockCount = variantService.countLowStockVariants(5); // Ngưỡng dưới 5 sản phẩm
+
+        // Lấy danh sách chi tiết hiển thị
+        List<Orders> pendingOrders = ordersService.getPendingApprovalOrders(3);
+        List<Orders> returnOrders = ordersService.getReturnRequestedOrders(3);
+        List<com.clothingshop.styleera.model.Variants> lowStockVariantsList = variantService.getLowStockVariants(5, 3);
 
         request.setAttribute("dashboardLoaded", true);
-        request.setAttribute("revenueChartLabels", revenueChartLabels);
-        request.setAttribute("revenueChartData", revenueChartData);
+        
+        request.setAttribute("monthlyLabels", monthlyLabels);
+        request.setAttribute("monthlyData", monthlyData);
+        request.setAttribute("dailyLabels", dailyLabels);
+        request.setAttribute("dailyData", dailyData);
+        
+        request.setAttribute("pendingApprovalCount", pendingApprovalCount);
+        request.setAttribute("returnRequestedCount", returnRequestedCount);
+        request.setAttribute("lowStockCount", lowStockCount);
+        
+        request.setAttribute("pendingOrders", pendingOrders);
+        request.setAttribute("returnOrders", returnOrders);
+        request.setAttribute("lowStockVariantsList", lowStockVariantsList);
+
         request.setAttribute("latestOrders", latestOrders);
         request.setAttribute("totalProductPrice", totalProductPrice);
         request.setAttribute("totalOrders", totalOrders);
@@ -45,7 +70,6 @@ public class AdminDashboardController extends HttpServlet {
         request.setAttribute("totalRevenue", totalRevenue);
         request.setAttribute("totalUser", totalUserCount);
         request.setAttribute("totalQuantity", totalQuantity);
-        request.setAttribute("categoryStats", categoryStats);
         request.setAttribute("bestSellers", bestSellers);
         request.getRequestDispatcher("/admin/admin-dashboard.jsp").forward(request, response);
     }

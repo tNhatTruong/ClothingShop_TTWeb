@@ -109,8 +109,15 @@
                 <!-- Revenue Chart -->
                 <div class="col-lg-8 col-md-12">
                     <div class="card shadow-sm h-100">
-                        <div class="card-header bg-light border-bottom">
-                            <h6 class="mb-0">Doanh Thu Theo Tháng</h6>
+                        <div class="card-header bg-light border-bottom d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">Thống Kê Doanh Thu</h6>
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Lựa chọn biểu đồ">
+                                <input type="radio" class="btn-check" name="chartToggle" id="btnMonthly" autocomplete="off" checked>
+                                <label class="btn btn-outline-primary" for="btnMonthly">Theo Tháng (Năm nay)</label>
+
+                                <input type="radio" class="btn-check" name="chartToggle" id="btnDaily" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="btnDaily">Theo Ngày (Tháng này)</label>
+                            </div>
                         </div>
                         <div class="card-body p-3">
                             <div class="chart-container">
@@ -120,24 +127,129 @@
                     </div>
                 </div>
 
-                <!-- Category -->
+                <!-- Urgent Tasks -->
                 <div class="col-lg-4 col-md-12">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-header bg-light border-bottom">
-                            <h6 class="mb-0">Thống kê Danh Mục hiện có</h6>
+                    <div class="card shadow-sm h-100 border-warning">
+                        <div class="card-header bg-warning text-dark border-bottom">
+                            <h6 class="mb-0"><i class="fas fa-bell me-2"></i>Việc Cần Làm Ngay</h6>
                         </div>
-                        <div class="card-body">
-                            <div class="category-list">
-                                <c:forEach items="${categoryStats}" var="c">
-                                    <div class="category-item d-flex justify-content-between align-items-center mb-2">
-                                        <span>${c.name}</span>
-                                        <span class="badge bg-primary">
-                                             ${c.percent}%
-                                        </span>
+                        <div class="card-body p-0">
+                            <div class="accordion accordion-flush" id="urgentTasksAccordion">
+                                
+                                <!-- Đơn hàng chờ duyệt -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button <c:if test='${pendingApprovalCount == 0}'>collapsed</c:if>" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePending" aria-expanded="<c:out value='${pendingApprovalCount > 0}'/>" aria-controls="collapsePending">
+                                            <span>
+                                                <i class="fas fa-file-invoice me-2 text-primary"></i>
+                                                <c:choose>
+                                                    <c:when test="${pendingApprovalCount > 0}">Có <strong>${pendingApprovalCount}</strong> đơn hàng chờ duyệt</c:when>
+                                                    <c:otherwise>Không có đơn hàng chờ duyệt</c:otherwise>
+                                                </c:choose>
+                                            </span>
+                                            <c:if test="${pendingApprovalCount > 0}">
+                                                <span class="badge bg-danger rounded-pill ms-auto me-2">Xử lý ngay</span>
+                                            </c:if>
+                                        </button>
+                                    </h2>
+                                    <div id="collapsePending" class="accordion-collapse collapse <c:if test='${pendingApprovalCount > 0}'>show</c:if>" data-bs-parent="#urgentTasksAccordion">
+                                        <div class="accordion-body p-0">
+                                            <div class="list-group list-group-flush">
+                                                <c:forEach items="${pendingOrders}" var="o">
+                                                    <div class="list-group-item d-flex justify-content-between align-items-center bg-light">
+                                                        <div>
+                                                            <small class="fw-bold">Mã ĐH: #${o.id}</small><br>
+                                                            <small class="text-muted"><fmt:formatNumber value="${o.totalPrice}" pattern="#,### VNĐ"/></small>
+                                                        </div>
+                                                        <a href="${root}/admin-orders" class="btn btn-sm btn-outline-primary">Xem</a>
+                                                    </div>
+                                                </c:forEach>
+                                                <c:if test="${pendingApprovalCount > 3}">
+                                                    <a href="${root}/admin-orders" class="list-group-item text-center text-primary py-2 small fw-bold">Xem tất cả ${pendingApprovalCount} đơn...</a>
+                                                </c:if>
+                                            </div>
+                                        </div>
                                     </div>
-                                </c:forEach>
-                            </div>
+                                </div>
 
+                                <!-- Yêu cầu trả hàng -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseReturn" aria-expanded="false" aria-controls="collapseReturn">
+                                            <span>
+                                                <i class="fas fa-undo-alt me-2 text-danger"></i>
+                                                <c:choose>
+                                                    <c:when test="${returnRequestedCount > 0}">Có <strong>${returnRequestedCount}</strong> yêu cầu trả hàng</c:when>
+                                                    <c:otherwise>Không có yêu cầu trả hàng</c:otherwise>
+                                                </c:choose>
+                                            </span>
+                                            <c:if test="${returnRequestedCount > 0}">
+                                                <span class="badge bg-danger rounded-pill ms-auto me-2">Xử lý ngay</span>
+                                            </c:if>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseReturn" class="accordion-collapse collapse" data-bs-parent="#urgentTasksAccordion">
+                                        <div class="accordion-body p-0">
+                                            <div class="list-group list-group-flush">
+                                                <c:forEach items="${returnOrders}" var="o">
+                                                    <div class="list-group-item d-flex justify-content-between align-items-center bg-light">
+                                                        <div>
+                                                            <small class="fw-bold">Mã ĐH: #${o.id}</small><br>
+                                                            <small class="text-muted"><fmt:formatNumber value="${o.totalPrice}" pattern="#,### VNĐ"/></small>
+                                                        </div>
+                                                        <a href="${root}/admin-orders" class="btn btn-sm btn-outline-danger">Xem</a>
+                                                    </div>
+                                                </c:forEach>
+                                                <c:if test="${returnRequestedCount > 3}">
+                                                    <a href="${root}/admin-orders" class="list-group-item text-center text-danger py-2 small fw-bold">Xem tất cả ${returnRequestedCount} yêu cầu...</a>
+                                                </c:if>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Sản phẩm sắp hết hàng -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLowStock" aria-expanded="false" aria-controls="collapseLowStock">
+                                            <span>
+                                                <i class="fas fa-exclamation-triangle me-2 text-warning"></i>
+                                                <c:choose>
+                                                    <c:when test="${lowStockCount > 0}">Có <strong>${lowStockCount}</strong> sản phẩm sắp hết</c:when>
+                                                    <c:otherwise>Tồn kho ổn định</c:otherwise>
+                                                </c:choose>
+                                            </span>
+                                            <c:if test="${lowStockCount > 0}">
+                                                <span class="badge bg-warning text-dark rounded-pill ms-auto me-2">Nhập hàng</span>
+                                            </c:if>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseLowStock" class="accordion-collapse collapse" data-bs-parent="#urgentTasksAccordion">
+                                        <div class="accordion-body p-0">
+                                            <div class="list-group list-group-flush">
+                                                <c:forEach items="${lowStockVariantsList}" var="v">
+                                                    <div class="list-group-item d-flex justify-content-between align-items-center bg-light">
+                                                        <div class="d-flex align-items-center">
+                                                            <c:if test="${not empty v.product.thumbnail}">
+                                                                <img src="${root}${v.product.thumbnail}" style="width: 32px; height: 32px; object-fit: cover; border-radius: 4px;" class="me-2" alt="">
+                                                            </c:if>
+                                                            <div>
+                                                                <small class="fw-bold text-truncate" style="max-width: 140px; display: inline-block;" title="${v.product.product_name}">${v.product.product_name}</small><br>
+                                                                <small class="text-muted">Màu ${v.color} - Size ${v.size} (Còn: <span class="text-danger fw-bold">${v.quantity}</span>)</small>
+                                                            </div>
+                                                        </div>
+                                                        <a href="${root}/admin-products" class="btn btn-sm btn-outline-warning text-dark">Xem</a>
+                                                    </div>
+                                                </c:forEach>
+                                                <c:if test="${lowStockCount > 3}">
+                                                    <a href="${root}/admin-products" class="list-group-item text-center text-warning text-dark py-2 small fw-bold">Xem tất cả ${lowStockCount} sản phẩm...</a>
+                                                </c:if>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -210,19 +322,21 @@
                         <div class="card-body p-0">
                             <ol class="list-group list-group-flush">
                                 <c:forEach items="${bestSellers}" var="p" varStatus="st">
-                                    <li class="list-group-item d-flex justify-content-between align-items-center text-bg-light">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center text-bg-light px-3 py-2">
 
-                                        <div>
-                                            <strong>${st.index + 1}.</strong>
-                                                ${p.product_name}
-                                            <div class="text-danger small"> Đánh giá: ${p.medium_rating}
+                                        <div class="ps-2">
+                                            <strong class="me-1">${st.index + 1}.</strong>
+                                            <span class="fw-medium">${p.product_name}</span>
+                                            <div class="text-success small mt-1"> 
+                                                <i class="fas fa-shopping-cart me-1"></i>Tổng số lượng đã bán: <strong>${p.sold_quantity}</strong>
                                             </div>
                                         </div>
 
                                         <c:if test="${not empty p.thumbnail}">
-                                            <div class="product-img-wrapper me-3">
+                                            <div class="product-img-wrapper">
                                                 <img src="${pageContext.request.contextPath}${p.thumbnail}"
                                                      alt="${p.product_name}"
+                                                     style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #dee2e6;"
                                                      class="product-img"/>
                                             </div>
                                         </c:if>
@@ -249,20 +363,34 @@
 <script>
     window.dashboardChartData = {
         labels: [
-            <c:forEach items="${revenueChartLabels}" var="label" varStatus="s">
+            <c:forEach items="${monthlyLabels}" var="label" varStatus="s">
             "${label}"<c:if test="${!s.last}">,</c:if>
             </c:forEach>
         ],
         data: [
-            <c:forEach items="${revenueChartData}" var="amount" varStatus="s">
+            <c:forEach items="${monthlyData}" var="amount" varStatus="s">
             ${amount}<c:if test="${!s.last}">,</c:if>
             </c:forEach>
         ]
     };
+
+    window.monthlyLabels = window.dashboardChartData.labels;
+    window.monthlyData = window.dashboardChartData.data;
+    
+    window.dailyLabels = [
+        <c:forEach items="${dailyLabels}" var="label" varStatus="s">
+        "${label}"<c:if test="${!s.last}">,</c:if>
+        </c:forEach>
+    ];
+    window.dailyData = [
+        <c:forEach items="${dailyData}" var="amount" varStatus="s">
+        ${amount}<c:if test="${!s.last}">,</c:if>
+        </c:forEach>
+    ];
 </script>
 
 <!-- Custom JS -->
-<script src="${root}/admin/js/admin-common.js"></script>
-<script src="${root}/admin/js/admin-dashboard.js"></script>
+<script src="${root}/admin/js/admin-common.js?v=2"></script>
+<script src="${root}/admin/js/admin-dashboard.js?v=2"></script>
 </body>
 </html>
