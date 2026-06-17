@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <c:set var="root" value="${pageContext.request.contextPath}" scope="request" />
 
 <!DOCTYPE html>
@@ -65,18 +66,25 @@
                                                 </span>
                                             </div>
                                             <div>
+                                                <c:set var="statusLC" value="${fn:toLowerCase(order.status)}" />
                                                 <c:choose>
-                                                    <c:when test="${order.status == 'Đang xử lý' || order.status == 'Chờ xác nhận'}">
-                                                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class="fas fa-spinner fa-spin me-1"></i>${order.status}</span>
+                                                    <c:when test="${statusLC == 'chờ duyệt' || statusLC == 'chờ thanh toán'}">
+                                                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class="fas fa-hourglass-half me-1"></i>${order.status}</span>
                                                     </c:when>
-                                                    <c:when test="${order.status == 'Đang giao hàng'}">
-                                                        <span class="badge bg-info text-dark px-3 py-2 rounded-pill"><i class="fas fa-truck me-1"></i>${order.status}</span>
+                                                    <c:when test="${statusLC == 'đã thanh toán' || statusLC == 'chờ vận chuyển' || statusLC == 'chờ lấy hàng' || statusLC == 'admin_confirmed'}">
+                                                        <span class="badge bg-info text-dark px-3 py-2 rounded-pill"><i class="fas fa-box me-1"></i>${order.status}</span>
                                                     </c:when>
-                                                    <c:when test="${order.status == 'Đã giao' || order.status == 'Hoàn thành'}">
+                                                    <c:when test="${statusLC == 'đang vận chuyển'}">
+                                                        <span class="badge bg-primary px-3 py-2 rounded-pill"><i class="fas fa-truck me-1"></i>${order.status}</span>
+                                                    </c:when>
+                                                    <c:when test="${statusLC == 'đã giao'}">
                                                         <span class="badge bg-success px-3 py-2 rounded-pill"><i class="fas fa-check-circle me-1"></i>${order.status}</span>
                                                     </c:when>
-                                                    <c:when test="${order.status == 'Đã hủy'}">
+                                                    <c:when test="${fn:contains(statusLC, 'hủy') || fn:contains(statusLC, 'thất bại') || fn:contains(statusLC, 'từ chối')}">
                                                         <span class="badge bg-danger px-3 py-2 rounded-pill"><i class="fas fa-times-circle me-1"></i>${order.status}</span>
+                                                    </c:when>
+                                                    <c:when test="${fn:contains(statusLC, 'trả hàng') || fn:contains(statusLC, 'hoàn tiền')}">
+                                                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class="fas fa-undo me-1"></i>${order.status}</span>
                                                     </c:when>
                                                     <c:otherwise>
                                                         <span class="badge bg-secondary px-3 py-2 rounded-pill">${order.status}</span>

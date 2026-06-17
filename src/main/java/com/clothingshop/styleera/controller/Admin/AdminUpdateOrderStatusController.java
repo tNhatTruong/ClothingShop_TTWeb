@@ -42,6 +42,12 @@ public class AdminUpdateOrderStatusController extends HttpServlet {
         String newStatus  = request.getParameter("status");
 
         if (orderIdStr == null || newStatus == null) {
+            if ("true".equals(request.getParameter("ajax"))) {
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("{\"status\":\"error\", \"message\":\"Dữ liệu không hợp lệ.\"}");
+                return;
+            }
             response.sendRedirect(request.getContextPath() + "/admin-orders?error=invalid");
             return;
         }
@@ -52,6 +58,12 @@ public class AdminUpdateOrderStatusController extends HttpServlet {
             Orders order = ordersDAO.findById(orderId);
 
             if (order == null) {
+                if ("true".equals(request.getParameter("ajax"))) {
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"status\":\"error\", \"message\":\"Không tìm thấy đơn hàng.\"}");
+                    return;
+                }
                 response.sendRedirect(request.getContextPath() + "/admin-orders?error=notfound");
                 return;
             }
@@ -62,6 +74,12 @@ public class AdminUpdateOrderStatusController extends HttpServlet {
             List<String> allowedNextStates = VALID_TRANSITIONS.get(currentStatus);
             if (allowedNextStates == null || !allowedNextStates.contains(newStatus)) {
                 // Ràng buộc 1 chiều bị vi phạm (Ví dụ: Từ Chờ duyệt nhảy thẳng sang Đã giao)
+                if ("true".equals(request.getParameter("ajax"))) {
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"status\":\"error\", \"message\":\"Trạng thái chuyển đổi không hợp lệ!\"}");
+                    return;
+                }
                 response.sendRedirect(request.getContextPath() + "/admin-orders?error=invalid_transition");
                 return;
             }
@@ -74,9 +92,30 @@ public class AdminUpdateOrderStatusController extends HttpServlet {
                 ordersDAO.updateStatus(orderId, newStatus);
             }
             
+            if ("true".equals(request.getParameter("ajax"))) {
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("{\"status\":\"success\", \"message\":\"Cập nhật trạng thái thành công!\", \"newStatus\":\"" + newStatus + "\"}");
+                return;
+            }
             response.sendRedirect(request.getContextPath() + "/admin-orders?success=updated");
         } catch (NumberFormatException e) {
+            if ("true".equals(request.getParameter("ajax"))) {
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("{\"status\":\"error\", \"message\":\"ID đơn hàng không hợp lệ.\"}");
+                return;
+            }
             response.sendRedirect(request.getContextPath() + "/admin-orders?error=invalid");
+        } catch (Exception e) {
+            e.printStackTrace();
+            if ("true".equals(request.getParameter("ajax"))) {
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("{\"status\":\"error\", \"message\":\"Có lỗi xảy ra.\"}");
+                return;
+            }
+            response.sendRedirect(request.getContextPath() + "/admin-orders?error=exception");
         }
     }
 }
